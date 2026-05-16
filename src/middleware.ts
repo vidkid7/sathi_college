@@ -4,6 +4,20 @@ import { rateLimitRequest, rateLimitedJson, withSecurityHeaders } from "@/lib/se
 
 export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
+  const canonicalAuthUrl = process.env.NEXTAUTH_URL;
+  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+
+  if (canonicalAuthUrl && host) {
+    const canonical = new URL(canonicalAuthUrl);
+    const isAuthSurface = pathname === "/login" || pathname === "/signup" || pathname.startsWith("/api/auth");
+    if (isAuthSurface && host !== canonical.host) {
+      const redirectUrl = req.nextUrl.clone();
+      redirectUrl.protocol = canonical.protocol;
+      redirectUrl.host = canonical.host;
+      redirectUrl.port = canonical.port;
+      return withSecurityHeaders(NextResponse.redirect(redirectUrl), req);
+    }
+  }
 
   if (pathname === "/api/auth/callback/credentials" && req.method === "POST") {
     const limit = rateLimitRequest(req, "auth-callback", {
