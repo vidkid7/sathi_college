@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getSettings } from "./settings";
 import type { SiteSettings } from "./settings-defaults";
 
-const FALLBACK_SITE_URL = "https://sathi-college-production.up.railway.app";
+const FALLBACK_SITE_URL = "https://sathicollege.com";
 const DEFAULT_OG_IMAGE = "/assets/generated/hero-campus-generated.png";
 
 type MetadataInput = {
