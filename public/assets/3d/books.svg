@@ -1,0 +1,23 @@
+<svg width="420" height="320" viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Stacked study books</title>
+  <desc id="desc">A glossy stack of study books with a notebook and pen.</desc>
+  <defs>
+    <filter id="shadow" x="47" y="58" width="308" height="226" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#2563eb" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="M91 207 240 122l96 55-151 86-94-56Z" fill="#7c3aed"/>
+    <path d="M91 207v29l94 55v-28l-94-56Z" fill="#6d28d9"/>
+    <path d="M185 263l151-86v28l-151 86v-28Z" fill="#a78bfa"/>
+    <path d="M114 167 263 82l96 55-151 86-94-56Z" fill="#ffffff"/>
+    <path d="M114 167v30l94 55v-29l-94-56Z" fill="#fed7aa"/>
+    <path d="M208 223l151-86v29l-151 86v-29Z" fill="#fb923c"/>
+    <path d="M82 128 231 43l96 55-151 86-94-56Z" fill="#dbeafe"/>
+    <path d="M82 128v31l94 55v-30l-94-56Z" fill="#60a5fa"/>
+    <path d="M176 184 327 98v30l-151 86v-30Z" fill="#2563eb"/>
+    <path d="M141 123 238 68l39 22-98 56-38-23Z" fill="#f8fafc"/>
+    <path d="M224 41 304 87" stroke="#f97316" stroke-width="11" stroke-linecap="round"/>
+    <path d="M303 87 326 88 311 105" stroke="#f97316" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

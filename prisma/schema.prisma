@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  USER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+}
+
+model Exam {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  shortName   String
+  description String   @db.Text
+  category    String   @default("Engineering")
+  heroImage   String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  cutoffs     Cutoff[]
+  colleges    CollegeExam[]
+}
+
+model College {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  city         String
+  state        String
+  type         String   @default("Government")
+  rating       Float    @default(0)
+  fees         Int      @default(0)
+  description  String   @db.Text
+  heroImage    String?
+  featured     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  cutoffs      Cutoff[]
+  exams        CollegeExam[]
+}
+
+model CollegeExam {
+  collegeId String
+  examId    String
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  exam      Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@id([collegeId, examId])
+}
+
+model Cutoff {
+  id        String  @id @default(cuid())
+  examId    String
+  collegeId String
+  branch    String
+  category  String
+  year      Int
+  closingRank Int
+  exam      Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@index([examId, category, year])
+  @@index([collegeId])
+}
+
+model Community {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String   @db.Text
+  joinUrl     String
+  image       String?
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  description String? @db.Text
+  posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String   @db.Text
+  content     String   @db.LongText
+  coverImage  String?
+  published   Boolean  @default(false)
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  tags        String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
+}
+
+model RankPrediction {
+  id        String   @id @default(cuid())
+  exam      String
+  marks     Float
+  category  String
+  predicted Int
+  meta      String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  exam      String?
+  message   String?  @db.Text
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key   String @id
+  value String @db.LongText
+}

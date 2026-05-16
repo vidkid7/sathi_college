@@ -1,0 +1,27 @@
+<svg width="520" height="320" viewBox="0 0 520 320" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Study desk article visual</title>
+  <desc id="desc">A study desk with notes, pen, laptop and exam guide.</desc>
+  <defs>
+    <linearGradient id="surface" x1="72" y1="68" x2="434" y2="268" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <filter id="shadow" x="43" y="36" width="421" height="249" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#2563eb" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="78" y="63" width="370" height="198" rx="20" fill="url(#surface)" stroke="#dbeafe" stroke-width="3"/>
+    <rect x="111" y="93" width="128" height="142" rx="10" fill="#ffffff" stroke="#bfdbfe"/>
+    <path d="M130 122h74M130 146h88M130 170h68M130 194h80" stroke="#93c5fd" stroke-width="7" stroke-linecap="round"/>
+    <rect x="268" y="103" width="129" height="80" rx="12" fill="#1f2937"/>
+    <rect x="286" y="119" width="93" height="47" rx="7" fill="#60a5fa"/>
+    <path d="M252 202h162l23 31H229l23-31Z" fill="#cbd5e1"/>
+    <path d="M296 215h74" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>
+    <path d="M211 79 271 45l47 27-60 34-47-27Z" fill="#7c3aed"/>
+    <path d="M211 79v20l47 27v-20l-47-27Z" fill="#6d28d9"/>
+    <path d="M258 106 318 72v20l-60 34v-20Z" fill="#a78bfa"/>
+    <path d="M120 240c73 28 188 28 296 0" stroke="#bfdbfe" stroke-width="4" stroke-linecap="round"/>
+    <path d="M75 132 51 119M460 113l25-17M434 265l21 17" stroke="#bfdbfe" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

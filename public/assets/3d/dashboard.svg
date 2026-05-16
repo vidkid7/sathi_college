@@ -1,0 +1,49 @@
+<svg width="560" height="420" viewBox="0 0 560 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Guidance dashboard preview</title>
+  <desc id="desc">A frosted dashboard interface with metrics, chart, and student list.</desc>
+  <defs>
+    <linearGradient id="panel" x1="64" y1="38" x2="493" y2="354" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eaf4ff"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="151" y1="93" x2="367" y2="282" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#0f6fea"/>
+    </linearGradient>
+    <filter id="shadow" x="39" y="20" width="485" height="363" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#2563eb" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="73" y="51" width="413" height="294" rx="24" fill="url(#panel)" stroke="#d8e8ff" stroke-width="3"/>
+    <rect x="92" y="72" width="42" height="252" rx="16" fill="#f8fbff" stroke="#dbeafe"/>
+    <circle cx="113" cy="97" r="11" fill="#0f6fea"/>
+    <rect x="107" y="130" width="12" height="12" rx="4" fill="#93c5fd"/>
+    <rect x="107" y="169" width="12" height="12" rx="4" fill="#93c5fd"/>
+    <rect x="107" y="208" width="12" height="12" rx="4" fill="#bfdbfe"/>
+    <rect x="107" y="247" width="12" height="12" rx="4" fill="#bfdbfe"/>
+    <text x="158" y="99" font-family="Arial, sans-serif" font-size="14" fill="#111827" font-weight="700">Dashboard</text>
+    <text x="158" y="119" font-family="Arial, sans-serif" font-size="9" fill="#64748b">Overview of your institute</text>
+    <g>
+      <rect x="158" y="142" width="70" height="56" rx="8" fill="#ffffff" stroke="#e2e8f0"/>
+      <rect x="241" y="142" width="70" height="56" rx="8" fill="#ffffff" stroke="#e2e8f0"/>
+      <rect x="324" y="142" width="70" height="56" rx="8" fill="#ffffff" stroke="#e2e8f0"/>
+      <text x="174" y="166" font-family="Arial, sans-serif" font-size="16" fill="#111827" font-weight="700">2,543</text>
+      <text x="257" y="166" font-family="Arial, sans-serif" font-size="16" fill="#111827" font-weight="700">1,892</text>
+      <text x="345" y="166" font-family="Arial, sans-serif" font-size="16" fill="#111827" font-weight="700">98</text>
+      <text x="173" y="185" font-family="Arial, sans-serif" font-size="8" fill="#10b981">+12.5%</text>
+      <text x="256" y="185" font-family="Arial, sans-serif" font-size="8" fill="#10b981">+8.2%</text>
+      <text x="344" y="185" font-family="Arial, sans-serif" font-size="8" fill="#10b981">+15.3%</text>
+    </g>
+    <rect x="158" y="216" width="165" height="93" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="174" y="238" font-family="Arial, sans-serif" font-size="10" fill="#111827" font-weight="700">Performance Overview</text>
+    <path d="M177 284 200 260l23 12 23-31 24 21 27-39" stroke="url(#accent)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M177 292h123" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round"/>
+    <rect x="338" y="216" width="116" height="93" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="354" y="238" font-family="Arial, sans-serif" font-size="10" fill="#111827" font-weight="700">Top Performers</text>
+    <circle cx="360" cy="262" r="10" fill="#fde68a"/>
+    <circle cx="360" cy="285" r="10" fill="#bfdbfe"/>
+    <text x="377" y="266" font-family="Arial, sans-serif" font-size="9" fill="#111827">Rahul Kumar</text>
+    <text x="377" y="289" font-family="Arial, sans-serif" font-size="9" fill="#111827">Priya Singh</text>
+  </g>
+</svg>

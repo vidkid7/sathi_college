@@ -1,0 +1,53 @@
+import { PageHero } from "@/components/ui/PageHero";
+import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
+import { buildMetadata } from "@/lib/seo";
+import Link from "next/link";
+import { CalendarDays } from "lucide-react";
+import { fallbackArticle } from "@/lib/blog-fallback";
+import { safeImageSrc } from "@/lib/utils";
+
+export async function generateMetadata({ params }: { params: { category: string } }) {
+  const post = await db.post.findUnique({ where: { slug: params.category } });
+  if (post) return buildMetadata({ title: post.title, description: post.excerpt });
+  const fallback = fallbackArticle(undefined, params.category);
+  return buildMetadata({ title: fallback.title, description: fallback.excerpt });
+}
+
+export default async function PostPage({ params }: { params: { category: string } }) {
+  const post = await db.post.findUnique({
+    where: { slug: params.category },
+    include: { category: true }
+  });
+  if (post && !post.published) notFound();
+  const fallback = post ? null : fallbackArticle(undefined, params.category);
+  const title = post?.title ?? fallback!.title;
+  const excerpt = post?.excerpt ?? fallback!.excerpt;
+  const content = post?.content ?? fallback!.content;
+  const coverImage = safeImageSrc(post?.coverImage, "");
+  return (
+    <>
+      <PageHero title={<>{title}</>} description={excerpt}>
+        <div className="flex flex-wrap gap-2">
+          <span className="badge"><CalendarDays className="h-3 w-3" /> {new Date(post?.createdAt ?? Date.now()).toLocaleDateString()}</span>
+          {post?.category ? (
+            <Link href={`/blog/category/${post.category.slug}`} className="badge hover:bg-[rgb(var(--bg-elev))]">
+              {post.category.name}
+            </Link>
+          ) : (
+            <span className="badge">Editorial shell</span>
+          )}
+        </div>
+      </PageHero>
+      <article className="container py-12">
+        {coverImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={coverImage} alt="" className="mb-6 h-72 w-full rounded-lg border border-[rgb(var(--border))] object-cover shadow-xl" loading="eager" decoding="async" />
+        )}
+        <div className="reference-panel prose prose-lg max-w-3xl whitespace-pre-line p-6 dark:prose-invert sm:p-8">
+          {content}
+        </div>
+      </article>
+    </>
+  );
+}

@@ -1,0 +1,33 @@
+<svg width="420" height="360" viewBox="0 0 420 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">College comparison scale</title>
+  <desc id="desc">A polished balance scale comparing a college and books.</desc>
+  <defs>
+    <linearGradient id="metal" x1="170" y1="24" x2="260" y2="336" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset=".42" stop-color="#94a3b8"/>
+      <stop offset="1" stop-color="#475569"/>
+    </linearGradient>
+    <filter id="shadow" x="28" y="20" width="360" height="322" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="18" flood-color="#64748b" flood-opacity=".25"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="M198 88h24v187h-24z" fill="url(#metal)"/>
+    <ellipse cx="210" cy="301" rx="82" ry="21" fill="#94a3b8"/>
+    <path d="M158 280h104l24 21H134l24-21Z" fill="#cbd5e1"/>
+    <circle cx="210" cy="70" r="26" fill="url(#metal)"/>
+    <path d="M84 106h252" stroke="#64748b" stroke-width="10" stroke-linecap="round"/>
+    <path d="M104 108 55 211h98L104 108Z" stroke="#94a3b8" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M316 108 267 211h98L316 108Z" stroke="#94a3b8" stroke-width="4" stroke-linejoin="round"/>
+    <ellipse cx="104" cy="216" rx="66" ry="18" fill="#cbd5e1"/>
+    <ellipse cx="316" cy="216" rx="66" ry="18" fill="#cbd5e1"/>
+    <path d="M76 198 118 173l42 24-43 25-41-24Z" fill="#60a5fa"/>
+    <path d="M76 198v28l41 23v-27l-41-24Z" fill="#2563eb"/>
+    <path d="M160 197v28l-43 24v-27l43-25Z" fill="#93c5fd"/>
+    <path d="M94 189v-36l24-14 24 14v36" fill="#dbeafe"/>
+    <path d="M102 183v-18h32v18" fill="#0f6fea"/>
+    <path d="M276 186h79v20h-79z" rx="6" fill="#f97316"/>
+    <path d="M285 165h74v21h-74z" rx="6" fill="#ffffff"/>
+    <path d="M292 145h70v20h-70z" rx="6" fill="#7c3aed"/>
+  </g>
+</svg>

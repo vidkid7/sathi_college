@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: sathicollege-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sathicollege
+      MYSQL_USER: sathicollege
+      MYSQL_PASSWORD: sathicollege
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: sathicollege-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8181:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sathicollege-app
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql://sathicollege:sathicollege@mysql:3306/sathicollege
+      NEXTAUTH_URL: http://localhost:3001
+      NEXTAUTH_SECRET: sathicollege-super-secret-key-change-in-prod
+      ADMIN_EMAIL: admin@sathicollege.in
+      ADMIN_PASSWORD: ChangeMe@123
+      NEXT_PUBLIC_SITE_URL: http://localhost:3001
+      NEXT_PUBLIC_WHATSAPP: "919281014900"
+      NEXT_PUBLIC_CONTACT_EMAIL: info@sathicollege.in
+    ports:
+      - "3001:3000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

@@ -1,0 +1,54 @@
+import Link from "next/link";
+import { CalendarDays } from "lucide-react";
+import { PageHero } from "@/components/ui/PageHero";
+import { db } from "@/lib/db";
+import { fallbackArticle } from "@/lib/blog-fallback";
+import { buildMetadata } from "@/lib/seo";
+import { notFound } from "next/navigation";
+import { safeImageSrc } from "@/lib/utils";
+
+export async function generateMetadata({ params }: { params: { category: string; slug: string } }) {
+  const post = await db.post.findUnique({ where: { slug: params.slug } });
+  if (post) return buildMetadata({ title: post.title, description: post.excerpt });
+  const fallback = fallbackArticle(params.category, params.slug);
+  return buildMetadata({ title: fallback.title, description: fallback.excerpt });
+}
+
+export default async function CategoryPostPage({ params }: { params: { category: string; slug: string } }) {
+  const post = await db.post.findUnique({
+    where: { slug: params.slug },
+    include: { category: true }
+  });
+  if (post && !post.published) notFound();
+
+  const fallback = post ? null : fallbackArticle(params.category, params.slug);
+  const title = post?.title ?? fallback!.title;
+  const excerpt = post?.excerpt ?? fallback!.excerpt;
+  const content = post?.content ?? fallback!.content;
+  const category = post?.category?.slug || params.category;
+  const categoryName = post?.category?.name || fallback!.categoryLabel;
+  const coverImage = safeImageSrc(post?.coverImage, "");
+
+  return (
+    <>
+      <PageHero title={<>{title}</>} description={excerpt}>
+        <div className="flex flex-wrap gap-2">
+          <span className="badge"><CalendarDays className="h-3 w-3" /> {new Date(post?.createdAt ?? Date.now()).toLocaleDateString()}</span>
+          <Link href={`/blog/category/${category}`} className="badge hover:bg-[rgb(var(--bg-elev))]">
+            {categoryName}
+          </Link>
+          {!post && <span className="badge">Editorial shell</span>}
+        </div>
+      </PageHero>
+      <article className="container py-12">
+        {coverImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={coverImage} alt="" className="mb-6 h-72 w-full rounded-lg border border-[rgb(var(--border))] object-cover shadow-xl" loading="eager" decoding="async" />
+        )}
+        <div className="reference-panel prose prose-lg max-w-3xl whitespace-pre-line p-6 dark:prose-invert sm:p-8">
+          {content}
+        </div>
+      </article>
+    </>
+  );
+}
