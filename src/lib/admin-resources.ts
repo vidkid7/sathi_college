@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { isSafeUrl } from "@/lib/security";
 import { z } from "zod";
 
-export type ResourceKey = "colleges" | "exams" | "communities" | "posts" | "categories";
+export type ResourceKey = "colleges" | "exams" | "communities" | "communityPosts" | "posts" | "categories";
 
 const slugSchema = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/i, "Use only letters, numbers and hyphens.");
 const text = (max = 255) => z.string().trim().min(1).max(max);
@@ -63,6 +63,20 @@ const communitySchema = z.object({
   active: z.coerce.boolean().default(true)
 });
 
+const communityPostSchema = z.object({
+  slug: slugSchema,
+  title: text(220),
+  body: longText(5000),
+  tag: optionalTextId,
+  mediaType: z.preprocess(
+    (value) => value === "" || value === undefined ? null : value,
+    z.enum(["Photo", "Video", "Poll"]).nullable().optional()
+  ),
+  communityId: optionalTextId,
+  imageUrl: optionalSafeUrl({ allowRelative: true }),
+  published: z.coerce.boolean().default(true)
+});
+
 const postSchema = z.object({
   slug: slugSchema,
   title: text(220),
@@ -84,6 +98,7 @@ export const resources = {
   colleges: { model: db.college, schema: collegeSchema, orderBy: { name: "asc" as const } },
   exams: { model: db.exam, schema: examSchema, orderBy: { name: "asc" as const } },
   communities: { model: db.community, schema: communitySchema, orderBy: { order: "asc" as const } },
+  communityPosts: { model: db.communityPost, schema: communityPostSchema, orderBy: { createdAt: "desc" as const } },
   posts: { model: db.post, schema: postSchema, orderBy: { createdAt: "desc" as const } },
   categories: { model: db.category, schema: categorySchema, orderBy: { name: "asc" as const } }
 } as const;

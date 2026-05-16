@@ -11,6 +11,7 @@ const items = [
   { href: "/admin/colleges", label: "Colleges", icon: Building2 },
   { href: "/admin/exams", label: "Exams", icon: BookOpen },
   { href: "/admin/communities", label: "Communities", icon: Users },
+  { href: "/admin/community-posts", label: "Community Posts", icon: MessageSquare },
   { href: "/admin/categories", label: "Blog Categories", icon: FolderTree },
   { href: "/admin/blog", label: "Blog Posts", icon: FileText },
   { href: "/admin/leads", label: "Leads", icon: MessageSquare },

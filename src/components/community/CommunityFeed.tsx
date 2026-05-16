@@ -1,40 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useMemo, useState } from "react";
 import { BarChart3, BookOpen, Compass, Flame, Heart, Home, ImageIcon, MessageCircle, Plus, Search, Send, Sparkles, TrendingUp, Video } from "lucide-react";
 import { motion } from "framer-motion";
 import { safeImageSrc } from "@/lib/utils";
+import type { SerializedCommunityPost } from "@/lib/community";
 
 type Community = { id: string; slug: string; name: string; description: string; joinUrl: string; image?: string | null };
 type ActiveView = "home" | "trending" | "explore" | "all";
-
-const tags = ["JEE", "AP EAPCET", "TS EAMCET", "KCET", "KEAM", "TNEA", "WBJEE"];
-
-const fallbackCommunities: Community[] = [
-  { id: "jee", slug: "jee", name: "JEE Community", description: "JEE Main and Advanced doubts, PYQs, college choice and counselling updates.", joinUrl: "https://api.whatsapp.com/send/?phone=919281014900" },
-  { id: "ap-eapcet", slug: "ap-eapcet", name: "AP EAPCET Community", description: "AP EAPCET alerts, ranks, branch discussion and college suggestions.", joinUrl: "https://api.whatsapp.com/send/?phone=919281014900" },
-  { id: "ts-eamcet", slug: "ts-eamcet", name: "TS EAMCET Community", description: "TS EAMCET preparation, cutoff questions, web-option guidance and results.", joinUrl: "https://api.whatsapp.com/send/?phone=919281014900" },
-  { id: "kcet", slug: "kcet", name: "KCET Community", description: "KCET college comparison, round-wise cutoff support and branch planning.", joinUrl: "https://api.whatsapp.com/send/?phone=919281014900" }
-];
-
-const mockPostBodies = [
-  "Sns college of engineering, Kathir college of engineering, Arjune college of engineering and Easwar college of engineering. Which one should I keep higher?",
-  "I did not open a book properly for EAPCET and the exam is close. Need a realistic topic plan for the next few weeks.",
-  "Check out EAMCET related details in the community. This helped me understand counselling and branch priorities.",
-  "Need to prepare for JEE Exam. What should I revise first if I am starting late?",
-  "Can someone explain how to verify placement stats on college websites before choosing a private college?",
-  "Hostel, mess and campus-life reviews are confusing. How do you identify genuine student feedback?"
-];
-
-const trendingTitles = [
-  "JEE Mains: most common mistakes and how to avoid them",
-  "Are college website placement stats trustable?",
-  "Is paying 8 LPA per year for a private college worth it?",
-  "Hostel mess and campus hygiene: what should students verify?",
-  "Scholarship documents students usually miss",
-  "Safety for girls: campus security questions to ask"
-];
+type CurrentUser = { id?: string | null; name?: string | null; email?: string | null; role?: string | null } | null;
 
 const composerActions = [
   { label: "Photo", icon: ImageIcon },
@@ -54,51 +30,42 @@ const communityLogoFallbacks: Record<string, string> = {
   mhtcet: "/assets/collegedost/mht-cet.png"
 };
 
-function slugify(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+function initials(name?: string | null, email?: string | null) {
+  const value = name || email || "SathiCollege";
+  return value.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "S";
 }
 
-function initials(name: string) {
-  return name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "S";
+function timeAgo(value: string) {
+  const diff = Date.now() - new Date(value).getTime();
+  const minutes = Math.max(1, Math.floor(diff / 60_000));
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
 
-export function CommunityFeed({ communities, activeView = "home" }: { communities: Community[]; activeView?: ActiveView }) {
+export function CommunityFeed({
+  communities,
+  posts,
+  currentUser,
+  activeView = "home"
+}: {
+  communities: Community[];
+  posts: SerializedCommunityPost[];
+  currentUser?: CurrentUser;
+  activeView?: ActiveView;
+}) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [liked, setLiked] = useState<Record<string, boolean>>({});
+  const [items, setItems] = useState(posts);
   const [commenting, setCommenting] = useState<string | null>(null);
+  const [commentBody, setCommentBody] = useState("");
   const [composerMode, setComposerMode] = useState<"Photo" | "Video" | "Poll" | null>(null);
-  const [showExamForm, setShowExamForm] = useState(false);
-  const source = communities.length ? communities : fallbackCommunities;
-
-  const posts = useMemo(() => {
-    return Array.from({ length: Math.max(source.length, 6) }, (_, index) => {
-      const community = source[index % source.length];
-      const tag = tags[index % tags.length];
-      const title = index === 0 ? "Coimbatore engineering college" : index === 1 ? "Help me out with EAPCET prep" : index === 2 ? "Struggling with EAMCET counselling" : trendingTitles[index % trendingTitles.length];
-      return {
-        id: `${community.slug}-${index}`,
-        slug: slugify(title),
-        author: ["thanuvardanya7", "shriya568", "akanksha-solleti299", "yogeswar-naidu306", "mayank_b", "anita_rao"][index % 6],
-        initial: initials(community.name),
-        time: index === 0 ? "4d ago" : `${25 + index * 8}d ago`,
-        title,
-        tag,
-        body: mockPostBodies[index % mockPostBodies.length],
-        comments: index % 4,
-        likes: 1 + (index % 5),
-        views: 18 + index * 9,
-        joinUrl: community.joinUrl
-      };
-    });
-  }, [source]);
-
-  const searched = posts.filter((post) => `${post.title} ${post.tag} ${post.body} ${post.author}`.toLowerCase().includes(query.toLowerCase()));
-  const visiblePosts = activeView === "trending"
-    ? [...searched].sort((a, b) => (b.likes + b.comments) - (a.likes + a.comments))
-    : activeView === "explore"
-      ? searched.filter((post) => ["JEE", "AP EAPCET", "TS EAMCET", "KCET"].includes(post.tag))
-      : searched;
-  const trending = [...posts].sort((a, b) => (b.likes + b.comments + b.views) - (a.likes + a.comments + a.views)).slice(0, 8);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [communityId, setCommunityId] = useState(communities[0]?.id ?? "");
+  const [message, setMessage] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const navItems = [
     { href: "/community", label: "Home Page", key: "home", icon: Home },
@@ -107,17 +74,101 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
     { href: "/community/all", label: "All", key: "all", icon: BookOpen }
   ] as const;
 
+  const tags = useMemo(() => {
+    const fromPosts = items.map((post) => post.tag).filter(Boolean) as string[];
+    const fromCommunities = communities.map((community) => community.name.replace(/\s+Community$/i, ""));
+    return Array.from(new Set([...fromPosts, ...fromCommunities])).slice(0, 10);
+  }, [communities, items]);
+
+  const searched = items.filter((post) => `${post.title} ${post.tag ?? ""} ${post.body} ${post.author.name ?? ""} ${post.author.email}`.toLowerCase().includes(query.toLowerCase()));
+  const visiblePosts = activeView === "trending"
+    ? [...searched].sort((a, b) => (b.likesCount + b.commentsCount + b.views) - (a.likesCount + a.commentsCount + a.views))
+    : activeView === "explore"
+      ? searched.filter((post) => post.community || post.tag)
+      : searched;
+  const trending = [...items].sort((a, b) => (b.likesCount + b.commentsCount + b.views) - (a.likesCount + a.commentsCount + a.views)).slice(0, 8);
+
+  async function createPost(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!currentUser?.id) {
+      router.push("/login?callbackUrl=/community");
+      return;
+    }
+    setSaving(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/community/posts", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          title,
+          body,
+          communityId: communityId || null,
+          tag: communities.find((community) => community.id === communityId)?.name ?? null,
+          mediaType: composerMode
+        })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Could not publish post");
+      setItems((current) => [data.item, ...current]);
+      setTitle("");
+      setBody("");
+      setComposerMode(null);
+      setMessage("Post published.");
+    } catch (error: any) {
+      setMessage(error?.message || "Could not publish post");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function toggleLike(postId: string) {
+    if (!currentUser?.id) {
+      router.push("/login?callbackUrl=/community");
+      return;
+    }
+    const response = await fetch(`/api/community/posts/${postId}/like`, { method: "POST" });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setMessage(data.error || "Could not like post");
+      return;
+    }
+    setMessage(null);
+    setItems((current) => current.map((post) => post.id === postId ? { ...post, likedByMe: data.liked, likesCount: data.likesCount } : post));
+  }
+
+  async function sendComment(postId: string) {
+    if (!currentUser?.id) {
+      router.push("/login?callbackUrl=/community");
+      return;
+    }
+    const response = await fetch(`/api/community/posts/${postId}/comments`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ body: commentBody })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setMessage(data.error || "Could not comment");
+      return;
+    }
+    setMessage(null);
+    setItems((current) => current.map((post) => post.id === postId ? { ...post, comments: [...post.comments, data.item], commentsCount: post.commentsCount + 1 } : post));
+    setCommentBody("");
+    setCommenting(null);
+  }
+
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 py-8 sm:py-10">
-      <div className="grid gap-5 xl:grid-cols-[220px_minmax(0,1fr)_300px]">
-        <aside className="order-2 grid min-w-0 gap-4 xl:order-1 xl:sticky xl:top-24 xl:h-fit">
-          <div className="reference-panel hidden p-4 xl:block">
+    <section className="relative z-0 mx-auto w-full max-w-[1380px] overflow-x-hidden px-4 py-8 sm:py-10">
+      <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] 2xl:grid-cols-[280px_minmax(0,720px)_300px] 2xl:justify-center">
+        <aside className="order-3 grid min-w-0 gap-4 md:grid-cols-2 lg:col-span-2 2xl:order-1 2xl:col-span-1 2xl:grid-cols-1 2xl:sticky 2xl:top-24 2xl:h-fit">
+          <div className="reference-panel hidden p-4 2xl:block">
             <div className="mb-4 flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/assets/brand/sathi-logo.png" alt="SathiCollege community logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
               <div>
                 <p className="text-sm font-extrabold">Community</p>
-                <p className="text-xs text-[rgb(var(--fg-muted))]">Student platform</p>
+                <p className="text-xs text-[rgb(var(--fg-muted))]">{currentUser?.email ? "Signed in" : "Student platform"}</p>
               </div>
             </div>
             <nav className="grid gap-1">
@@ -134,33 +185,27 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
             </nav>
           </div>
 
-          <div className="soft-card p-4">
+          <div className="soft-card min-w-0 overflow-hidden p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="font-display text-lg font-extrabold">Entrance Exams</h2>
-                <p className="text-xs text-[rgb(var(--fg-muted))]">Follow the exam rooms you need.</p>
+                <p className="text-xs text-[rgb(var(--fg-muted))]">Managed from Admin → Communities.</p>
               </div>
-              <button type="button" onClick={() => setShowExamForm((value) => !value)} className="grid h-9 w-9 place-items-center rounded-lg bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]" aria-label="Add entrance exam">
-                <Plus className="h-4 w-4" />
-              </button>
+              {currentUser?.role === "ADMIN" || currentUser?.role === "EDITOR" ? (
+                <Link href="/admin/communities" className="grid h-9 w-9 place-items-center rounded-lg bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]" aria-label="Manage entrance exams">
+                  <Plus className="h-4 w-4" />
+                </Link>
+              ) : null}
             </div>
-            {showExamForm && (
-              <div className="mt-4 rounded-lg border border-[rgb(var(--border))] bg-white/70 p-3 dark:bg-[rgb(var(--bg-elev))]/60">
-                <p className="text-xs font-bold">Add Entrance Exam</p>
-                <div className="mt-2 flex gap-2">
-                  <input className="input h-10 px-3 py-2" placeholder="Exam name" />
-                  <button type="button" onClick={() => setShowExamForm(false)} className="btn-primary h-10 px-3 py-2 text-xs">Add</button>
-                </div>
-              </div>
-            )}
-            <div className="mt-4 grid gap-2">
-              {source.slice(0, 7).map((community) => (
-                <a key={community.id} href={community.joinUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg px-2 py-2 transition hover:bg-[rgb(var(--primary))]/10">
+            <div className="mt-4 grid min-w-0 gap-2 overflow-hidden">
+              {communities.length === 0 && <p className="text-sm text-[rgb(var(--fg-muted))]">No communities have been published yet.</p>}
+              {communities.slice(0, 8).map((community) => (
+                <a key={community.id} href={community.joinUrl} target="_blank" rel="noopener noreferrer" className="flex w-full min-w-0 items-center gap-3 overflow-hidden rounded-lg px-2 py-2 transition hover:bg-[rgb(var(--primary))]/10">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={safeImageSrc(community.image, communityLogoFallbacks[community.slug] || "/assets/generated/visual-blog.png")} alt={`${community.name} logo`} className="h-9 w-9 rounded-lg bg-white object-contain p-1 shadow-sm" />
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-bold">{community.name}</span>
-                    <span className="block truncate text-xs text-[rgb(var(--fg-muted))]">Join discussion</span>
+                  <img src={safeImageSrc(community.image, communityLogoFallbacks[community.slug] || "/assets/generated/visual-blog.png")} alt={`${community.name} logo`} className="h-9 w-9 shrink-0 rounded-lg bg-white object-contain p-1 shadow-sm" />
+                  <span className="min-w-0 flex-1 overflow-hidden">
+                    <span className="block max-w-full truncate text-sm font-bold">{community.name}</span>
+                    <span className="block max-w-full truncate text-xs text-[rgb(var(--fg-muted))]">Join discussion</span>
                   </span>
                 </a>
               ))}
@@ -181,9 +226,9 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
           </Link>
         </aside>
 
-        <main className="order-1 min-w-0 xl:order-2">
+        <main className="order-1 min-w-0 2xl:order-2">
           <div className="reference-panel mb-4 p-4 sm:p-5">
-            <nav className="nice-scroll mb-4 flex gap-2 overflow-x-auto pb-1 xl:hidden">
+            <nav className="nice-scroll mb-4 flex max-w-full min-w-0 gap-2 overflow-x-auto pb-1 2xl:hidden">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = activeView === item.key;
@@ -200,7 +245,14 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
                 <p className="inline-flex items-center gap-2 text-sm font-bold text-[rgb(var(--primary))]"><Sparkles className="h-4 w-4" /> Posts For You</p>
                 <h1 className="mt-1 font-display text-2xl font-extrabold sm:text-3xl">Ask, compare and decide with other aspirants</h1>
               </div>
-              <Link href="/login" className="btn-ghost w-fit px-4 py-2">Sign In</Link>
+              {currentUser?.id ? (
+                <span className="badge w-fit">{currentUser.name || currentUser.email}</span>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  <Link href="/login?callbackUrl=/community" className="btn-ghost w-fit px-4 py-2">Sign In</Link>
+                  <Link href="/signup" className="btn-primary w-fit px-4 py-2">Sign Up</Link>
+                </div>
+              )}
             </div>
             <label className="mt-5 flex min-h-12 items-center gap-3 rounded-lg border border-[rgb(var(--border))] bg-white/80 px-4 shadow-sm dark:bg-[rgb(var(--bg-elev))]/70">
               <Search className="h-4 w-4 text-[rgb(var(--fg-muted))]" />
@@ -208,55 +260,88 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
             </label>
           </div>
 
-          <div className="soft-card mb-4 p-4">
-            <p className="font-display text-lg font-extrabold">What's on your mind there?</p>
-            <textarea className="input mt-3 min-h-24 resize-none" placeholder="Ask a counselling question, share your cutoff confusion, or start a poll..." />
-            <div className="mt-3 grid grid-cols-3 gap-3">
+          <form onSubmit={createPost} className="soft-card mb-4 p-4">
+            <p className="font-display text-lg font-extrabold">{currentUser?.id ? "What's on your mind?" : "Sign in to publish community posts"}</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_210px]">
+              <input className="input" value={title} onChange={(event) => setTitle(event.target.value)} disabled={!currentUser?.id} placeholder="Post title" required />
+              <select className="input" value={communityId} onChange={(event) => setCommunityId(event.target.value)} disabled={!currentUser?.id || communities.length === 0}>
+                <option value="">General community</option>
+                {communities.map((community) => <option key={community.id} value={community.id}>{community.name}</option>)}
+              </select>
+            </div>
+            <textarea className="input mt-3 min-h-24 resize-none" value={body} onChange={(event) => setBody(event.target.value)} disabled={!currentUser?.id} placeholder="Ask a counselling question, share your cutoff confusion, or start a poll..." required />
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
               {composerActions.map(({ label, icon: Icon }) => (
-                <button key={label} type="button" onClick={() => setComposerMode(label)} className={composerMode === label ? "btn-primary justify-center py-2" : "btn-ghost justify-center py-2"}>
+                <button key={label} type="button" disabled={!currentUser?.id} onClick={() => setComposerMode(label)} className={composerMode === label ? "btn-primary w-full justify-center px-3 py-2 text-xs sm:text-sm" : "btn-ghost w-full justify-center px-3 py-2 text-xs sm:text-sm"}>
                   <Icon className="h-4 w-4" />
                   {label}
                 </button>
               ))}
             </div>
-            {composerMode && <p className="mt-3 rounded-lg bg-[rgb(var(--primary))]/10 px-3 py-2 text-xs font-semibold text-[rgb(var(--primary))]">{composerMode} mode selected. Sign in to publish community posts.</p>}
-          </div>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+              {message && <p className="rounded-lg bg-[rgb(var(--primary))]/10 px-3 py-2 text-xs font-semibold text-[rgb(var(--primary))]">{message}</p>}
+              {currentUser?.id ? (
+                <button disabled={saving} className="btn-primary ml-auto px-4 py-2">{saving ? "Publishing..." : "Publish post"}</button>
+              ) : (
+                <Link href="/login?callbackUrl=/community" className="btn-primary ml-auto px-4 py-2">Sign in to post</Link>
+              )}
+            </div>
+          </form>
 
           <div className="grid gap-4">
+            {visiblePosts.length === 0 && (
+              <div className="soft-card p-6 text-center">
+                <p className="font-display text-xl font-extrabold">No community posts yet</p>
+                <p className="mt-2 text-sm text-[rgb(var(--fg-muted))]">Create the first discussion after signing in, or add posts from the admin panel.</p>
+              </div>
+            )}
             {visiblePosts.map((post, index) => (
               <motion.article key={post.id} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: (index % 6) * 0.04 }} className="soft-card p-5">
                 <div className="flex items-start gap-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-100 to-violet-100 font-extrabold text-[rgb(var(--primary))] shadow-inner">{post.initial}</span>
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-100 to-violet-100 font-extrabold text-[rgb(var(--primary))] shadow-inner">{initials(post.author.name, post.author.email)}</span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2 text-xs text-[rgb(var(--fg-muted))]">
-                      <span className="font-bold text-[rgb(var(--fg))]">{post.author}</span>
+                      <span className="font-bold text-[rgb(var(--fg))]">{post.author.name || post.author.email}</span>
                       <span aria-hidden>•</span>
-                      <span>{post.time}</span>
+                      <span>{timeAgo(post.createdAt)}</span>
                     </div>
                     <Link href={`/community/post/${post.slug}`} className="mt-2 block font-display text-xl font-extrabold leading-tight hover:text-[rgb(var(--primary))]">{post.title}</Link>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button type="button" onClick={() => setQuery(post.tag)} className="badge">{post.tag}</button>
-                      {index % 2 === 0 && <span className="badge">#engineering</span>}
+                      {post.tag && <button type="button" onClick={() => setQuery(post.tag || "")} className="badge">{post.tag}</button>}
+                      {post.community && <a href={post.community.joinUrl} target="_blank" rel="noopener noreferrer" className="badge">Join room</a>}
+                      {post.mediaType && <span className="badge">{post.mediaType}</span>}
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-[rgb(var(--fg-muted))]">{post.body}</p>
+                    <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[rgb(var(--fg-muted))]">{post.body}</p>
                     <div className="mt-4 flex flex-wrap gap-3">
-                      <button type="button" onClick={() => setLiked((current) => ({ ...current, [post.id]: !current[post.id] }))} className={liked[post.id] ? "btn-primary px-4 py-2" : "btn-ghost px-4 py-2"}>
+                      <button type="button" onClick={() => toggleLike(post.id)} className={post.likedByMe ? "btn-primary px-4 py-2" : "btn-ghost px-4 py-2"}>
                         <Heart className="h-4 w-4" />
-                        {post.likes + (liked[post.id] ? 1 : 0)}
+                        {post.likesCount}
                       </button>
                       <button type="button" onClick={() => setCommenting((current) => current === post.id ? null : post.id)} className="btn-ghost px-4 py-2">
                         <MessageCircle className="h-4 w-4" />
-                        {post.comments}
+                        {post.commentsCount}
                       </button>
-                      <a href={post.joinUrl} target="_blank" rel="noopener noreferrer" className="btn-ghost px-4 py-2">
-                        <Send className="h-4 w-4" />
-                        Join group
-                      </a>
+                      {post.community && (
+                        <a href={post.community.joinUrl} target="_blank" rel="noopener noreferrer" className="btn-ghost px-4 py-2">
+                          <Send className="h-4 w-4" />
+                          Join group
+                        </a>
+                      )}
                     </div>
+                    {post.comments.length > 0 && (
+                      <div className="mt-4 grid gap-2 rounded-lg border border-[rgb(var(--border))] bg-white/60 p-3 dark:bg-[rgb(var(--bg-elev))]/50">
+                        {post.comments.map((comment) => (
+                          <p key={comment.id} className="text-sm text-[rgb(var(--fg-muted))]">
+                            <span className="font-bold text-[rgb(var(--fg))]">{comment.author.name || comment.author.email}: </span>
+                            {comment.body}
+                          </p>
+                        ))}
+                      </div>
+                    )}
                     {commenting === post.id && (
                       <div className="mt-4 flex gap-2 rounded-lg border border-[rgb(var(--border))] bg-white/70 p-3 dark:bg-[rgb(var(--bg-elev))]/60">
-                        <input className="input h-10 px-3 py-2" placeholder="Write a comment..." />
-                        <button type="button" onClick={() => setCommenting(null)} className="btn-primary h-10 px-3 py-2 text-xs">Send</button>
+                        <input className="input h-10 px-3 py-2" value={commentBody} onChange={(event) => setCommentBody(event.target.value)} placeholder={currentUser?.id ? "Write a comment..." : "Sign in to comment"} />
+                        <button type="button" onClick={() => sendComment(post.id)} className="btn-primary h-10 px-3 py-2 text-xs">Send</button>
                       </div>
                     )}
                   </div>
@@ -266,20 +351,21 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
           </div>
         </main>
 
-        <aside className="order-3 grid min-w-0 gap-4 xl:sticky xl:top-24 xl:h-fit">
+        <aside className="order-2 grid min-w-0 gap-4 lg:sticky lg:top-24 lg:h-fit 2xl:order-3">
           <div className="reference-panel p-5">
             <div className="mb-4 flex items-center gap-2">
               <Flame className="h-5 w-5 text-orange-500" />
               <h2 className="font-display text-xl font-extrabold">Trending Now</h2>
             </div>
             <div className="grid gap-3">
+              {trending.length === 0 && <p className="text-sm text-[rgb(var(--fg-muted))]">No trending posts yet.</p>}
               {trending.map((post, index) => (
                 <Link key={post.id} href={`/community/post/${post.slug}`} className="group grid grid-cols-[32px_minmax(0,1fr)] gap-3 rounded-lg p-2 transition hover:bg-[rgb(var(--primary))]/10">
                   <span className="grid h-8 w-8 place-items-center rounded-lg bg-[rgb(var(--primary))]/10 text-sm font-extrabold text-[rgb(var(--primary))]">{index + 1}</span>
                   <span className="min-w-0">
-                    <span className="block truncate text-xs font-bold text-[rgb(var(--fg-muted))]">{post.author}</span>
+                    <span className="block truncate text-xs font-bold text-[rgb(var(--fg-muted))]">{post.author.name || post.author.email}</span>
                     <span className="line-clamp-2 text-sm font-extrabold leading-5 group-hover:text-[rgb(var(--primary))]">{post.title}</span>
-                    <span className="mt-1 block text-xs text-[rgb(var(--fg-muted))]">{post.likes} likes • {post.comments} replies • {post.time}</span>
+                    <span className="mt-1 block text-xs text-[rgb(var(--fg-muted))]">{post.likesCount} likes • {post.commentsCount} replies • {timeAgo(post.createdAt)}</span>
                   </span>
                 </Link>
               ))}
@@ -290,6 +376,7 @@ export function CommunityFeed({ communities, activeView = "home" }: { communitie
           <div className="soft-card p-5">
             <h2 className="font-display text-lg font-extrabold">Popular Tags</h2>
             <div className="mt-4 flex flex-wrap gap-2">
+              {tags.length === 0 && <p className="text-sm text-[rgb(var(--fg-muted))]">Tags appear after posts are created.</p>}
               {tags.map((tag) => (
                 <button key={tag} type="button" onClick={() => setQuery(tag)} className="badge">{tag}</button>
               ))}

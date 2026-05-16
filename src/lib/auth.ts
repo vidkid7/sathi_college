@@ -14,6 +14,16 @@ const dummyPasswordHash = bcrypt.hashSync("sathicollege-invalid-password", 10);
 const secureCookies = process.env.NEXTAUTH_URL
   ? process.env.NEXTAUTH_URL.startsWith("https://")
   : process.env.NODE_ENV === "production";
+const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+const hasGoogleConfig = Boolean(
+  googleClientId &&
+  googleClientSecret &&
+  googleClientId !== "..." &&
+  googleClientSecret !== "..." &&
+  googleClientId.endsWith(".apps.googleusercontent.com") &&
+  googleClientSecret.length > 20
+);
 
 const credentialsSchema = z.object({
   email: z.string().trim().email().max(254),
@@ -50,11 +60,11 @@ const providers: NextAuthOptions["providers"] = [
   })
 ];
 
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+if (hasGoogleConfig) {
   providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+      clientId: googleClientId!,
+      clientSecret: googleClientSecret!
     })
   );
 }
@@ -80,22 +90,32 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider !== "google") return true;
-      return Boolean(user.email);
-    },
-    async jwt({ token, user, account }) {
-      if (user) {
-        if (account?.provider === "google") {
-          token.role = "USER";
-          token.email = user.email;
-          token.name = user.name;
-          return token;
+      if (!user.email) return false;
+      await db.user.upsert({
+        where: { email: user.email.toLowerCase() },
+        update: { name: user.name ?? user.email },
+        create: {
+          email: user.email.toLowerCase(),
+          name: user.name ?? user.email,
+          role: "USER"
         }
+      });
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
         const dbUser = user.email ? await db.user.findUnique({ where: { email: user.email.toLowerCase() } }) : null;
+        token.id = dbUser?.id || (user as any).id;
+        token.email = dbUser?.email || user.email;
+        token.name = dbUser?.name || user.name;
         token.role = (user as any).role || dbUser?.role || "USER";
       }
       return token;
     },
     async session({ session, token }) {
+      session.user.id = token.id as string | undefined;
+      session.user.email = (token.email as string | undefined) || session.user.email;
+      session.user.name = (token.name as string | undefined) || session.user.name;
       session.user.role = (token.role as any) || "USER";
       return session;
     }

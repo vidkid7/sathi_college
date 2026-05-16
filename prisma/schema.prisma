@@ -17,11 +17,14 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
-  password  String
+  password  String?
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   posts     Post[]
+  communityPosts CommunityPost[]
+  communityComments CommunityComment[]
+  communityLikes CommunityLike[]
 }
 
 model Exam {
@@ -92,6 +95,56 @@ model Community {
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  posts       CommunityPost[]
+}
+
+model CommunityPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  body        String   @db.Text
+  tag         String?
+  mediaType   String?
+  imageUrl    String?
+  published   Boolean  @default(true)
+  views       Int      @default(0)
+  authorId    String
+  communityId String?
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  community   Community? @relation(fields: [communityId], references: [id], onDelete: SetNull)
+  comments    CommunityComment[]
+  likes       CommunityLike[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId, createdAt])
+  @@index([communityId, createdAt])
+  @@index([published, createdAt])
+}
+
+model CommunityComment {
+  id        String   @id @default(cuid())
+  body      String   @db.Text
+  postId    String
+  authorId  String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([postId, createdAt])
+  @@index([authorId, createdAt])
+}
+
+model CommunityLike {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@index([userId, createdAt])
 }
 
 model Category {

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, Search, ChevronDown, UserRound, ShieldCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
+import { signOut, useSession } from "next-auth/react";
 import { safeImageSrc } from "@/lib/utils";
 
 const directLinks = [
@@ -73,6 +74,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const brandRestRaw = siteName.toLowerCase().startsWith(shortName.toLowerCase())
@@ -251,14 +253,28 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
             )}
           </div>
           <ThemeToggle />
-          <Link href="/login" className="hidden btn-ghost whitespace-nowrap px-4 py-2 md:inline-flex">
-            <UserRound className="h-4 w-4" />
-            Sign In
-          </Link>
-          <Link href="/contact" className="hidden btn-primary whitespace-nowrap px-4 py-2 md:inline-flex">
-            <ShieldCheck className="h-4 w-4" />
-            Sign Up
-          </Link>
+          {session?.user ? (
+            <>
+              <Link href={session.user.role === "ADMIN" || session.user.role === "EDITOR" ? "/admin" : "/community"} className="hidden btn-ghost max-w-[150px] truncate whitespace-nowrap px-4 py-2 md:inline-flex">
+                <UserRound className="h-4 w-4 shrink-0" />
+                <span className="truncate">{session.user.name || session.user.email}</span>
+              </Link>
+              <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="hidden btn-primary whitespace-nowrap px-4 py-2 md:inline-flex">
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="hidden btn-ghost whitespace-nowrap px-4 py-2 md:inline-flex">
+                <UserRound className="h-4 w-4" />
+                Sign In
+              </Link>
+              <Link href="/signup" className="hidden btn-primary whitespace-nowrap px-4 py-2 md:inline-flex">
+                <ShieldCheck className="h-4 w-4" />
+                Sign Up
+              </Link>
+            </>
+          )}
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="Open menu"
@@ -333,14 +349,25 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
                     </div>
                   </details>
                 ))}
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <Link href="/login" onClick={() => setOpen(false)} className="btn-ghost">
-                    Sign In
-                  </Link>
-                  <Link href="/contact" onClick={() => setOpen(false)} className="btn-primary">
-                    Sign Up
-                  </Link>
-                </div>
+                {session?.user ? (
+                  <div className="mt-2 grid gap-2">
+                    <Link href={session.user.role === "ADMIN" || session.user.role === "EDITOR" ? "/admin" : "/community"} onClick={() => setOpen(false)} className="btn-ghost">
+                      {session.user.name || session.user.email}
+                    </Link>
+                    <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="btn-primary">
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <Link href="/login" onClick={() => setOpen(false)} className="btn-ghost">
+                      Sign In
+                    </Link>
+                    <Link href="/signup" onClick={() => setOpen(false)} className="btn-primary">
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
                 <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="btn-ghost mt-2">
                   Join WhatsApp
                 </a>

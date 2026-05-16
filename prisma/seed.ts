@@ -5,7 +5,7 @@ const db = new PrismaClient();
 
 async function main() {
   // Admin user
-  const email = process.env.ADMIN_EMAIL || "admin@sathicollege.in";
+  const email = process.env.ADMIN_EMAIL || "admin@collegedost.in";
   const password = process.env.ADMIN_PASSWORD || "ChangeMe@123";
   const hashed = await bcrypt.hash(password, 10);
   await db.user.upsert({
@@ -43,6 +43,86 @@ async function main() {
   ];
   for (const c of communities) {
     await db.community.upsert({ where: { slug: c.slug }, update: c, create: c });
+  }
+
+  const seededCommunities = await db.community.findMany();
+  const communityBySlug = Object.fromEntries(seededCommunities.map((community) => [community.slug, community]));
+  const admin = await db.user.findUnique({ where: { email } });
+  const communityPosts = [
+    {
+      slug: "coimbatore-engineering-college-priority",
+      title: "Coimbatore engineering college priority",
+      body: "Sns college of engineering, Kathir college of engineering, Arjune college of engineering and Easwar college of engineering. Which one should I keep higher for counselling?",
+      tag: "College comparison",
+      communitySlug: "private",
+      views: 84
+    },
+    {
+      slug: "help-me-out-with-eapcet-prep",
+      title: "Help me out with EAPCET prep",
+      body: "I did not open a book properly for EAPCET and the exam is close. Need a realistic topic plan for the next few weeks.",
+      tag: "EAMCET preparation",
+      communitySlug: "eamcet",
+      views: 117
+    },
+    {
+      slug: "struggling-with-eamcet-counselling",
+      title: "Struggling with EAMCET counselling",
+      body: "Can someone explain how to check branch priority, local area rules and previous cutoff ranges before web options?",
+      tag: "Counselling",
+      communitySlug: "eamcet",
+      views: 96
+    },
+    {
+      slug: "jee-main-revision-starting-late",
+      title: "JEE Main revision when starting late",
+      body: "Need to prepare for JEE Exam. What should I revise first if I am starting late and want to avoid low-value topics?",
+      tag: "JEE",
+      communitySlug: "jee",
+      views: 132
+    },
+    {
+      slug: "verify-placement-stats-before-choice-filling",
+      title: "How to verify placement stats before choice filling",
+      body: "College websites show different placement numbers. What are the best ways to verify median package, branch-wise outcomes and internship quality?",
+      tag: "Placements",
+      communitySlug: "private",
+      views: 74
+    },
+    {
+      slug: "hostel-mess-and-campus-life-reviews",
+      title: "Hostel mess and campus-life reviews",
+      body: "Hostel, mess and campus-life reviews are confusing. How do you identify genuine student feedback before joining?",
+      tag: "Campus life",
+      communitySlug: "kcet",
+      views: 63
+    }
+  ];
+  if (admin) {
+    for (const post of communityPosts) {
+      const community = communityBySlug[post.communitySlug];
+      await db.communityPost.upsert({
+        where: { slug: post.slug },
+        update: {
+          title: post.title,
+          body: post.body,
+          tag: post.tag,
+          views: post.views,
+          communityId: community?.id ?? null,
+          published: true
+        },
+        create: {
+          slug: post.slug,
+          title: post.title,
+          body: post.body,
+          tag: post.tag,
+          views: post.views,
+          communityId: community?.id ?? null,
+          authorId: admin.id,
+          published: true
+        }
+      });
+    }
   }
 
   // Blog categories (mirrors collegedost.in's blog/category structure)

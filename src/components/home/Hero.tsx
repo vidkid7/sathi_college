@@ -133,10 +133,10 @@ export function Hero(p: HeroProps) {
 
   return (
     <section className="page-visual-bg relative overflow-hidden border-b border-[rgb(var(--border))]/70">
-      <div className="container relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-start pb-4 pt-5 sm:pb-6 sm:pt-6 md:justify-center lg:py-10">
-        <div className="grid items-center gap-4 sm:gap-6 md:grid-cols-[minmax(0,0.96fr)_minmax(250px,0.72fr)] md:gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.86fr)] lg:gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)]">
-          <div className="relative z-10 pt-1 sm:pt-3">
-            <motion.span key={`badge-${slide.key}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="badge mb-5">
+      <div className="container relative z-10 flex flex-col justify-start pb-4 pt-3 sm:pb-7 sm:pt-6 md:min-h-[calc(100svh-4rem)] md:justify-center lg:py-10">
+        <div className="grid items-center gap-2 sm:gap-5 md:grid-cols-[minmax(0,0.96fr)_minmax(250px,0.72fr)] md:gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.86fr)] lg:gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)]">
+          <div className="relative z-10 order-2 mx-auto max-w-xl pt-0 text-center md:order-1 md:mx-0 md:max-w-none md:pt-3 md:text-left">
+            <motion.span key={`badge-${slide.key}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="badge mb-3 md:mb-5">
               <ShieldCheck className="h-3.5 w-3.5 text-[rgb(var(--primary))]" />
               {slide.eyebrow}
             </motion.span>
@@ -146,7 +146,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="font-display text-[2.65rem] font-extrabold leading-[1.04] text-balance sm:text-5xl md:text-[2.5rem] lg:text-[3.35rem] xl:text-[4.25rem]"
+              className="font-display text-[1.55rem] font-extrabold leading-[1.05] text-balance sm:text-[2.85rem] md:text-[2.5rem] lg:text-[3.35rem] xl:text-[4.25rem]"
             >
               {slide.title}
             </motion.h1>
@@ -156,7 +156,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mt-4 max-w-xl text-base leading-7 text-[rgb(var(--fg-muted))] sm:mt-5 sm:text-lg"
+              className="mx-auto mt-2 max-w-xl text-[0.82rem] leading-5 text-[rgb(var(--fg-muted))] sm:mt-4 sm:text-base md:mx-0 md:text-lg md:leading-7"
             >
               {slide.description}
             </motion.p>
@@ -165,28 +165,28 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="mt-4 flex flex-wrap items-center gap-3 sm:mt-5"
+              className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:mt-5 sm:gap-3 md:justify-start"
             >
               <div className="flex -space-x-2">
                 {avatars.map((avatar) => (
-                  <span key={avatar} className="grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-gradient-to-br from-blue-100 to-violet-100 text-xs font-bold text-[rgb(var(--primary))] shadow-sm dark:border-[rgb(var(--bg))]">
+                  <span key={avatar} className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gradient-to-br from-blue-100 to-violet-100 text-[0.68rem] font-bold text-[rgb(var(--primary))] shadow-sm dark:border-[rgb(var(--bg))] sm:h-8 sm:w-8 sm:text-xs">
                     {avatar}
                   </span>
                 ))}
               </div>
-              <span className="text-sm font-medium text-[rgb(var(--fg-muted))]">50K+ students signed up this month</span>
+              <span className="text-xs font-medium text-[rgb(var(--fg-muted))] sm:text-sm">50K+ students signed up this month</span>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.18 }}
-              className="mt-5 flex flex-wrap items-center gap-3 sm:mt-7"
+              className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:mt-6 sm:gap-3 md:mt-7 md:justify-start"
             >
               <SmartLink
                 href={slide.primary.href}
                 external={isExternal(slide.primary.href)}
-                className="btn-primary px-6 py-3"
+                className="btn-primary px-4 py-2.5 sm:px-6 sm:py-3"
               >
                 {slide.primary.label}
                 <ArrowRight className="h-4 w-4" />
@@ -194,13 +194,13 @@ export function Hero(p: HeroProps) {
               <SmartLink
                 href={slide.secondary.href}
                 external={isExternal(slide.secondary.href)}
-                className="btn-ghost px-6 py-3"
+                className="btn-ghost px-4 py-2.5 sm:px-6 sm:py-3"
               >
                 {slide.secondary.label}
               </SmartLink>
             </motion.div>
 
-            <div className="mt-5 flex items-center gap-2 sm:mt-7" aria-label="Home carousel slides">
+            <div className="mt-3 flex items-center justify-center gap-2 sm:mt-6 md:mt-7 md:justify-start" aria-label="Home carousel slides">
               {slides.map((item, index) => (
                 <button
                   key={item.key}
@@ -221,15 +221,15 @@ export function Hero(p: HeroProps) {
             initial={{ scale: 0.96 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.16 }}
-            className="pointer-events-none absolute right-[-48%] top-[4.9rem] z-0 h-[620px] w-[158%] opacity-[0.38] saturate-125 sm:right-[-38%] sm:top-[7rem] sm:h-[560px] sm:w-[144%] md:pointer-events-auto md:relative md:right-auto md:top-auto md:z-auto md:h-auto md:w-auto md:min-h-[300px] md:opacity-100 lg:min-h-[430px] xl:min-h-[520px]"
+            className="pointer-events-none relative order-1 z-0 mx-auto flex h-[170px] w-full max-w-[340px] items-center justify-center overflow-visible opacity-100 saturate-125 sm:h-[300px] sm:max-w-[500px] md:pointer-events-auto md:order-2 md:h-auto md:max-w-none md:min-h-[300px] md:w-auto lg:min-h-[430px] xl:min-h-[520px]"
           >
-            <div className="absolute inset-x-0 top-8 h-72 rounded-full bg-blue-300/20 blur-3xl md:h-72" />
+            <div className="absolute inset-x-[8%] top-6 h-36 rounded-full bg-blue-300/20 blur-3xl sm:top-8 sm:h-56 md:inset-x-0 md:h-72" />
             {slide.visual === "story" ? (
-              <StoryHeroAnimation className="max-w-none scale-[1.28] md:scale-[1.12] lg:scale-[1.2] xl:scale-[1.28] xl:max-w-[980px] 2xl:max-w-[1080px]" />
+              <StoryHeroAnimation className="scale-[0.5] sm:scale-[0.78] md:scale-[1.02] lg:scale-[1.08] xl:scale-[1.14] xl:max-w-[980px] 2xl:max-w-[1080px]" />
             ) : slide.visual === "hero" ? (
-              <HeroIllustration className="max-w-none scale-110 md:scale-100 xl:max-w-[760px]" />
+              <HeroIllustration className="scale-[0.58] sm:scale-[0.82] md:scale-100 xl:max-w-[760px]" />
             ) : (
-              <SceneVisual name={slide.visual} priority className="max-w-none scale-110 md:scale-100 xl:max-w-[700px]" />
+              <SceneVisual name={slide.visual} priority className="scale-[0.58] sm:scale-[0.82] md:scale-100 xl:max-w-[700px]" />
             )}
           </motion.div>
         </div>

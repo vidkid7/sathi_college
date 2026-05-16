@@ -27,7 +27,10 @@ export async function POST(req: NextRequest, { params }: { params: { resource: s
   if (!res) return withSecurityHeaders(NextResponse.json({ error: "Unknown resource" }, { status: 404 }), req);
   try {
     const body = await req.json();
-    const data = res.schema.parse(body);
+    const parsed = res.schema.parse(body);
+    const data = params.resource === "communityPosts"
+      ? { ...parsed, authorId: session.user.id }
+      : parsed;
     const created = await res.model.create({ data });
     return withSecurityHeaders(NextResponse.json({ item: created }), req);
   } catch (e: any) {
