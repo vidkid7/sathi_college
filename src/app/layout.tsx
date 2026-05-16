@@ -3,7 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import Providers from "./providers";
 import { getSettings } from "@/lib/settings";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getSiteUrl, organizationJsonLd, resolveSeoImageUrl, websiteJsonLd } from "@/lib/seo";
+import { brandPageTitle, brandTitleTemplate, getSiteUrl, organizationJsonLd, resolveSeoImageUrl, websiteJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -13,13 +13,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const s = await getSettings();
   const url = getSiteUrl();
   const ogImage = resolveSeoImageUrl(s.seo.ogImage);
+  const title = brandPageTitle(s.seo.metaTitle);
   return {
     metadataBase: new URL(url),
-    title: { default: s.seo.metaTitle, template: `%s • ${s.siteName}` },
+    title: { default: title, template: brandTitleTemplate() },
     description: s.seo.metaDescription,
     keywords: s.seo.keywords,
     openGraph: {
-      title: s.seo.metaTitle,
+      title,
       description: s.seo.metaDescription,
       url,
       siteName: s.siteName,
@@ -28,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: s.seo.metaTitle,
+      title,
       description: s.seo.metaDescription,
       images: [ogImage]
     },
@@ -44,6 +45,9 @@ export async function generateMetadata(): Promise<Metadata> {
       }
     },
     alternates: { canonical: url },
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
+    },
     icons: { icon: s.faviconUrl || "/favicon.svg" }
   };
 }
@@ -61,6 +65,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const settings = await getSettings();
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${display.variable}`}>
+      <head>
+        <link rel="search" type="application/opensearchdescription+xml" title="SathiCollege Search" href="/opensearch.xml" />
+        <link rel="alternate" type="application/rss+xml" title="SathiCollege Blog" href="/feed.xml" />
+      </head>
       <body className="min-h-screen antialiased">
         <JsonLd data={[organizationJsonLd(settings), websiteJsonLd(settings)]} />
         <Providers>{children}</Providers>

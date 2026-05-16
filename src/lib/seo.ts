@@ -4,6 +4,8 @@ import type { SiteSettings } from "./settings-defaults";
 
 const FALLBACK_SITE_URL = "https://sathicollege.com";
 const DEFAULT_OG_IMAGE = "/assets/generated/hero-campus-generated.png";
+const BRAND_DISPLAY_NAME = "SathiCollege";
+const BRAND_ALIASES = ["SathiCollege", "Sathi College", "sathicollege", "sathi college", "Sathi Collage", "sathicollage"];
 
 type MetadataInput = {
   title?: string;
@@ -72,7 +74,28 @@ export function resolveSeoImageUrl(path?: string | null) {
 }
 
 function searchableKeywords(input?: string[]) {
-  return Array.from(new Set([...(input || []), ...siteConfig.keywords])).slice(0, 24);
+  return Array.from(new Set([...(input || []), ...BRAND_ALIASES, ...siteConfig.keywords])).slice(0, 40);
+}
+
+function verification(): Metadata["verification"] | undefined {
+  const google = process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+  return google ? { google } : undefined;
+}
+
+export function brandPageTitle(title?: string | null) {
+  const clean = title?.replace(/\s+/g, " ").trim().replace(/sathi\s*college/gi, BRAND_DISPLAY_NAME);
+  if (!clean) return "SathiCollege (Sathi College) | Engineering Rank Predictor, College Predictor & Admissions";
+  if (/sathi\s*college/i.test(clean) && /rank predictor|college predictor|admission/i.test(clean)) return clean;
+  if (/sathi\s*college/i.test(clean)) return `${clean} | Rank Predictor, College Predictor & Engineering Admissions`;
+  return `${BRAND_DISPLAY_NAME} (Sathi College) | ${clean}`;
+}
+
+export function brandTitleTemplate() {
+  return `%s | ${BRAND_DISPLAY_NAME}`;
+}
+
+export function brandAliases() {
+  return BRAND_ALIASES;
 }
 
 function robots(noIndex?: boolean): Metadata["robots"] {
@@ -109,8 +132,9 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
     authors: [{ name: s.siteName, url: base }],
     creator: s.siteName,
     publisher: s.siteName,
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages: { "en-IN": url } },
     robots: robots(input?.noIndex),
+    verification: verification(),
     openGraph: {
       title,
       description,
@@ -128,9 +152,14 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
 // Backwards-compatible sync helper for places where settings cannot be awaited.
 export const siteConfig = {
   url: getSiteUrl(),
-  name: "SathiCollege",
+  name: BRAND_DISPLAY_NAME,
   ogImage: DEFAULT_OG_IMAGE,
   keywords: [
+    "SathiCollege",
+    "Sathi College",
+    "sathicollege",
+    "sathi college",
+    "sathicollage",
     "engineering colleges in India",
     "rank predictor",
     "college predictor",
@@ -154,8 +183,9 @@ export function buildMetadata(input?: MetadataInput): Metadata {
     title,
     description,
     keywords: searchableKeywords(input?.keywords),
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages: { "en-IN": url } },
     robots: robots(input?.noIndex),
+    verification: verification(),
     openGraph: {
       title,
       description,
@@ -180,8 +210,9 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "@id": `${getSiteUrl()}/#organization`,
-    name: settings.siteName,
-    alternateName: settings.shortName,
+    name: BRAND_DISPLAY_NAME,
+    legalName: settings.siteName,
+    alternateName: Array.from(new Set([settings.shortName, ...BRAND_ALIASES])),
     url: getSiteUrl(),
     logo: imageUrl(settings.logoUrl),
     description: trimDescription(settings.description),
@@ -201,7 +232,8 @@ export function websiteJsonLd(settings: SiteSettings): JsonLdRecord {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${getSiteUrl()}/#website`,
-    name: settings.siteName,
+    name: BRAND_DISPLAY_NAME,
+    alternateName: BRAND_ALIASES,
     url: getSiteUrl(),
     description: trimDescription(settings.seo.metaDescription),
     publisher: { "@id": `${getSiteUrl()}/#organization` },

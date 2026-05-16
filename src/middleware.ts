@@ -5,11 +5,38 @@ import { rateLimitRequest, rateLimitedJson, withSecurityHeaders } from "@/lib/se
 export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const canonicalAuthUrl = process.env.NEXTAUTH_URL;
+  const canonicalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sathicollege.com";
   const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+  const methodAllowsCanonicalRedirect = req.method === "GET" || req.method === "HEAD";
+  const isAuthSurface = pathname === "/login" || pathname === "/signup" || pathname.startsWith("/api/auth");
+
+  if (methodAllowsCanonicalRedirect && pathname === "/privacy") {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = "/privacy-policy";
+    return withSecurityHeaders(NextResponse.redirect(redirectUrl, 308), req);
+  }
+
+  if (methodAllowsCanonicalRedirect && pathname === "/terms") {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = "/terms-of-service";
+    return withSecurityHeaders(NextResponse.redirect(redirectUrl, 308), req);
+  }
+
+  if (host && methodAllowsCanonicalRedirect && !isAuthSurface && !pathname.startsWith("/api") && !pathname.startsWith("/admin")) {
+    const canonicalSite = new URL(canonicalSiteUrl);
+    const currentHost = host.toLowerCase();
+    const duplicateHosts = new Set(["www.sathicollege.com", "sathi-college-production.up.railway.app"]);
+    if (currentHost !== canonicalSite.host && duplicateHosts.has(currentHost)) {
+      const redirectUrl = req.nextUrl.clone();
+      redirectUrl.protocol = canonicalSite.protocol;
+      redirectUrl.host = canonicalSite.host;
+      redirectUrl.port = canonicalSite.port;
+      return withSecurityHeaders(NextResponse.redirect(redirectUrl, 308), req);
+    }
+  }
 
   if (canonicalAuthUrl && host) {
     const canonical = new URL(canonicalAuthUrl);
-    const isAuthSurface = pathname === "/login" || pathname === "/signup" || pathname.startsWith("/api/auth");
     if (isAuthSurface && host !== canonical.host) {
       const redirectUrl = req.nextUrl.clone();
       redirectUrl.protocol = canonical.protocol;

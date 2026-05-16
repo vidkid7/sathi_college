@@ -52,10 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         entry(`/college-comparison/${c.slug}`, c.updatedAt, 0.7, "monthly")
       ]),
       ...categories.map((c) => entry(`/blog/category/${c.slug}`, c.updatedAt, 0.6, "weekly")),
-      ...posts.flatMap((p) => [
-        entry(`/blog/${p.slug}`, p.updatedAt, 0.75, "weekly"),
-        ...(p.category?.slug ? [entry(`/blog/${p.category.slug}/${p.slug}`, p.updatedAt, 0.65, "weekly")] : [])
-      ]),
+      ...posts.map((p) => entry(`/blog/${p.slug}`, p.updatedAt, 0.75, "weekly")),
       ...communityPosts.map((p) => entry(`/community/post/${p.slug}`, p.updatedAt, 0.55, "daily"))
     ];
   } catch {}

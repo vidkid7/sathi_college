@@ -150,10 +150,11 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     bottomNote: "Made with ♥ for engineering aspirants in India."
   },
   seo: {
-    metaTitle: "sathicollege • Engineering Aspirants Community",
+    metaTitle: "SathiCollege (Sathi College) | Engineering Rank Predictor, College Predictor & Admissions",
     metaDescription:
-      "India's leading community for engineering aspirants — rank predictors, college predictors, mock tests and counselling guidance.",
+      "SathiCollege helps engineering aspirants with rank predictors, college predictors, mock tests, student communities and counselling guidance.",
     keywords: [
+      "SathiCollege", "Sathi College", "sathicollege", "sathi college", "sathicollage",
       "JEE", "EAMCET", "KCET", "MHT CET", "KEAM", "TNEA", "WBJEE",
       "rank predictor", "college predictor", "engineering counselling", "sathicollege"
     ],

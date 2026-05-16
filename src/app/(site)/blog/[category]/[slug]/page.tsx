@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: { category: string;
     return buildMetadata({
       title: post.title,
       description: post.excerpt,
-      path: `/blog/${params.category}/${post.slug}`,
+      path: `/blog/${post.slug}`,
       image: post.coverImage,
       type: "article",
       publishedTime: post.createdAt,
@@ -46,7 +46,7 @@ export default async function CategoryPostPage({ params }: { params: { category:
       <JsonLd
         data={[
           webPageJsonLd({
-            path: `/blog/${category}/${params.slug}`,
+            path: `/blog/${params.slug}`,
             name: title,
             description: excerpt
           }),
@@ -54,10 +54,10 @@ export default async function CategoryPostPage({ params }: { params: { category:
             { name: "Home", path: "/" },
             { name: "Blog", path: "/blog" },
             { name: categoryName, path: `/blog/category/${category}` },
-            { name: title, path: `/blog/${category}/${params.slug}` }
+            { name: title, path: `/blog/${params.slug}` }
           ]),
           articleJsonLd({
-            path: `/blog/${category}/${params.slug}`,
+            path: `/blog/${params.slug}`,
             title,
             description: excerpt,
             datePublished: post?.createdAt,
