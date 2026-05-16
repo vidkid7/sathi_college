@@ -6,11 +6,13 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const c = await db.category.findUnique({ where: { slug: params.slug } });
   if (!c) return buildMetadata({ title: "Category" });
-  return buildMetadata({ title: c.name, description: c.description ?? `Articles in ${c.name}` });
+  return buildMetadata({ title: c.name, description: c.description ?? `Articles in ${c.name}`, path: `/blog/category/${c.slug}` });
 }
 
 export default async function CategoryPage({ params }: { params: { slug: string } }) {
@@ -22,6 +24,29 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   });
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: `/blog/category/${category.slug}`,
+            name: `${category.name} articles`,
+            description: category.description ?? `Latest news and guides in ${category.name}.`
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: category.name, path: `/blog/category/${category.slug}` }
+          ]),
+          itemListJsonLd({
+            path: `/blog/category/${category.slug}`,
+            name: `${category.name} articles`,
+            items: posts.map((post) => ({
+              name: post.title,
+              path: `/blog/${post.slug}`,
+              description: post.excerpt
+            }))
+          })
+        ]}
+      />
       <PageHero
         eyebrow="Category"
         title={<>{category.name} <span className="gradient-text">Articles</span></>}

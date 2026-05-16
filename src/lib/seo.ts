@@ -1,39 +1,309 @@
 import type { Metadata } from "next";
 import { getSettings } from "./settings";
+import type { SiteSettings } from "./settings-defaults";
 
-export async function buildPageMetadata(input?: { title?: string; description?: string }): Promise<Metadata> {
-  const s = await getSettings();
-  const url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const title = input?.title ? `${input.title} • ${s.siteName}` : s.seo.metaTitle;
-  const description = input?.description || s.seo.metaDescription;
+const FALLBACK_SITE_URL = "https://sathi-college-production.up.railway.app";
+const DEFAULT_OG_IMAGE = "/assets/generated/hero-campus-generated.png";
+
+type MetadataInput = {
+  title?: string;
+  description?: string;
+  path?: string;
+  image?: string | null;
+  type?: "website" | "article";
+  keywords?: string[];
+  noIndex?: boolean;
+  publishedTime?: Date | string | null;
+  modifiedTime?: Date | string | null;
+};
+
+type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
+
+type JsonLdRecord = Record<string, unknown>;
+
+function trimDescription(description: string) {
+  const normalized = description.replace(/\s+/g, " ").trim();
+  return normalized.length > 165 ? `${normalized.slice(0, 162).trim()}...` : normalized;
+}
+
+function normalizeBaseUrl(value?: string | null) {
+  const raw = value || process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXTAUTH_URL || FALLBACK_SITE_URL;
+  try {
+    const url = new URL(raw);
+    url.pathname = "";
+    url.search = "";
+    url.hash = "";
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return FALLBACK_SITE_URL;
+  }
+}
+
+function normalizePath(path = "/") {
+  if (!path || path === "/") return "/";
+  if (/^https?:\/\//i.test(path)) return new URL(path).pathname || "/";
+  return `/${path.replace(/^\/+/, "")}`.replace(/\/{2,}/g, "/");
+}
+
+export function getSiteUrl() {
+  return normalizeBaseUrl();
+}
+
+export function absoluteUrl(path = "/") {
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${getSiteUrl()}${normalizePath(path)}`;
+}
+
+export function canonicalUrl(path = "/") {
+  return absoluteUrl(normalizePath(path));
+}
+
+function imageUrl(path?: string | null) {
+  const normalized = path?.trim();
+  const safePath = !normalized || /(^|\/)og\.png(\?|$)/.test(normalized) ? DEFAULT_OG_IMAGE : normalized;
+  return absoluteUrl(safePath);
+}
+
+export function resolveSeoImageUrl(path?: string | null) {
+  return imageUrl(path);
+}
+
+function searchableKeywords(input?: string[]) {
+  return Array.from(new Set([...(input || []), ...siteConfig.keywords])).slice(0, 24);
+}
+
+function robots(noIndex?: boolean): Metadata["robots"] {
+  if (noIndex) {
+    return { index: false, follow: false, nocache: true };
+  }
   return {
-    metadataBase: new URL(url),
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
+  };
+}
+
+export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata> {
+  const s = await getSettings();
+  const base = getSiteUrl();
+  const path = normalizePath(input?.path);
+  const url = canonicalUrl(path);
+  const title = input?.title || s.seo.metaTitle;
+  const description = trimDescription(input?.description || s.seo.metaDescription);
+  const ogImage = imageUrl(input?.image || s.seo.ogImage);
+  return {
+    metadataBase: new URL(base),
     title,
     description,
-    keywords: s.seo.keywords,
+    keywords: searchableKeywords(input?.keywords || s.seo.keywords),
+    applicationName: s.siteName,
+    authors: [{ name: s.siteName, url: base }],
+    creator: s.siteName,
+    publisher: s.siteName,
+    alternates: { canonical: url },
+    robots: robots(input?.noIndex),
     openGraph: {
-      title, description, url, siteName: s.siteName, type: "website",
-      images: [{ url: s.seo.ogImage, width: 1200, height: 630 }]
+      title,
+      description,
+      url,
+      siteName: s.siteName,
+      type: input?.type || "website",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `${s.siteName} preview` }],
+      ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
+      ...(input?.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {})
     },
-    twitter: { card: "summary_large_image", title, description, images: [s.seo.ogImage] }
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] }
   };
 }
 
 // Backwards-compatible sync helper for places where settings cannot be awaited.
 export const siteConfig = {
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  name: "sathicollege",
-  ogImage: "/og.png"
+  url: getSiteUrl(),
+  name: "SathiCollege",
+  ogImage: DEFAULT_OG_IMAGE,
+  keywords: [
+    "engineering colleges in India",
+    "rank predictor",
+    "college predictor",
+    "JEE Main rank predictor",
+    "AP EAMCET college predictor",
+    "TS EAMCET college predictor",
+    "KCET college predictor",
+    "engineering counselling"
+  ]
 };
 
-export function buildMetadata(input?: { title?: string; description?: string }): Metadata {
-  const url = siteConfig.url;
-  const title = input?.title ? `${input.title} • ${siteConfig.name}` : `${siteConfig.name} • Engineering Aspirants Community`;
-  const description = input?.description || "India's leading community for engineering aspirants.";
+export function buildMetadata(input?: MetadataInput): Metadata {
+  const base = getSiteUrl();
+  const path = normalizePath(input?.path);
+  const url = canonicalUrl(path);
+  const title = input?.title || `${siteConfig.name} Engineering Admissions Guidance`;
+  const description = trimDescription(input?.description || "India's leading community for engineering aspirants with rank predictors, college predictors, mock tests and counselling guidance.");
+  const ogImage = imageUrl(input?.image || siteConfig.ogImage);
   return {
-    metadataBase: new URL(url),
+    metadataBase: new URL(base),
     title,
     description,
-    openGraph: { title, description, url, type: "website" }
+    keywords: searchableKeywords(input?.keywords),
+    alternates: { canonical: url },
+    robots: robots(input?.noIndex),
+    openGraph: {
+      title,
+      description,
+      url,
+      type: input?.type || "website",
+      siteName: siteConfig.name,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `${siteConfig.name} preview` }],
+      ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
+      ...(input?.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {})
+    },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] }
+  };
+}
+
+export function jsonLd(data: JsonLdRecord | JsonLdRecord[]) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
+  const sameAs = Object.values(settings.social).filter(Boolean);
+  return {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "@id": `${getSiteUrl()}/#organization`,
+    name: settings.siteName,
+    alternateName: settings.shortName,
+    url: getSiteUrl(),
+    logo: imageUrl(settings.logoUrl),
+    description: trimDescription(settings.description),
+    email: settings.email,
+    telephone: settings.phone,
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "IN",
+      addressLocality: settings.address
+    },
+    sameAs
+  };
+}
+
+export function websiteJsonLd(settings: SiteSettings): JsonLdRecord {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${getSiteUrl()}/#website`,
+    name: settings.siteName,
+    url: getSiteUrl(),
+    description: trimDescription(settings.seo.metaDescription),
+    publisher: { "@id": `${getSiteUrl()}/#organization` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${getSiteUrl()}/colleges?search={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  };
+}
+
+export function webPageJsonLd(input: { path: string; name: string; description: string; type?: string }): JsonLdRecord {
+  const url = canonicalUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": input.type || "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: input.name,
+    description: trimDescription(input.description),
+    isPartOf: { "@id": `${getSiteUrl()}/#website` },
+    publisher: { "@id": `${getSiteUrl()}/#organization` }
+  };
+}
+
+export function breadcrumbJsonLd(items: BreadcrumbItem[]): JsonLdRecord {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: canonicalUrl(item.path)
+    }))
+  };
+}
+
+export function itemListJsonLd(input: { path: string; name: string; items: Array<{ name: string; path: string; description?: string | null }> }): JsonLdRecord {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: input.name,
+    url: canonicalUrl(input.path),
+    itemListElement: input.items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: canonicalUrl(item.path),
+      name: item.name,
+      ...(item.description ? { description: trimDescription(item.description) } : {})
+    }))
+  };
+}
+
+export function articleJsonLd(input: { path: string; title: string; description: string; datePublished?: Date | string | null; dateModified?: Date | string | null; image?: string | null; authorName?: string | null }): JsonLdRecord {
+  const url = canonicalUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${url}#article`,
+    headline: input.title,
+    description: trimDescription(input.description),
+    url,
+    image: imageUrl(input.image),
+    datePublished: new Date(input.datePublished || Date.now()).toISOString(),
+    dateModified: new Date(input.dateModified || input.datePublished || Date.now()).toISOString(),
+    author: { "@type": "Organization", name: input.authorName || siteConfig.name },
+    publisher: { "@id": `${getSiteUrl()}/#organization` },
+    mainEntityOfPage: { "@id": `${url}#webpage` }
+  };
+}
+
+export function educationalOrganizationJsonLd(input: { path: string; name: string; description: string; image?: string | null; city?: string | null; state?: string | null; rating?: number | null }): JsonLdRecord {
+  const url = canonicalUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollegeOrUniversity",
+    "@id": `${url}#college`,
+    name: input.name,
+    url,
+    description: trimDescription(input.description),
+    image: imageUrl(input.image),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: input.city || undefined,
+      addressRegion: input.state || undefined,
+      addressCountry: "IN"
+    },
+    ...(input.rating ? { aggregateRating: { "@type": "AggregateRating", ratingValue: input.rating, bestRating: 5, ratingCount: 1 } } : {})
+  };
+}
+
+export function softwareApplicationJsonLd(input: { path: string; name: string; description: string; applicationCategory?: string }): JsonLdRecord {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: input.name,
+    url: canonicalUrl(input.path),
+    description: trimDescription(input.description),
+    applicationCategory: input.applicationCategory || "EducationApplication",
+    operatingSystem: "Web",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+    publisher: { "@id": `${getSiteUrl()}/#organization` }
   };
 }

@@ -4,10 +4,14 @@ import { db } from "@/lib/db";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { BarChart3, GitCompareArrows, GraduationCap } from "lucide-react";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "College Comparison",
-  description: "Compare engineering colleges by fees, rating, location, type and admission fit."
+  description: "Compare engineering colleges by fees, rating, location, type, counselling priority and admission fit.",
+  path: "/college-comparison",
+  keywords: ["college comparison", "compare engineering colleges", "engineering college fees comparison"]
 });
 
 export const dynamic = "force-dynamic";
@@ -20,6 +24,24 @@ export default async function CollegeComparisonPage() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: "/college-comparison",
+            name: "Engineering college comparison",
+            description: "Compare engineering colleges side by side by fees, rating, location, type and counselling fit."
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "College Comparison", path: "/college-comparison" }
+          ]),
+          softwareApplicationJsonLd({
+            path: "/college-comparison",
+            name: "SathiCollege College Comparison",
+            description: "Free side-by-side engineering college comparison tool."
+          })
+        ]}
+      />
       <PageHero
         eyebrow="Compare"
         title={<>College <span className="gradient-text">Comparison</span></>}

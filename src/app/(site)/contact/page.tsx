@@ -2,6 +2,13 @@ import { PageHero } from "@/components/ui/PageHero";
 import { ContactForm } from "@/components/site/ContactForm";
 import { getSettings, whatsappLinkFromSettings } from "@/lib/settings";
 import { Mail, MessageCircle, Phone } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Contact SathiCollege",
+  description: "Contact SathiCollege for engineering admission, rank predictor, college predictor, counselling and community support.",
+  path: "/contact"
+});
 
 export const dynamic = "force-dynamic";
 

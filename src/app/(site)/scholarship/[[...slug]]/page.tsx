@@ -4,6 +4,8 @@ import { ContactForm } from "@/components/site/ContactForm";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { PageHero } from "@/components/ui/PageHero";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
 
 const pages: Record<string, { title: string; description: string; icon: any; bullets: string[] }> = {
   home: {
@@ -62,7 +64,13 @@ function pageKey(slug?: string[]) {
 
 export function generateMetadata({ params }: { params: { slug?: string[] } }) {
   const page = pages[pageKey(params.slug)] || pages.home;
-  return buildMetadata({ title: page.title, description: page.description });
+  const key = pageKey(params.slug);
+  return buildMetadata({
+    title: page.title,
+    description: page.description,
+    path: key === "home" ? "/scholarship" : `/scholarship/${key}`,
+    noIndex: key.includes("privacy") || key.includes("cookie") || key.includes("terms")
+  });
 }
 
 export default function ScholarshipPage({ params }: { params: { slug?: string[] } }) {
@@ -73,6 +81,20 @@ export default function ScholarshipPage({ params }: { params: { slug?: string[] 
 
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: key === "home" ? "/scholarship" : `/scholarship/${key}`,
+            name: page.title,
+            description: page.description
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Scholarship", path: "/scholarship" },
+            ...(key === "home" ? [] : [{ name: page.title, path: `/scholarship/${key}` }])
+          ])
+        ]}
+      />
       <PageHero
         eyebrow="Scholarship"
         title={<>{page.title.split(" ").slice(0, -1).join(" ")} <span className="gradient-text">{page.title.split(" ").slice(-1)}</span></>}

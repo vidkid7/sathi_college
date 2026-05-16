@@ -1,5 +1,12 @@
 import { PageHero } from "@/components/ui/PageHero";
 import { getSettings } from "@/lib/settings";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "About SathiCollege",
+  description: "Learn how SathiCollege helps engineering aspirants with rank predictors, college predictors, mock tests, counselling guidance and student communities.",
+  path: "/about"
+});
 
 export const dynamic = "force-dynamic";
 

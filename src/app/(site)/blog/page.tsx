@@ -5,8 +5,15 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 
-export const metadata = buildMetadata({ title: "Blog", description: "Articles, exam tips and counselling guides." });
+export const metadata = buildMetadata({
+  title: "Engineering Admission Blog",
+  description: "Articles, exam tips, counselling guides, cutoff updates and rank prediction guidance for engineering aspirants.",
+  path: "/blog",
+  keywords: ["engineering admission blog", "exam tips", "counselling guide", "cutoff updates"]
+});
 export const dynamic = "force-dynamic";
 
 export default async function BlogPage() {
@@ -22,6 +29,28 @@ export default async function BlogPage() {
   } catch {}
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: "/blog",
+            name: "Engineering admission blog",
+            description: "Exam tips, counselling guides, cutoff updates and career planning articles for engineering aspirants."
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" }
+          ]),
+          itemListJsonLd({
+            path: "/blog",
+            name: "Latest SathiCollege articles",
+            items: posts.slice(0, 50).map((post) => ({
+              name: post.title,
+              path: `/blog/${post.slug}`,
+              description: post.excerpt
+            }))
+          })
+        ]}
+      />
       <PageHero
         eyebrow="Insights"
         title={<>Latest <span className="gradient-text">Updates</span></>}

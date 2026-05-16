@@ -6,12 +6,24 @@ import { fallbackArticle } from "@/lib/blog-fallback";
 import { buildMetadata } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { safeImageSrc } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articleJsonLd, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: { category: string; slug: string } }) {
   const post = await db.post.findUnique({ where: { slug: params.slug } });
-  if (post) return buildMetadata({ title: post.title, description: post.excerpt });
+  if (post) {
+    return buildMetadata({
+      title: post.title,
+      description: post.excerpt,
+      path: `/blog/${params.category}/${post.slug}`,
+      image: post.coverImage,
+      type: "article",
+      publishedTime: post.createdAt,
+      modifiedTime: post.updatedAt
+    });
+  }
   const fallback = fallbackArticle(params.category, params.slug);
-  return buildMetadata({ title: fallback.title, description: fallback.excerpt });
+  return buildMetadata({ title: fallback.title, description: fallback.excerpt, path: `/blog/${params.category}/${params.slug}`, type: "article" });
 }
 
 export default async function CategoryPostPage({ params }: { params: { category: string; slug: string } }) {
@@ -31,6 +43,29 @@ export default async function CategoryPostPage({ params }: { params: { category:
 
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: `/blog/${category}/${params.slug}`,
+            name: title,
+            description: excerpt
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: categoryName, path: `/blog/category/${category}` },
+            { name: title, path: `/blog/${category}/${params.slug}` }
+          ]),
+          articleJsonLd({
+            path: `/blog/${category}/${params.slug}`,
+            title,
+            description: excerpt,
+            datePublished: post?.createdAt,
+            dateModified: post?.updatedAt,
+            image: post?.coverImage
+          })
+        ]}
+      />
       <PageHero title={<>{title}</>} description={excerpt}>
         <div className="flex flex-wrap gap-2">
           <span className="badge"><CalendarDays className="h-3 w-3" /> {new Date(post?.createdAt ?? Date.now()).toLocaleDateString()}</span>

@@ -6,11 +6,19 @@ import { formatINR, safeImageSrc } from "@/lib/utils";
 import { Star, MapPin, Building2 } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, educationalOrganizationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const c = await db.college.findUnique({ where: { slug: params.slug } });
   if (!c) return buildMetadata({ title: "College" });
-  return buildMetadata({ title: c.name, description: c.description });
+  return buildMetadata({
+    title: c.name,
+    description: c.description,
+    path: `/colleges/${c.slug}`,
+    image: c.heroImage,
+    keywords: [c.name, `${c.name} fees`, `${c.name} cutoffs`, `${c.city} engineering college`]
+  });
 }
 
 export default async function CollegeDetail({ params }: { params: { slug: string } }) {
@@ -20,6 +28,29 @@ export default async function CollegeDetail({ params }: { params: { slug: string
 
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: `/colleges/${college.slug}`,
+            name: college.name,
+            description: college.description
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Colleges", path: "/colleges" },
+            { name: college.name, path: `/colleges/${college.slug}` }
+          ]),
+          educationalOrganizationJsonLd({
+            path: `/colleges/${college.slug}`,
+            name: college.name,
+            description: college.description,
+            image: college.heroImage,
+            city: college.city,
+            state: college.state,
+            rating: college.rating
+          })
+        ]}
+      />
       <PageHero
         eyebrow={`${college.city}, ${college.state}`}
         title={<>{college.name}</>}

@@ -7,11 +7,19 @@ import { Calculator, GraduationCap } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const e = await db.exam.findUnique({ where: { slug: params.slug } });
   if (!e) return buildMetadata({ title: "Exam" });
-  return buildMetadata({ title: e.name, description: e.description });
+  return buildMetadata({
+    title: e.name,
+    description: e.description,
+    path: `/exams/${e.slug}`,
+    image: e.heroImage,
+    keywords: [e.name, e.shortName, `${e.shortName} rank predictor`, `${e.shortName} college predictor`, `${e.shortName} counselling`]
+  });
 }
 
 export default async function ExamDetail({ params }: { params: { slug: string } }) {
@@ -20,6 +28,31 @@ export default async function ExamDetail({ params }: { params: { slug: string } 
   const examImage = safeImageSrc(exam.heroImage, "");
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: `/exams/${exam.slug}`,
+            name: exam.name,
+            description: exam.description,
+            type: "EducationalOccupationalProgram"
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Exams", path: "/exams" },
+            { name: exam.name, path: `/exams/${exam.slug}` }
+          ]),
+          softwareApplicationJsonLd({
+            path: `/rank-predictor/${exam.slug}`,
+            name: `${exam.shortName} Rank Predictor`,
+            description: `Estimate ${exam.shortName} rank from marks, category and score range.`
+          }),
+          softwareApplicationJsonLd({
+            path: `/college-predictor/${exam.slug}`,
+            name: `${exam.shortName} College Predictor`,
+            description: `Find likely engineering colleges from ${exam.shortName} rank and cutoff trends.`
+          })
+        ]}
+      />
       <PageHero eyebrow={exam.shortName} title={<>{exam.name}</>} description={exam.description} />
       <section className="container grid gap-6 py-12 md:grid-cols-2">
         {examImage && (

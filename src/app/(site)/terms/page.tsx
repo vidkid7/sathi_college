@@ -1,8 +1,14 @@
 import { PageHero } from "@/components/ui/PageHero";
 import { getSettings } from "@/lib/settings";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Terms of Service" };
+export const metadata = buildMetadata({
+  title: "Terms of Service",
+  description: "Terms that govern SathiCollege admission guidance, predictors, content, communities and student support.",
+  path: "/terms-of-service",
+  noIndex: true
+});
 
 export default async function Page() {
   const s = await getSettings();

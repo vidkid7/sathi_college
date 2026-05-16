@@ -5,6 +5,8 @@ import { About } from "@/components/home/About";
 import { CtaBanner } from "@/components/home/CtaBanner";
 import { db } from "@/lib/db";
 import { getSettings, resolveCta, whatsappLinkFromSettings } from "@/lib/settings";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { itemListJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,30 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: "/",
+            name: `${settings.siteName} engineering admissions guidance`,
+            description: settings.description
+          }),
+          itemListJsonLd({
+            path: "/",
+            name: "SathiCollege core admission tools",
+            items: [
+              { name: "Rank Predictor", path: "/rank-predictor", description: "Estimate engineering entrance exam rank from marks and category." },
+              { name: "College Predictor", path: "/college-predictor", description: "Find likely engineering colleges from rank and category." },
+              { name: "Mock Tests", path: "/mock-test", description: "Practice entrance exam mock tests with solutions." },
+              { name: "Student Communities", path: "/community", description: "Join exam-specific student discussion communities." }
+            ]
+          }),
+          softwareApplicationJsonLd({
+            path: "/rank-predictor",
+            name: "SathiCollege Rank Predictor",
+            description: "Free web tool to estimate engineering entrance exam ranks."
+          })
+        ]}
+      />
       <Hero
         eyebrow={settings.hero.eyebrow}
         titleLine1={settings.hero.titleLine1}

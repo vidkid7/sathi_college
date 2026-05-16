@@ -157,6 +157,6 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       "JEE", "EAMCET", "KCET", "MHT CET", "KEAM", "TNEA", "WBJEE",
       "rank predictor", "college predictor", "engineering counselling", "sathicollege"
     ],
-    ogImage: "/og.png"
+    ogImage: "/assets/generated/hero-campus-generated.png"
   }
 };

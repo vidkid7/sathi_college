@@ -5,10 +5,14 @@ import { ArrowRight, BookOpen } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Engineering Entrance Exams",
-  description: "JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE — guides, dates and counselling info."
+  description: "JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE guides, rank predictors, college predictors and counselling info.",
+  path: "/exams",
+  keywords: ["engineering entrance exams", "JEE Main", "EAMCET", "KCET", "MHT CET", "KEAM", "TNEA", "WBJEE"]
 });
 
 export const dynamic = "force-dynamic";
@@ -22,6 +26,28 @@ export default async function ExamsPage() {
   }
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: "/exams",
+            name: "Engineering entrance exams",
+            description: "Guides and admission tools for JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE and other engineering entrance exams."
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Exams", path: "/exams" }
+          ]),
+          itemListJsonLd({
+            path: "/exams",
+            name: "Engineering entrance exam guides",
+            items: exams.map((exam) => ({
+              name: exam.name,
+              path: `/exams/${exam.slug}`,
+              description: exam.description
+            }))
+          })
+        ]}
+      />
       <PageHero
         eyebrow="Entrance exams"
         title={<>Engineering <span className="gradient-text">Exams</span></>}

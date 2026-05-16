@@ -5,10 +5,14 @@ import Link from "next/link";
 import { formatINR, safeImageSrc } from "@/lib/utils";
 import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Engineering Colleges",
-  description: "Discover engineering colleges across India with cutoff trends, fees and reviews."
+  description: "Discover engineering colleges across India with cutoff trends, fees, reviews, counselling fit and admission guidance.",
+  path: "/colleges",
+  keywords: ["engineering colleges in India", "best engineering colleges", "engineering college fees", "college cutoffs"]
 });
 
 export const dynamic = "force-dynamic";
@@ -39,6 +43,28 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
 
   return (
     <>
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: "/colleges",
+            name: "Engineering colleges in India",
+            description: "Browse engineering colleges with cutoff trends, fees, ratings, location and counselling fit."
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Colleges", path: "/colleges" }
+          ]),
+          itemListJsonLd({
+            path: "/colleges",
+            name: "Engineering colleges listed on SathiCollege",
+            items: colleges.slice(0, 50).map((college) => ({
+              name: college.name,
+              path: `/colleges/${college.slug}`,
+              description: college.description
+            }))
+          })
+        ]}
+      />
       <PageHero
         eyebrow="Discover"
         title={<>Engineering <span className="gradient-text">Colleges</span></>}

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { MessageCircle, Send, ThumbsUp } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
 import { db } from "@/lib/db";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articleJsonLd, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
 
 function initials(name?: string | null, email?: string | null) {
   const value = name || email || "SathiCollege";
@@ -28,7 +30,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const post = await getPost(params.slug).catch(() => null);
   return buildMetadata({
     title: post?.title || "Community Post",
-    description: post?.body.slice(0, 150) || "SathiCollege community discussion."
+    description: post?.body.slice(0, 150) || "SathiCollege community discussion.",
+    path: `/community/post/${params.slug}`,
+    type: "article",
+    publishedTime: post?.createdAt,
+    modifiedTime: post?.updatedAt
   });
 }
 
@@ -40,6 +46,28 @@ export default async function CommunityPostPage({ params }: { params: { slug: st
 
   return (
     <section className="container py-12">
+      <JsonLd
+        data={[
+          webPageJsonLd({
+            path: `/community/post/${post.slug}`,
+            name: post.title,
+            description: post.body
+          }),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Community", path: "/community" },
+            { name: post.title, path: `/community/post/${post.slug}` }
+          ]),
+          articleJsonLd({
+            path: `/community/post/${post.slug}`,
+            title: post.title,
+            description: post.body,
+            datePublished: post.createdAt,
+            dateModified: post.updatedAt,
+            authorName: post.author.name || post.author.email
+          })
+        ]}
+      />
       <div className="mx-auto grid max-w-3xl gap-5">
         <Link href="/community" className="subtle-link">Back to community</Link>
         <article className="reference-panel p-5 sm:p-7">

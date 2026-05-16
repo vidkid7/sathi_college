@@ -3,7 +3,9 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Sign Up",
-  description: "Create your SathiCollege student account."
+  description: "Create your SathiCollege student account.",
+  path: "/signup",
+  noIndex: true
 });
 
 export default function SignupPage() {

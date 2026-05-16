@@ -1,8 +1,14 @@
 import { PageHero } from "@/components/ui/PageHero";
 import { getSettings } from "@/lib/settings";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Privacy Policy" };
+export const metadata = buildMetadata({
+  title: "Privacy Policy",
+  description: "How SathiCollege collects, uses and protects student account, contact and admission guidance data.",
+  path: "/privacy-policy",
+  noIndex: true
+});
 
 export default async function Page() {
   const s = await getSettings();
