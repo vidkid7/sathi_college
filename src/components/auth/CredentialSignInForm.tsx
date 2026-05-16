@@ -21,6 +21,7 @@ export function CredentialSignInForm({ mode, title, subtitle, defaultCallback }:
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const Icon = mode === "admin" ? ShieldCheck : UserRound;
+  const googleEnabled = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,6 +68,23 @@ export function CredentialSignInForm({ mode, title, subtitle, defaultCallback }:
           </div>
         </div>
         <form className="grid gap-4" onSubmit={onSubmit}>
+          {mode === "user" && googleEnabled && (
+            <>
+              <button
+                type="button"
+                onClick={() => signIn("google", { callbackUrl: params.get("callbackUrl") || defaultCallback })}
+                className="btn-ghost w-full bg-white/90 py-3 dark:bg-white/10"
+              >
+                <span className="grid h-5 w-5 place-items-center rounded-full bg-white font-display text-sm font-extrabold text-[#4285f4] shadow-sm">G</span>
+                Continue with Google
+              </button>
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-xs text-[rgb(var(--fg-muted))]">
+                <span className="h-px bg-[rgb(var(--border))]" />
+                <span>or use email</span>
+                <span className="h-px bg-[rgb(var(--border))]" />
+              </div>
+            </>
+          )}
           <div>
             <label className="mb-1 block text-sm font-medium">Email</label>
             <input className="input" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder={mode === "admin" ? "staff@example.com" : "you@example.com"} />

@@ -387,7 +387,7 @@
 
   @keyframes story-ai-campus {
     0%, 4% {
-      opacity: 0;
+      opacity: .88;
       transform: translate3d(0, 26px, 0) scale(.94);
       filter: blur(2px) drop-shadow(0 18px 20px rgb(42 87 151 / 0.10));
     }
@@ -487,6 +487,15 @@
     .story-scene {
       min-width: 460px;
       border-radius: 22px;
+    }
+
+    .story-scene__layer {
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .story-scene::before {
+      filter: blur(20px);
     }
   }
 

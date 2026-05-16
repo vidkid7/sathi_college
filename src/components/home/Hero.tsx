@@ -133,9 +133,9 @@ export function Hero(p: HeroProps) {
 
   return (
     <section className="page-visual-bg relative overflow-hidden border-b border-[rgb(var(--border))]/70">
-      <div className="container relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-center py-8 lg:py-10">
-        <div className="grid items-center gap-7 md:grid-cols-[minmax(0,0.96fr)_minmax(250px,0.72fr)] md:gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.86fr)] lg:gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)]">
-          <div className="relative z-10 pt-4">
+      <div className="container relative z-10 flex min-h-[calc(100svh-4rem)] flex-col justify-start pb-4 pt-5 sm:pb-6 sm:pt-6 md:justify-center lg:py-10">
+        <div className="grid items-center gap-4 sm:gap-6 md:grid-cols-[minmax(0,0.96fr)_minmax(250px,0.72fr)] md:gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.86fr)] lg:gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)]">
+          <div className="relative z-10 pt-1 sm:pt-3">
             <motion.span key={`badge-${slide.key}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="badge mb-5">
               <ShieldCheck className="h-3.5 w-3.5 text-[rgb(var(--primary))]" />
               {slide.eyebrow}
@@ -146,7 +146,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="font-display text-4xl font-extrabold leading-[1.08] text-balance sm:text-5xl md:text-[2.5rem] lg:text-[3.35rem] xl:text-[4.25rem]"
+              className="font-display text-[2.65rem] font-extrabold leading-[1.04] text-balance sm:text-5xl md:text-[2.5rem] lg:text-[3.35rem] xl:text-[4.25rem]"
             >
               {slide.title}
             </motion.h1>
@@ -156,7 +156,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mt-5 max-w-xl text-base leading-7 text-[rgb(var(--fg-muted))] sm:text-lg"
+              className="mt-4 max-w-xl text-base leading-7 text-[rgb(var(--fg-muted))] sm:mt-5 sm:text-lg"
             >
               {slide.description}
             </motion.p>
@@ -165,7 +165,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="mt-5 flex flex-wrap items-center gap-3"
+              className="mt-4 flex flex-wrap items-center gap-3 sm:mt-5"
             >
               <div className="flex -space-x-2">
                 {avatars.map((avatar) => (
@@ -181,7 +181,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.18 }}
-              className="mt-7 flex flex-wrap items-center gap-3"
+              className="mt-5 flex flex-wrap items-center gap-3 sm:mt-7"
             >
               <SmartLink
                 href={slide.primary.href}
@@ -200,7 +200,7 @@ export function Hero(p: HeroProps) {
               </SmartLink>
             </motion.div>
 
-            <div className="mt-7 flex items-center gap-2" aria-label="Home carousel slides">
+            <div className="mt-5 flex items-center gap-2 sm:mt-7" aria-label="Home carousel slides">
               {slides.map((item, index) => (
                 <button
                   key={item.key}
@@ -221,7 +221,7 @@ export function Hero(p: HeroProps) {
             initial={{ scale: 0.96 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.16 }}
-            className="pointer-events-none absolute right-[-34%] top-[15.5rem] z-0 h-[440px] w-[118%] opacity-20 saturate-125 md:pointer-events-auto md:relative md:right-auto md:top-auto md:z-auto md:h-auto md:w-auto md:min-h-[300px] md:opacity-100 lg:min-h-[430px] xl:min-h-[520px]"
+            className="pointer-events-none absolute right-[-48%] top-[4.9rem] z-0 h-[620px] w-[158%] opacity-[0.38] saturate-125 sm:right-[-38%] sm:top-[7rem] sm:h-[560px] sm:w-[144%] md:pointer-events-auto md:relative md:right-auto md:top-auto md:z-auto md:h-auto md:w-auto md:min-h-[300px] md:opacity-100 lg:min-h-[430px] xl:min-h-[520px]"
           >
             <div className="absolute inset-x-0 top-8 h-72 rounded-full bg-blue-300/20 blur-3xl md:h-72" />
             {slide.visual === "story" ? (
@@ -236,7 +236,7 @@ export function Hero(p: HeroProps) {
 
       </div>
 
-      <div className="container relative z-10 pb-12 lg:pb-16">
+      <div className="container relative z-10 pb-10 lg:pb-16">
         <div className="grid gap-4 md:grid-cols-2 xl:max-w-[760px]">
           <PredictorMiniCard
             title="Rank Predictor"

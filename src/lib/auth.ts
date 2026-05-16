@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { db } from "./db";
 import { clearRateLimit, getClientIp, rateLimit } from "./security";
@@ -19,6 +20,45 @@ const credentialsSchema = z.object({
   password: z.string().min(8).max(128)
 });
 
+const providers: NextAuthOptions["providers"] = [
+  CredentialsProvider({
+    name: "Credentials",
+    credentials: {
+      email: { label: "Email", type: "email" },
+      password: { label: "Password", type: "password" }
+    },
+    async authorize(creds, req) {
+      const parsed = credentialsSchema.safeParse(creds);
+      if (!parsed.success) return null;
+
+      const email = parsed.data.email.toLowerCase();
+      const ip = getClientIp(req);
+      const limiterKey = `login:${ip}:${email}`;
+      const allowed = rateLimit(limiterKey, {
+        limit: LOGIN_LIMIT,
+        windowMs: LOGIN_WINDOW_MS,
+        blockMs: LOGIN_BLOCK_MS
+      });
+      if (!allowed.ok) return null;
+
+      const user = await db.user.findUnique({ where: { email } });
+      const ok = await bcrypt.compare(parsed.data.password, user?.password ?? dummyPasswordHash);
+      if (!user || !ok) return null;
+      clearRateLimit(limiterKey);
+      return { id: user.id, email: user.email, name: user.name ?? user.email, role: user.role } as any;
+    }
+  })
+];
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    })
+  );
+}
+
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt", maxAge: SESSION_MAX_AGE, updateAge: 15 * 60 },
   jwt: { maxAge: SESSION_MAX_AGE },
@@ -36,46 +76,27 @@ export const authOptions: NextAuthOptions = {
     }
   },
   pages: { signIn: "/login" },
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(creds, req) {
-        const parsed = credentialsSchema.safeParse(creds);
-        if (!parsed.success) return null;
-
-        const email = parsed.data.email.toLowerCase();
-        const ip = getClientIp(req);
-        const limiterKey = `login:${ip}:${email}`;
-        const allowed = rateLimit(limiterKey, {
-          limit: LOGIN_LIMIT,
-          windowMs: LOGIN_WINDOW_MS,
-          blockMs: LOGIN_BLOCK_MS
-        });
-        if (!allowed.ok) return null;
-
-        const user = await db.user.findUnique({ where: { email } });
-        const ok = await bcrypt.compare(parsed.data.password, user?.password ?? dummyPasswordHash);
-        if (!user || !ok) return null;
-        clearRateLimit(limiterKey);
-        return { id: user.id, email: user.email, name: user.name ?? user.email, role: user.role } as any;
-      }
-    })
-  ],
+  providers,
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      if (account?.provider !== "google") return true;
+      return Boolean(user.email);
+    },
+    async jwt({ token, user, account }) {
       if (user) {
-        // @ts-expect-error custom field
-        token.role = user.role;
+        if (account?.provider === "google") {
+          token.role = "USER";
+          token.email = user.email;
+          token.name = user.name;
+          return token;
+        }
+        const dbUser = user.email ? await db.user.findUnique({ where: { email: user.email.toLowerCase() } }) : null;
+        token.role = (user as any).role || dbUser?.role || "USER";
       }
       return token;
     },
     async session({ session, token }) {
-      // @ts-expect-error custom field
-      session.user.role = token.role;
+      session.user.role = (token.role as any) || "USER";
       return session;
     }
   }

@@ -10,7 +10,7 @@ async function main() {
   const hashed = await bcrypt.hash(password, 10);
   await db.user.upsert({
     where: { email },
-    update: {},
+    update: process.env.ADMIN_PASSWORD ? { name: "Admin", password: hashed, role: "ADMIN" } : {},
     create: { email, name: "Admin", password: hashed, role: "ADMIN" }
   });
 
