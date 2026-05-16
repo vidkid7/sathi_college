@@ -83,7 +83,7 @@ function verification(): Metadata["verification"] | undefined {
 }
 
 export function brandPageTitle(title?: string | null) {
-  const clean = title?.replace(/\s+/g, " ").trim().replace(/sathi\s*college/gi, BRAND_DISPLAY_NAME);
+  const clean = title?.replace(/\s+/g, " ").trim().replace(/\bsathicollege\b/gi, BRAND_DISPLAY_NAME);
   if (!clean) return "SathiCollege (Sathi College) | Engineering Rank Predictor, College Predictor & Admissions";
   if (/sathi\s*college/i.test(clean) && /rank predictor|college predictor|admission/i.test(clean)) return clean;
   if (/sathi\s*college/i.test(clean)) return `${clean} | Rank Predictor, College Predictor & Engineering Admissions`;
