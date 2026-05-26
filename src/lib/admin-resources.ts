@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { isSafeUrl } from "@/lib/security";
 import { z } from "zod";
 
-export type ResourceKey = "colleges" | "exams" | "communities" | "communityPosts" | "posts" | "categories";
+export type ResourceKey = "colleges" | "exams" | "courses" | "careers" | "communities" | "communityPosts" | "posts" | "categories";
 
 const slugSchema = z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/i, "Use only letters, numbers and hyphens.");
 const text = (max = 255) => z.string().trim().min(1).max(max);
@@ -53,6 +53,31 @@ const examSchema = z.object({
   active: z.coerce.boolean().default(true)
 });
 
+const courseSchema = z.object({
+  slug: slugSchema,
+  name: text(180),
+  category: text(100).default("Engineering"),
+  level: text(80).default("UG"),
+  duration: z.preprocess(
+    (value) => value === "" || value === undefined ? null : value,
+    z.string().trim().max(80).nullable().optional()
+  ),
+  description: longText(8000),
+  image: optionalSafeUrl({ allowRelative: true }),
+  featured: z.coerce.boolean().default(false),
+  active: z.coerce.boolean().default(true)
+});
+
+const careerSchema = z.object({
+  slug: slugSchema,
+  name: text(180),
+  sector: text(120).default("General"),
+  description: longText(8000),
+  image: optionalSafeUrl({ allowRelative: true }),
+  featured: z.coerce.boolean().default(false),
+  active: z.coerce.boolean().default(true)
+});
+
 const communitySchema = z.object({
   slug: slugSchema,
   name: text(180),
@@ -97,6 +122,8 @@ const categorySchema = z.object({
 export const resources = {
   colleges: { model: db.college, schema: collegeSchema, orderBy: { name: "asc" as const } },
   exams: { model: db.exam, schema: examSchema, orderBy: { name: "asc" as const } },
+  courses: { model: db.course, schema: courseSchema, orderBy: [{ featured: "desc" as const }, { name: "asc" as const }] },
+  careers: { model: db.career, schema: careerSchema, orderBy: [{ featured: "desc" as const }, { name: "asc" as const }] },
   communities: { model: db.community, schema: communitySchema, orderBy: { order: "asc" as const } },
   communityPosts: { model: db.communityPost, schema: communityPostSchema, orderBy: { createdAt: "desc" as const } },
   posts: { model: db.post, schema: postSchema, orderBy: { createdAt: "desc" as const } },

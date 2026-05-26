@@ -26,7 +26,7 @@ export function MockTestDetailShell({ test }: { test: MockTest }) {
             </div>
             <h2 className="mt-5 font-display text-3xl font-extrabold sm:text-4xl">{test.title}</h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[rgb(var(--fg-muted))]">
-              CollegeDost-style mock test experience with year selection, full-length test details, timed runner, instant scoring and answer review.
+              SathiCollege mock test experience with year selection, full-length test details, timed runner, instant scoring and answer review.
             </p>
             <button type="button" onClick={() => document.getElementById("test-runner")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="btn-primary mt-6">
               Start {test.title.replace(" Mock Test", "")}

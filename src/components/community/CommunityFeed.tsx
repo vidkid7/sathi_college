@@ -19,15 +19,15 @@ const composerActions = [
 ] as const;
 
 const communityLogoFallbacks: Record<string, string> = {
-  jee: "/assets/collegedost/jee-common.png",
-  "ap-eapcet": "/assets/collegedost/ap-eamcet.png",
-  "ts-eamcet": "/assets/collegedost/ts-eamcet.png",
-  eamcet: "/assets/collegedost/ap-eamcet.png",
-  kcet: "/assets/collegedost/kcet.png",
-  keam: "/assets/collegedost/keam.png",
-  tnea: "/assets/collegedost/tnea.png",
-  wbjee: "/assets/collegedost/wbjee.png",
-  mhtcet: "/assets/collegedost/mht-cet.png"
+  jee: "/assets/sathicollege/jee-common.png",
+  "ap-eapcet": "/assets/sathicollege/ap-eamcet.png",
+  "ts-eamcet": "/assets/sathicollege/ts-eamcet.png",
+  eamcet: "/assets/sathicollege/ap-eamcet.png",
+  kcet: "/assets/sathicollege/kcet.png",
+  keam: "/assets/sathicollege/keam.png",
+  tnea: "/assets/sathicollege/tnea.png",
+  wbjee: "/assets/sathicollege/wbjee.png",
+  mhtcet: "/assets/sathicollege/mht-cet.png"
 };
 
 function initials(name?: string | null, email?: string | null) {
@@ -215,7 +215,7 @@ export function CommunityFeed({
           <Link href="/mock-test?utm_source=Community&utm_medium=Website-Sidebar&utm_campaign=Mock-Test" className="soft-card group overflow-hidden p-0">
             <div className="relative h-32 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/collegedost/mock/jee-mains.png" alt="JEE mock test practice" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+              <img src="/assets/sathicollege/mock/jee-mains.png" alt="JEE mock test practice" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-950/70 to-transparent" />
               <span className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-extrabold text-[rgb(var(--primary))]">All PYQs included</span>
             </div>

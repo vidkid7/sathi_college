@@ -4,8 +4,20 @@ import type { SiteSettings } from "./settings-defaults";
 
 const FALLBACK_SITE_URL = "https://sathicollege.com";
 const DEFAULT_OG_IMAGE = "/assets/generated/hero-campus-generated.png";
-const BRAND_DISPLAY_NAME = "SathiCollege";
-const BRAND_ALIASES = ["SathiCollege", "Sathi College", "sathicollege", "sathi college", "Sathi Collage", "sathicollage"];
+const BRAND_LOGO_PATH = "/assets/brand/sathi-logo.png";
+
+export const BRAND_DISPLAY_NAME = "SathiCollege";
+export const BRAND_READABLE_NAME = "Sathi College";
+export const BRAND_LEGAL_NAME = BRAND_READABLE_NAME;
+
+const BRAND_ALIASES = [
+  BRAND_DISPLAY_NAME,
+  BRAND_READABLE_NAME,
+  "sathicollege",
+  "sathi college",
+  "Sathi Collage",
+  "sathicollage"
+];
 
 type MetadataInput = {
   title?: string;
@@ -29,6 +41,16 @@ type JsonLdRecord = Record<string, unknown>;
 function trimDescription(description: string) {
   const normalized = description.replace(/\s+/g, " ").trim();
   return normalized.length > 165 ? `${normalized.slice(0, 162).trim()}...` : normalized;
+}
+
+function uniqueText(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.map((value) => value?.trim()).filter(Boolean) as string[]));
+}
+
+export function brandMetaDescription(description?: string | null) {
+  const fallback = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) helps engineering aspirants compare colleges, predict ranks, practice mock tests, join student communities and get counselling guidance.`;
+  const clean = trimDescription(description || fallback);
+  return /SathiCollege/i.test(clean) && /Sathi\s+College/i.test(clean) ? clean : fallback;
 }
 
 function normalizeBaseUrl(value?: string | null) {
@@ -84,10 +106,10 @@ function verification(): Metadata["verification"] | undefined {
 
 export function brandPageTitle(title?: string | null) {
   const clean = title?.replace(/\s+/g, " ").trim().replace(/\bsathicollege\b/gi, BRAND_DISPLAY_NAME);
-  if (!clean) return "SathiCollege (Sathi College) | Engineering Rank Predictor, College Predictor & Admissions";
+  if (!clean) return `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) | Engineering Rank Predictor, College Predictor & Admissions`;
   if (/sathi\s*college/i.test(clean) && /rank predictor|college predictor|admission/i.test(clean)) return clean;
   if (/sathi\s*college/i.test(clean)) return `${clean} | Rank Predictor, College Predictor & Engineering Admissions`;
-  return `${BRAND_DISPLAY_NAME} (Sathi College) | ${clean}`;
+  return `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) | ${clean}`;
 }
 
 export function brandTitleTemplate() {
@@ -128,10 +150,10 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
     title,
     description,
     keywords: searchableKeywords(input?.keywords || s.seo.keywords),
-    applicationName: s.siteName,
-    authors: [{ name: s.siteName, url: base }],
-    creator: s.siteName,
-    publisher: s.siteName,
+    applicationName: BRAND_DISPLAY_NAME,
+    authors: [{ name: BRAND_DISPLAY_NAME, url: base }],
+    creator: BRAND_DISPLAY_NAME,
+    publisher: BRAND_DISPLAY_NAME,
     alternates: { canonical: url, languages: { "en-IN": url } },
     robots: robots(input?.noIndex),
     verification: verification(),
@@ -139,9 +161,9 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
       title,
       description,
       url,
-      siteName: s.siteName,
+      siteName: BRAND_DISPLAY_NAME,
       type: input?.type || "website",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: `${s.siteName} preview` }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `${BRAND_DISPLAY_NAME} preview` }],
       ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
       ...(input?.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {})
     },
@@ -183,6 +205,10 @@ export function buildMetadata(input?: MetadataInput): Metadata {
     title,
     description,
     keywords: searchableKeywords(input?.keywords),
+    applicationName: BRAND_DISPLAY_NAME,
+    authors: [{ name: BRAND_DISPLAY_NAME, url: base }],
+    creator: BRAND_DISPLAY_NAME,
+    publisher: BRAND_DISPLAY_NAME,
     alternates: { canonical: url, languages: { "en-IN": url } },
     robots: robots(input?.noIndex),
     verification: verification(),
@@ -206,16 +232,23 @@ export function jsonLd(data: JsonLdRecord | JsonLdRecord[]) {
 
 export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
   const sameAs = Object.values(settings.social).filter(Boolean);
+  const logo = imageUrl(settings.logoUrl || BRAND_LOGO_PATH);
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "@id": `${getSiteUrl()}/#organization`,
     name: BRAND_DISPLAY_NAME,
-    legalName: settings.siteName,
-    alternateName: Array.from(new Set([settings.shortName, ...BRAND_ALIASES])),
+    legalName: BRAND_LEGAL_NAME,
+    alternateName: uniqueText([settings.shortName, settings.siteName, ...BRAND_ALIASES]),
     url: getSiteUrl(),
-    logo: imageUrl(settings.logoUrl),
-    description: trimDescription(settings.description),
+    logo: {
+      "@type": "ImageObject",
+      url: logo,
+      width: 512,
+      height: 512
+    },
+    image: logo,
+    description: brandMetaDescription(settings.description || settings.seo.metaDescription),
     email: settings.email,
     telephone: settings.phone,
     address: {
@@ -233,9 +266,9 @@ export function websiteJsonLd(settings: SiteSettings): JsonLdRecord {
     "@type": "WebSite",
     "@id": `${getSiteUrl()}/#website`,
     name: BRAND_DISPLAY_NAME,
-    alternateName: BRAND_ALIASES,
+    alternateName: uniqueText([BRAND_READABLE_NAME, settings.siteName, settings.shortName, ...BRAND_ALIASES]),
     url: getSiteUrl(),
-    description: trimDescription(settings.seo.metaDescription),
+    description: brandMetaDescription(settings.seo.metaDescription),
     publisher: { "@id": `${getSiteUrl()}/#organization` },
     potentialAction: {
       "@type": "SearchAction",

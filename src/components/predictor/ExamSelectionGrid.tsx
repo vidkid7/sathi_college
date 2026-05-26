@@ -1,15 +1,15 @@
 import Link from "next/link";
 
 const examLogos: Record<string, string> = {
-  "jee-main": "/assets/collegedost/jee-common.png",
-  "jee-advanced": "/assets/collegedost/jee-common.png",
-  "ap-eamcet": "/assets/collegedost/ap-eamcet.png",
-  "ts-eamcet": "/assets/collegedost/ts-eamcet.png",
-  kcet: "/assets/collegedost/kcet.png",
-  "mht-cet": "/assets/collegedost/mht-cet.png",
-  keam: "/assets/collegedost/keam.png",
-  tnea: "/assets/collegedost/tnea.png",
-  wbjee: "/assets/collegedost/wbjee.png"
+  "jee-main": "/assets/sathicollege/jee-common.png",
+  "jee-advanced": "/assets/sathicollege/jee-common.png",
+  "ap-eamcet": "/assets/sathicollege/ap-eamcet.png",
+  "ts-eamcet": "/assets/sathicollege/ts-eamcet.png",
+  kcet: "/assets/sathicollege/kcet.png",
+  "mht-cet": "/assets/sathicollege/mht-cet.png",
+  keam: "/assets/sathicollege/keam.png",
+  tnea: "/assets/sathicollege/tnea.png",
+  wbjee: "/assets/sathicollege/wbjee.png"
 };
 
 export const collegePredictorCards = [

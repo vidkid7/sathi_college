@@ -6,10 +6,10 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "AP EAPCET AI Chatbot",
-  description: "Ask AP EAPCET counselling questions about rank, colleges, documents, choices and admissions with SathiCollege support.",
+  title: "SathiCollege AI Assistant",
+  description: "Ask SathiCollege about programs, colleges, exams, courses, careers, rank prediction, scholarships, countries and counselling.",
   path: "/ap-eapcet-ai-chatbot",
-  keywords: ["AP EAPCET chatbot", "AP EAMCET counselling", "AP EAPCET college predictor", "AP EAPCET rank guidance"]
+  keywords: ["SathiCollege AI assistant", "course finder chatbot", "college search chatbot", "admission counselling AI"]
 });
 
 export default function ApEapcetChatbotPage() {
@@ -19,24 +19,24 @@ export default function ApEapcetChatbotPage() {
         data={[
           webPageJsonLd({
             path: "/ap-eapcet-ai-chatbot",
-            name: "AP EAPCET AI chatbot",
-            description: "Counselling assistant for AP EAPCET rank, documents, choices and follow-up enquiries."
+            name: "SathiCollege AI Assistant",
+            description: "AI assistant for program search, college discovery, exams, courses, careers and counselling enquiries."
           }),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "AP EAPCET AI Chatbot", path: "/ap-eapcet-ai-chatbot" }
+            { name: "SathiCollege AI Assistant", path: "/ap-eapcet-ai-chatbot" }
           ]),
           softwareApplicationJsonLd({
             path: "/ap-eapcet-ai-chatbot",
-            name: "AP EAPCET AI Chatbot",
-            description: "Web counselling assistant for AP EAPCET admissions and student enquiries."
+            name: "SathiCollege AI Assistant",
+            description: "Web assistant for SathiCollege admissions, search and student enquiries."
           })
         ]}
       />
       <PageHero
-        eyebrow="AI Counsellor"
-        title={<>AP EAPCET <span className="gradient-text">AI Chatbot</span></>}
-        description="A smooth, mobile-ready counselling assistant surface for rank, documents, choices and follow-up enquiries."
+        eyebrow="AI Assistant"
+        title={<>SathiCollege <span className="gradient-text">AI Chatbot</span></>}
+        description="Ask about programs, countries, scholarships, exams, courses, careers, rank prediction and counselling."
       />
       <section className="container grid gap-8 py-12 xl:grid-cols-[1.1fr_0.9fr]">
         <AiChatPreview />

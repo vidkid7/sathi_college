@@ -1,6 +1,6 @@
-# College Dost — Modern Rebuild
+# SathiCollege — Modern Admissions Platform
 
-A Next.js 14 + MySQL rebuild of [collegedost.in](https://collegedost.in/) with a modern, mobile-first liquid-glass UI, dark and light themes, full SEO setup, and an admin panel.
+A Next.js 14 + MySQL admissions platform for SathiCollege with a modern, mobile-first liquid-glass UI, dark and light themes, full SEO setup, and an admin panel.
 
 ## Stack
 
@@ -54,7 +54,7 @@ npm run db:seed
 npm run dev
 ```
 
-Open <http://localhost:3000> for the site and <http://localhost:3000/admin/login> for admin (default: `admin@collegedost.in` / `ChangeMe@123`).
+Open <http://localhost:3000> for the site and <http://localhost:3000/admin/login> for admin (default: `admin@sathicollege.in` / `ChangeMe@123`).
 
 phpMyAdmin runs at <http://localhost:8080>.
 

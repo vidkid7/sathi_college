@@ -26,6 +26,33 @@ export default async function ExamDetail({ params }: { params: { slug: string } 
   const exam = await db.exam.findUnique({ where: { slug: params.slug } });
   if (!exam) notFound();
   const examImage = safeImageSrc(exam.heroImage, "");
+  const examSections = [
+    {
+      id: "eligibility",
+      title: "Eligibility",
+      body: `${exam.shortName} eligibility depends on the official exam authority, academic background, qualifying marks and category rules. Use this page as a planning hub and verify final rules from the official notice.`
+    },
+    {
+      id: "syllabus",
+      title: "Syllabus",
+      body: `${exam.shortName} preparation should start with the current syllabus, high-weightage topics and previous trend analysis before moving into mocks.`
+    },
+    {
+      id: "exam-pattern",
+      title: "Exam Pattern",
+      body: `Check the latest ${exam.shortName} paper pattern, marking scheme, duration and subject split before building a test strategy.`
+    },
+    {
+      id: "preparation",
+      title: "How to Prepare",
+      body: `Build a weekly ${exam.shortName} plan with concept revision, timed practice, error logs, mock analysis and counselling-ready college shortlists.`
+    },
+    {
+      id: "previous-year-question-paper",
+      title: "Previous Year Question Paper",
+      body: `Use previous ${exam.shortName} question papers to understand question style, repeated concepts, speed requirements and realistic score targets.`
+    }
+  ];
   return (
     <>
       <JsonLd
@@ -81,6 +108,16 @@ export default async function ExamDetail({ params }: { params: { slug: string } 
             <p className="mt-3 text-sm text-[rgb(var(--fg-muted))]">Find colleges you can get based on rank and category.</p>
           </GlassCard>
         </Link>
+        <div className="grid gap-4 md:col-span-2 md:grid-cols-2">
+          {examSections.map((section) => (
+            <div key={section.id} id={section.id} className="scroll-mt-24">
+              <GlassCard hover={false} className="h-full">
+                <h2 className="font-display text-xl font-bold">{section.title}</h2>
+                <p className="mt-3 text-sm leading-6 text-[rgb(var(--fg-muted))]">{section.body}</p>
+              </GlassCard>
+            </div>
+          ))}
+        </div>
       </section>
     </>
   );

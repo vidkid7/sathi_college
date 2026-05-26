@@ -3,7 +3,18 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import Providers from "./providers";
 import { getSettings } from "@/lib/settings";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { brandPageTitle, brandTitleTemplate, getSiteUrl, organizationJsonLd, resolveSeoImageUrl, websiteJsonLd } from "@/lib/seo";
+import {
+  BRAND_DISPLAY_NAME,
+  BRAND_READABLE_NAME,
+  brandAliases,
+  brandMetaDescription,
+  brandPageTitle,
+  brandTitleTemplate,
+  getSiteUrl,
+  organizationJsonLd,
+  resolveSeoImageUrl,
+  websiteJsonLd
+} from "@/lib/seo";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -12,25 +23,32 @@ const display = Space_Grotesk({ subsets: ["latin"], variable: "--font-display", 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSettings();
   const url = getSiteUrl();
+  const homeUrl = `${url}/`;
   const ogImage = resolveSeoImageUrl(s.seo.ogImage);
   const title = brandPageTitle(s.seo.metaTitle);
+  const description = brandMetaDescription(s.seo.metaDescription);
+  const keywords = Array.from(new Set([...s.seo.keywords, ...brandAliases(), BRAND_DISPLAY_NAME, BRAND_READABLE_NAME]));
   return {
     metadataBase: new URL(url),
     title: { default: title, template: brandTitleTemplate() },
-    description: s.seo.metaDescription,
-    keywords: s.seo.keywords,
+    description,
+    keywords,
+    applicationName: BRAND_DISPLAY_NAME,
+    authors: [{ name: BRAND_DISPLAY_NAME, url: homeUrl }],
+    creator: BRAND_DISPLAY_NAME,
+    publisher: BRAND_DISPLAY_NAME,
     openGraph: {
       title,
-      description: s.seo.metaDescription,
-      url,
-      siteName: s.siteName,
+      description,
+      url: homeUrl,
+      siteName: BRAND_DISPLAY_NAME,
       type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630 }]
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `${BRAND_DISPLAY_NAME} preview` }]
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description: s.seo.metaDescription,
+      description,
       images: [ogImage]
     },
     robots: {
@@ -44,11 +62,28 @@ export async function generateMetadata(): Promise<Metadata> {
         "max-video-preview": -1
       }
     },
-    alternates: { canonical: url },
+    alternates: { canonical: homeUrl },
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
     },
-    icons: { icon: s.faviconUrl || "/favicon.svg" }
+    manifest: "/manifest.webmanifest",
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
+      ],
+      shortcut: "/favicon.ico",
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
+    },
+    appleWebApp: {
+      capable: true,
+      title: BRAND_DISPLAY_NAME,
+      statusBarStyle: "default"
+    },
+    other: {
+      "apple-mobile-web-app-title": BRAND_DISPLAY_NAME
+    }
   };
 }
 

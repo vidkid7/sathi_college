@@ -38,7 +38,7 @@ export default function Page() {
             options: ["", ...communities.map((community) => `${community.id}:${community.name}`)]
           },
           { name: "imageUrl", label: "Image URL", type: "url" },
-          { name: "published", label: "Published", type: "checkbox" }
+          { name: "published", label: "Published", type: "checkbox", defaultChecked: true }
         ]}
         columns={[
           { key: "title", label: "Title" },

@@ -17,7 +17,7 @@ export default function Page() {
           { name: "joinUrl", label: "Join URL", type: "url", required: true },
           { name: "image", label: "Image URL", type: "url" },
           { name: "order", label: "Order", type: "number" },
-          { name: "active", label: "Active", type: "checkbox" }
+          { name: "active", label: "Active", type: "checkbox", defaultChecked: true }
         ]}
         columns={[
           { key: "image", label: "Image" },

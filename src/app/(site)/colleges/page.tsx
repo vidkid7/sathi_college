@@ -7,6 +7,7 @@ import { buildMetadata } from "@/lib/seo";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
+import { formatCompactCount, importedEntityPath } from "@/lib/search-slugs";
 
 export const metadata = buildMetadata({
   title: "Engineering Colleges",
@@ -21,25 +22,58 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
   const type = searchParams?.type;
   const search = searchParams?.search?.trim();
   let colleges: any[] = [];
+  let importedUniversities: any[] = [];
   try {
-    colleges = await db.college.findMany({
-      where: {
-        ...(type ? { type } : {}),
-        ...(search
-          ? {
-              OR: [
-                { name: { contains: search } },
-                { city: { contains: search } },
-                { state: { contains: search } }
-              ]
-            }
-          : {})
-      },
-      orderBy: [{ featured: "desc" }, { rating: "desc" }]
-    });
+    [colleges, importedUniversities] = await Promise.all([
+      db.college.findMany({
+        where: {
+          ...(type ? { type } : {}),
+          ...(search
+            ? {
+                OR: [
+                  { name: { contains: search } },
+                  { city: { contains: search } },
+                  { state: { contains: search } }
+                ]
+              }
+            : {})
+        },
+        orderBy: [{ featured: "desc" }, { rating: "desc" }],
+        take: 24
+      }),
+      db.searchUniversity.findMany({
+        where: {
+          ...(search
+            ? {
+                OR: [
+                  { name: { contains: search } },
+                  { country: { contains: search } },
+                  { state: { contains: search } },
+                  { city: { contains: search } }
+                ]
+              }
+            : {})
+        },
+        orderBy: [{ programCount: "desc" }, { offeringCount: "desc" }, { name: "asc" }],
+        take: 60
+      })
+    ]);
   } catch {
     colleges = [];
+    importedUniversities = [];
   }
+  const itemListItems = [
+    ...colleges.slice(0, 20).map((college) => ({
+      name: college.name,
+      path: `/colleges/${college.slug}`,
+      description: college.description
+    })),
+    ...importedUniversities.slice(0, 30).map((university) => ({
+      name: university.name,
+      path: importedEntityPath("/colleges", university.sourceId, university.name),
+      description: `${university.name} has ${university.programCount.toLocaleString("en-IN")} searchable programs in the local CourseFinder database.`
+    }))
+  ];
 
   return (
     <>
@@ -56,19 +90,15 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
           ]),
           itemListJsonLd({
             path: "/colleges",
-            name: "Engineering colleges listed on SathiCollege",
-            items: colleges.slice(0, 50).map((college) => ({
-              name: college.name,
-              path: `/colleges/${college.slug}`,
-              description: college.description
-            }))
+            name: "Colleges and universities listed on SathiCollege",
+            items: itemListItems
           })
         ]}
       />
       <PageHero
         eyebrow="Discover"
-        title={<>Engineering <span className="gradient-text">Colleges</span></>}
-        description="Browse a curated database of engineering colleges across India with details on cutoffs, fees and admission process."
+        title={<>Colleges & <span className="gradient-text">Universities</span></>}
+        description="Browse local colleges plus the imported CourseFinder university database connected to searchable programs, intakes and tuition data."
       />
       <section className="container py-12">
         <div className="reference-panel mb-8 grid items-center gap-4 p-4 md:grid-cols-[1fr_auto]">
@@ -93,11 +123,11 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
           </div>
           <div className="flex items-center gap-2 text-sm text-[rgb(var(--fg-muted))]">
             <Search className="h-4 w-4" />
-            {search ? `Showing results for "${search}"` : "Search from the top navigation"}
+            {search ? `Showing database results for "${search}"` : `${importedUniversities.length ? "Showing top imported universities" : "Search from the top navigation"}`}
           </div>
         </div>
 
-        {colleges.length === 0 ? (
+        {colleges.length === 0 && importedUniversities.length === 0 ? (
           <div className="reference-panel grid place-items-center p-10 text-center">
             <ReferenceVisual name="campus" className="h-48 w-48 object-contain opacity-80" />
             <p className="mt-4 font-semibold">No colleges found.</p>
@@ -137,6 +167,38 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
               </Link>
               );
             })}
+            {importedUniversities.map((university) => (
+              <Link
+                key={`search-university-${university.sourceId}`}
+                href={importedEntityPath("/colleges", university.sourceId, university.name)}
+                className="soft-card group flex h-full flex-col overflow-hidden"
+              >
+                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-slate-900 dark:to-blue-950">
+                  <ReferenceVisual name="campus" className="absolute inset-0 h-full w-full object-contain p-4 transition duration-300 group-hover:scale-105" />
+                  <span className="badge absolute right-3 top-3">{formatCompactCount(university.programCount)} programs</span>
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="icon-tile">
+                      <Building2 className="h-5 w-5" />
+                    </div>
+                    <span className="rounded-lg bg-[rgb(var(--primary))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--primary))]">CourseFinder DB</span>
+                  </div>
+                  <h3 className="mt-3 font-display text-lg font-bold">{university.name}</h3>
+                  <p className="mt-1 flex items-center gap-1 text-xs text-[rgb(var(--fg-muted))]">
+                    <MapPin className="h-3.5 w-3.5" /> {[university.city, university.state, university.country].filter(Boolean).join(", ") || "Global university"}
+                  </p>
+                  <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">
+                    Search {university.programCount.toLocaleString("en-IN")} programs and {university.offeringCount.toLocaleString("en-IN")} intake/year offerings from this university.
+                  </p>
+                  <div className="mt-4 flex items-center justify-between border-t border-[rgb(var(--border))]/70 pt-4 text-sm">
+                    <span className="flex items-center gap-1 text-[rgb(var(--fg-muted))]"><WalletCards className="h-4 w-4" /> Offerings</span>
+                    <span className="font-semibold">{formatCompactCount(university.offeringCount)}</span>
+                  </div>
+                  <span className="subtle-link mt-4">View Programs <ArrowRight className="h-4 w-4" /></span>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </section>

@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.production
+*.log
+.codex-*.png
+.vercel
+.turbo
+coverage
+tsconfig.tsbuildinfo

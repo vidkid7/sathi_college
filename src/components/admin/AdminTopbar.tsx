@@ -6,12 +6,14 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { BookOpen, Building2, FileText, FolderTree, LayoutDashboard, LogOut, Menu, MessageSquare, Settings, Users, X } from "lucide-react";
+import { BookOpen, BriefcaseBusiness, Building2, ClipboardCheck, FileText, FolderTree, LayoutDashboard, LogOut, Menu, MessageSquare, Settings, Users, X } from "lucide-react";
 
 const adminLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/colleges", label: "Colleges", icon: Building2 },
   { href: "/admin/exams", label: "Exams", icon: BookOpen },
+  { href: "/admin/courses", label: "Courses", icon: ClipboardCheck },
+  { href: "/admin/careers", label: "Careers", icon: BriefcaseBusiness },
   { href: "/admin/communities", label: "Communities", icon: Users },
   { href: "/admin/categories", label: "Categories", icon: FolderTree },
   { href: "/admin/blog", label: "Posts", icon: FileText },

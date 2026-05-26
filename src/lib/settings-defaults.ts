@@ -56,11 +56,11 @@ export type SiteSettings = {
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
-  siteName: "sathicollege",
+  siteName: "SathiCollege",
   shortName: "Sathi",
   tagline: "India's leading community for engineering aspirants",
   description:
-    "Join sathicollege, India's leading community for 12th class graduates. Get up-to-date info on JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE — exam tips, counselling, branch selection, cutoffs and results.",
+    "Join SathiCollege (Sathi College), India's leading community for 12th class graduates. Get up-to-date info on JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE - exam tips, counselling, branch selection, cutoffs and results.",
   logoUrl: "/assets/brand/sathi-logo.png",
   faviconUrl: "/assets/brand/sathi-logo.png",
   email: "info@sathicollege.in",
@@ -75,7 +75,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   hero: {
     eyebrow: "India's #1 community for engineering aspirants",
     titleLine1: "Join",
-    titleHighlight: "sathicollege",
+    titleHighlight: "SathiCollege",
     titleLine2: "India's leading community for 12th class graduates",
     description:
       "Get up-to-date information on JEE, EAMCET, exam tips, engineering counselling, branch selection, cutoffs, results and more.",
@@ -91,11 +91,11 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   about: {
     title: "Get trustworthy career guidance",
     body:
-      "After completing intermediate / 12th class, you're in one of the most crucial stages of your life. You have to make important decisions while dealing with confusion. With thousands of websites available, it's hard to know who to trust. sathicollege is here to help you make the right choices for your future."
+      "After completing intermediate / 12th class, you're in one of the most crucial stages of your life. You have to make important decisions while dealing with confusion. With thousands of websites available, it's hard to know who to trust. SathiCollege (Sathi College) is here to help you make the right choices for your future."
   },
   footer: {
     aboutText:
-      "India's leading community for 12th class graduates. Trustworthy guidance for engineering admissions and counselling.",
+      "SathiCollege (Sathi College) gives 12th class graduates trustworthy guidance for engineering admissions and counselling.",
     columns: [
       {
         title: "Engineering Colleges",
@@ -146,13 +146,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
         ]
       }
     ],
-    copyright: `Copyright © ${new Date().getFullYear()} sathicollege. All Rights Reserved.`,
+    copyright: `Copyright © ${new Date().getFullYear()} SathiCollege. All Rights Reserved.`,
     bottomNote: "Made with ♥ for engineering aspirants in India."
   },
   seo: {
     metaTitle: "SathiCollege (Sathi College) | Engineering Rank Predictor, College Predictor & Admissions",
     metaDescription:
-      "SathiCollege helps engineering aspirants with rank predictors, college predictors, mock tests, student communities and counselling guidance.",
+      "SathiCollege (Sathi College) helps engineering aspirants compare colleges, predict ranks, practice mock tests, join student communities and get counselling guidance.",
     keywords: [
       "SathiCollege", "Sathi College", "sathicollege", "sathi college", "sathicollage",
       "JEE", "EAMCET", "KCET", "MHT CET", "KEAM", "TNEA", "WBJEE",

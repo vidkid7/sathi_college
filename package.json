@@ -1,5 +1,5 @@
 {
-  "name": "collegedost",
+  "name": "sathicollege",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,10 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
+    "db:import:coursefinder": "tsx scripts/import-coursefinder-data.ts",
+    "db:import:scorecard": "tsx scripts/import-college-scorecard-data.ts",
+    "db:import:cricos": "tsx scripts/import-cricos-data.ts",
+    "ai:rebuild-knowledge": "tsx scripts/rebuild-ai-knowledge.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

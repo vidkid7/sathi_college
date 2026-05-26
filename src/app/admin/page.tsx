@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { Activity, Building2, BookOpen, FileText, MessageSquare, TrendingUp, Users } from "lucide-react";
+import { Activity, BriefcaseBusiness, Building2, BookOpen, ClipboardCheck, FileText, MessageSquare, Search, TrendingUp, Users } from "lucide-react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
@@ -12,22 +12,33 @@ export default async function AdminDashboard() {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/admin/access");
 
-  const [colleges, exams, communities, posts, leads, predictions] = await Promise.all([
+  const [colleges, exams, courses, careers, searchPrograms, searchUniversities, searchOfferings, communities, posts, leads, predictions, cutoffs] = await Promise.all([
     db.college.count(),
     db.exam.count(),
+    db.course.count(),
+    db.career.count(),
+    db.searchProgram.count(),
+    db.searchUniversity.count(),
+    db.searchProgramOffering.count(),
     db.community.count(),
     db.post.count(),
     db.lead.count(),
-    db.rankPrediction.count()
+    db.rankPrediction.count(),
+    db.cutoff.count()
   ]);
 
   const stats = [
     { l: "Colleges", v: colleges, icon: Building2, href: "/admin/colleges", color: "from-blue-500 to-cyan-500" },
     { l: "Exams", v: exams, icon: BookOpen, href: "/admin/exams", color: "from-violet-500 to-purple-500" },
+    { l: "Courses", v: courses, icon: ClipboardCheck, href: "/admin/courses", color: "from-emerald-500 to-lime-500" },
+    { l: "Search Programs", v: searchPrograms, icon: Search, href: "/admin/search-programs", color: "from-sky-500 to-blue-500" },
+    { l: "Search Universities", v: searchUniversities, icon: Building2, href: "/admin/search-programs", color: "from-cyan-500 to-teal-500" },
+    { l: "Search Offerings", v: searchOfferings, icon: ClipboardCheck, href: "/admin/search-programs", color: "from-blue-500 to-indigo-500" },
+    { l: "Careers", v: careers, icon: BriefcaseBusiness, href: "/admin/careers", color: "from-teal-500 to-cyan-500" },
     { l: "Communities", v: communities, icon: Users, href: "/admin/communities", color: "from-emerald-500 to-teal-500" },
     { l: "Blog Posts", v: posts, icon: FileText, href: "/admin/blog", color: "from-amber-500 to-orange-500" },
     { l: "Leads", v: leads, icon: MessageSquare, href: "/admin/leads", color: "from-pink-500 to-rose-500" },
-    { l: "Rank Predictions", v: predictions, icon: TrendingUp, href: "/admin", color: "from-indigo-500 to-blue-500" }
+    { l: "Predictor Data", v: cutoffs + predictions, icon: TrendingUp, href: "/admin/predictor-data", color: "from-indigo-500 to-blue-500" }
   ];
 
   return (
@@ -100,6 +111,10 @@ export default async function AdminDashboard() {
             {[
               { label: "Review new leads", href: "/admin/leads", value: leads },
               { label: "Update college data", href: "/admin/colleges", value: colleges },
+              { label: "Review imported programs", href: "/admin/search-programs", value: searchPrograms },
+              { label: "Manage predictor data", href: "/admin/predictor-data", value: cutoffs + predictions },
+              { label: "Manage popular courses", href: "/admin/courses", value: courses },
+              { label: "Manage career paths", href: "/admin/careers", value: careers },
               { label: "Publish latest articles", href: "/admin/blog", value: posts }
             ].map((item) => (
               <Link key={item.href} href={item.href} className="soft-card flex items-center justify-between p-3 text-sm font-semibold">

@@ -17,7 +17,7 @@ export default function Page() {
           { name: "description", label: "Description", type: "textarea", required: true },
           { name: "category", label: "Category" },
           { name: "heroImage", label: "Exam Image URL", type: "url" },
-          { name: "active", label: "Active", type: "checkbox" }
+          { name: "active", label: "Active", type: "checkbox", defaultChecked: true }
         ]}
         columns={[
           { key: "name", label: "Name" },

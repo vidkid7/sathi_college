@@ -9,18 +9,22 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "Engineering Entrance Exams",
-  description: "JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE guides, rank predictors, college predictors and counselling info.",
+  title: "Entrance Exams",
+  description: "Engineering, medical, management, commerce, law, design and common entrance exam guides with rank predictors and counselling info.",
   path: "/exams",
-  keywords: ["engineering entrance exams", "JEE Main", "EAMCET", "KCET", "MHT CET", "KEAM", "TNEA", "WBJEE"]
+  keywords: ["entrance exams", "JEE Main", "NEET UG", "CAT", "CUET", "CLAT", "NIFT", "WBJEE"]
 });
 
 export const dynamic = "force-dynamic";
 
-export default async function ExamsPage() {
+export default async function ExamsPage({ searchParams }: { searchParams?: { category?: string } }) {
+  const category = searchParams?.category?.trim();
   let exams: any[] = [];
   try {
-    exams = await db.exam.findMany({ where: { active: true } });
+    exams = await db.exam.findMany({
+      where: { active: true, ...(category ? { category } : {}) },
+      orderBy: [{ category: "asc" }, { name: "asc" }]
+    });
   } catch {
     exams = [];
   }
@@ -30,8 +34,8 @@ export default async function ExamsPage() {
         data={[
           webPageJsonLd({
             path: "/exams",
-            name: "Engineering entrance exams",
-            description: "Guides and admission tools for JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE and other engineering entrance exams."
+            name: "Entrance exams",
+            description: "Guides and admission tools for engineering, medical, management, commerce, law, design and common entrance exams."
           }),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
@@ -50,10 +54,28 @@ export default async function ExamsPage() {
       />
       <PageHero
         eyebrow="Entrance exams"
-        title={<>Engineering <span className="gradient-text">Exams</span></>}
-        description="Stay updated on JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE and other engineering entrance exams in India."
+        title={<>Entrance <span className="gradient-text">Exams</span></>}
+        description="Stay updated on engineering, medical, management, commerce, law, design, science and common entrance exams in India."
       />
       <section className="container py-12">
+        <div className="reference-panel mb-8 flex flex-wrap items-center gap-2 p-4">
+          <Link href="/exams" className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${!category ? "border-[rgb(var(--primary))] bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]" : "border-[rgb(var(--border))] hover:bg-[rgb(var(--bg-elev))]"}`}>
+            All
+          </Link>
+          {["Engineering", "Medical", "Management", "Commerce & Banking", "Law", "Design", "Sciences", "Education"].map((item) => (
+            <Link
+              key={item}
+              href={`/exams?category=${encodeURIComponent(item)}`}
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${
+                category === item
+                  ? "border-[rgb(var(--primary))] bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]"
+                  : "border-[rgb(var(--border))] hover:bg-[rgb(var(--bg-elev))]"
+              }`}
+            >
+              {item}
+            </Link>
+          ))}
+        </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {exams.map((e) => {
             const image = safeImageSrc(e.heroImage, "");

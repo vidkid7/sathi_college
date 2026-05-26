@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex"]
 }
 
 datasource db {
@@ -14,50 +15,225 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  posts     Post[]
-  communityPosts CommunityPost[]
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  password          String?
+  role              Role               @default(USER)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  posts             Post[]
+  communityPosts    CommunityPost[]
   communityComments CommunityComment[]
-  communityLikes CommunityLike[]
+  communityLikes    CommunityLike[]
 }
 
 model Exam {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String        @id @default(cuid())
+  slug        String        @unique
   name        String
   shortName   String
-  description String   @db.Text
-  category    String   @default("Engineering")
+  description String        @db.Text
+  category    String        @default("Engineering")
   heroImage   String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   cutoffs     Cutoff[]
   colleges    CollegeExam[]
 }
 
-model College {
-  id           String   @id @default(cuid())
-  slug         String   @unique
-  name         String
-  city         String
-  state        String
-  type         String   @default("Government")
-  rating       Float    @default(0)
-  fees         Int      @default(0)
-  description  String   @db.Text
-  heroImage    String?
-  featured     Boolean  @default(false)
+model Course {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String   @default("Engineering")
+  level       String   @default("UG")
+  duration    String?
+  description String   @db.Text
+  image       String?
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  cutoffs      Cutoff[]
-  exams        CollegeExam[]
+
+  @@index([category, active])
+  @@index([featured, active])
+}
+
+model SearchUniversity {
+  id            String                  @id @default(cuid())
+  sourceId      Int                     @unique
+  name          String                  @db.VarChar(255)
+  country       String?                 @db.VarChar(120)
+  state         String?                 @db.VarChar(160)
+  city          String?                 @db.VarChar(160)
+  countryId     Int?
+  currencyCode  String?                 @db.VarChar(12)
+  logoExtension String?                 @db.VarChar(20)
+  displayOrder  Int?
+  programCount  Int                     @default(0)
+  offeringCount Int                     @default(0)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  programs      SearchProgram[]
+  offerings     SearchProgramOffering[]
+
+  @@index([country])
+  @@index([country, state])
+  @@index([name])
+  @@fulltext([name, country, state, city])
+}
+
+model SearchProgram {
+  id                        String                  @id @default(cuid())
+  sourceId                  Int                     @unique
+  name                      String                  @db.VarChar(500)
+  concentration             String?                 @db.VarChar(255)
+  universitySourceId        Int
+  universityName            String                  @db.VarChar(255)
+  universityCountry         String?                 @db.VarChar(120)
+  universityState           String?                 @db.VarChar(160)
+  universityCity            String?                 @db.VarChar(160)
+  studyLevel                String?                 @db.VarChar(120)
+  studyLevelId              Int?
+  categoryId                String?                 @db.VarChar(40)
+  subCategoryId             String?                 @db.VarChar(40)
+  durationMonths            Int?
+  campus                    String?                 @db.VarChar(255)
+  currencyCode              String?                 @db.VarChar(12)
+  applicationMode           String?                 @db.VarChar(80)
+  highlights                String?                 @db.VarChar(255)
+  intakesText               String?                 @db.Text
+  minTuitionAmount          Decimal?                @db.Decimal(12, 2)
+  tuitionFeeText            String?                 @db.Text
+  applicationFeeAmount      Decimal?                @db.Decimal(10, 2)
+  applicationFeeText        String?                 @db.VarChar(120)
+  applicationFeeCurrency    String?                 @db.VarChar(12)
+  appFeeWaiverAvailable     Boolean                 @default(false)
+  scholarshipAvailable      Boolean                 @default(false)
+  internshipAvailable       Boolean                 @default(false)
+  isOnline                  Boolean                 @default(false)
+  isStem                    Boolean                 @default(false)
+  withoutEnglishProficiency Boolean                 @default(false)
+  withoutMaths              Boolean                 @default(false)
+  eslAvailable              Boolean                 @default(false)
+  elpAvailable              Boolean                 @default(false)
+  isMoiWaiver               Boolean                 @default(false)
+  fifteenYearsEducation     Boolean                 @default(false)
+  pteRequired               Boolean                 @default(false)
+  toeflRequired             Boolean                 @default(false)
+  ieltsRequired             Boolean                 @default(false)
+  detRequired               Boolean                 @default(false)
+  satRequired               Boolean                 @default(false)
+  actRequired               Boolean                 @default(false)
+  greRequired               Boolean                 @default(false)
+  gmatRequired              Boolean                 @default(false)
+  pteScore                  String?                 @db.VarChar(60)
+  toeflScore                String?                 @db.VarChar(60)
+  ieltsOverall              String?                 @db.VarChar(60)
+  detScore                  String?                 @db.VarChar(60)
+  satScore                  String?                 @db.VarChar(60)
+  actScore                  String?                 @db.VarChar(60)
+  greScore                  String?                 @db.VarChar(60)
+  gmatScore                 String?                 @db.VarChar(60)
+  entryRequirement          String?                 @db.LongText
+  entryRequirementTwelfth   String?                 @db.LongText
+  entryRequirementUG        String?                 @db.LongText
+  scholarshipDetail         String?                 @db.LongText
+  remarks                   String?                 @db.LongText
+  usNewsRanking             Int?
+  qsRanking                 Int?
+  webometricsNationalRank   Int?
+  webometricsWorldRank      Int?
+  searchText                String                  @db.LongText
+  createdAt                 DateTime                @default(now())
+  updatedAt                 DateTime                @updatedAt
+  university                SearchUniversity        @relation(fields: [universitySourceId], references: [sourceId], onDelete: Cascade)
+  offerings                 SearchProgramOffering[]
+
+  @@index([universitySourceId])
+  @@index([universityCountry])
+  @@index([universityCountry, studyLevel])
+  @@index([universityCountry, minTuitionAmount])
+  @@index([studyLevel])
+  @@index([studyLevel, minTuitionAmount])
+  @@index([durationMonths])
+  @@index([minTuitionAmount])
+  @@index([scholarshipAvailable])
+  @@index([isStem])
+  @@index([isOnline])
+  @@index([appFeeWaiverAvailable])
+  @@fulltext([name, universityName, searchText])
+}
+
+model SearchProgramOffering {
+  id                                String           @id @default(cuid())
+  programSourceId                   Int
+  universitySourceId                Int
+  extractionYear                    Int
+  extractionCountryFilterId         Int              @default(0)
+  extractionCountryFilterLabel      String?          @db.VarChar(120)
+  extractionProgramLevelFilterId    String?          @db.VarChar(40)
+  extractionProgramLevelFilterLabel String?          @db.VarChar(120)
+  applicationDeadline               String?          @db.VarChar(255)
+  applicationDeadlineDetails        String?          @db.Text
+  intakes                           String?          @db.Text
+  displayIntakes                    Json?
+  intakesAndDeadlines               String?          @db.Text
+  upcomingIntakeDeadlines           String?          @db.Text
+  intakesClosed                     String?          @db.Text
+  tuitionFee                        String?          @db.Text
+  amount                            Decimal?         @db.Decimal(12, 2)
+  tuitionFeeCurrency                String?          @db.VarChar(12)
+  applicationFee                    String?          @db.VarChar(120)
+  applicationFeeAmount              Decimal?         @db.Decimal(10, 2)
+  applicationFeeCurrency            String?          @db.VarChar(12)
+  createdAt                         DateTime         @default(now())
+  program                           SearchProgram    @relation(fields: [programSourceId], references: [sourceId], onDelete: Cascade)
+  university                        SearchUniversity @relation(fields: [universitySourceId], references: [sourceId], onDelete: Cascade)
+
+  @@unique([programSourceId, extractionYear, extractionCountryFilterId])
+  @@index([programSourceId, extractionYear])
+  @@index([universitySourceId])
+  @@index([extractionYear])
+  @@index([extractionCountryFilterLabel])
+  @@index([extractionCountryFilterLabel, extractionYear])
+  @@index([amount])
+}
+
+model Career {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  sector      String   @default("General")
+  description String   @db.Text
+  image       String?
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sector, active])
+  @@index([featured, active])
+}
+
+model College {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  city        String
+  state       String
+  type        String        @default("Government")
+  rating      Float         @default(0)
+  fees        Int           @default(0)
+  description String        @db.Text
+  heroImage   String?
+  featured    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  cutoffs     Cutoff[]
+  exams       CollegeExam[]
 }
 
 model CollegeExam {
@@ -70,52 +246,52 @@ model CollegeExam {
 }
 
 model Cutoff {
-  id        String  @id @default(cuid())
-  examId    String
-  collegeId String
-  branch    String
-  category  String
-  year      Int
+  id          String  @id @default(cuid())
+  examId      String
+  collegeId   String
+  branch      String
+  category    String
+  year        Int
   closingRank Int
-  exam      Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
-  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  exam        Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+  college     College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
 
   @@index([examId, category, year])
   @@index([collegeId])
 }
 
 model Community {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String          @id @default(cuid())
+  slug        String          @unique
   name        String
-  description String   @db.Text
+  description String          @db.Text
   joinUrl     String
   image       String?
-  order       Int      @default(0)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  order       Int             @default(0)
+  active      Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
   posts       CommunityPost[]
 }
 
 model CommunityPost {
-  id          String   @id @default(cuid())
-  slug        String   @unique
+  id          String             @id @default(cuid())
+  slug        String             @unique
   title       String
-  body        String   @db.Text
+  body        String             @db.Text
   tag         String?
   mediaType   String?
   imageUrl    String?
-  published   Boolean  @default(true)
-  views       Int      @default(0)
+  published   Boolean            @default(true)
+  views       Int                @default(0)
   authorId    String
   communityId String?
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  community   Community? @relation(fields: [communityId], references: [id], onDelete: SetNull)
+  author      User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  community   Community?         @relation(fields: [communityId], references: [id], onDelete: SetNull)
   comments    CommunityComment[]
   likes       CommunityLike[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@index([authorId, createdAt])
   @@index([communityId, createdAt])
@@ -123,55 +299,55 @@ model CommunityPost {
 }
 
 model CommunityComment {
-  id        String   @id @default(cuid())
-  body      String   @db.Text
+  id        String        @id @default(cuid())
+  body      String        @db.Text
   postId    String
   authorId  String
   post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
 
   @@index([postId, createdAt])
   @@index([authorId, createdAt])
 }
 
 model CommunityLike {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   postId    String
   userId    String
   post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
 
   @@unique([postId, userId])
   @@index([userId, createdAt])
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  name      String
-  description String? @db.Text
-  posts     Post[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  posts       Post[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  excerpt     String   @db.Text
-  content     String   @db.LongText
-  coverImage  String?
-  published   Boolean  @default(false)
-  authorId    String?
-  author      User?    @relation(fields: [authorId], references: [id])
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
-  tags        String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(cuid())
+  slug       String    @unique
+  title      String
+  excerpt    String    @db.Text
+  content    String    @db.LongText
+  coverImage String?
+  published  Boolean   @default(false)
+  authorId   String?
+  author     User?     @relation(fields: [authorId], references: [id])
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  tags       String?   @db.Text
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   @@index([categoryId])
 }
@@ -195,6 +371,34 @@ model Lead {
   message   String?  @db.Text
   source    String?
   createdAt DateTime @default(now())
+}
+
+model AiKnowledge {
+  id         String   @id @default(cuid())
+  sourceType String   @db.VarChar(60)
+  sourceId   String   @db.VarChar(120)
+  title      String   @db.VarChar(500)
+  url        String?  @db.VarChar(500)
+  summary    String   @db.LongText
+  keywords   String   @db.Text
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([sourceType, sourceId])
+  @@index([sourceType, active])
+  @@fulltext([title, summary, keywords])
+}
+
+model AiQueryLog {
+  id             String   @id @default(cuid())
+  question       String   @db.Text
+  answer         String?  @db.LongText
+  provider       String?  @db.VarChar(80)
+  matchedSources Json?
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
 }
 
 model Setting {

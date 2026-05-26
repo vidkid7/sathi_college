@@ -7,14 +7,14 @@ import { safeImageSrc } from "@/lib/utils";
 type Community = { id: string; slug: string; name: string; description: string; joinUrl: string; image?: string | null };
 
 const communityLogos: Record<string, string> = {
-  jee: "/assets/collegedost/jee-common.png",
-  eamcet: "/assets/collegedost/ap-eamcet.png",
-  kcet: "/assets/collegedost/kcet.png",
-  tnea: "/assets/collegedost/tnea.png",
-  wbjee: "/assets/collegedost/wbjee.png",
-  private: "/assets/collegedost/mock/bitsat.jpeg",
-  keam: "/assets/collegedost/keam.png",
-  mhtcet: "/assets/collegedost/mht-cet.png"
+  jee: "/assets/sathicollege/jee-common.png",
+  eamcet: "/assets/sathicollege/ap-eamcet.png",
+  kcet: "/assets/sathicollege/kcet.png",
+  tnea: "/assets/sathicollege/tnea.png",
+  wbjee: "/assets/sathicollege/wbjee.png",
+  private: "/assets/sathicollege/mock/bitsat.jpeg",
+  keam: "/assets/sathicollege/keam.png",
+  mhtcet: "/assets/sathicollege/mht-cet.png"
 };
 
 export function Communities({ items }: { items: Community[] }) {

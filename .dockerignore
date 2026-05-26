@@ -9,3 +9,7 @@ README.md
 *.log
 .vscode
 .idea
+.codex-*.png
+.railway
+coverage
+tsconfig.tsbuildinfo

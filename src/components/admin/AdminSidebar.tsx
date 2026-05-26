@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Building2, BookOpen, Users, FileText, Settings, MessageSquare, LogOut, FolderTree } from "lucide-react";
+import { LayoutDashboard, Building2, BookOpen, BriefcaseBusiness, ClipboardCheck, Users, FileText, Settings, MessageSquare, LogOut, FolderTree, Search, Target } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +10,10 @@ const items = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/colleges", label: "Colleges", icon: Building2 },
   { href: "/admin/exams", label: "Exams", icon: BookOpen },
+  { href: "/admin/courses", label: "Courses", icon: ClipboardCheck },
+  { href: "/admin/search-programs", label: "Search Programs", icon: Search },
+  { href: "/admin/predictor-data", label: "Predictor Data", icon: Target },
+  { href: "/admin/careers", label: "Careers", icon: BriefcaseBusiness },
   { href: "/admin/communities", label: "Communities", icon: Users },
   { href: "/admin/community-posts", label: "Community Posts", icon: MessageSquare },
   { href: "/admin/categories", label: "Blog Categories", icon: FolderTree },

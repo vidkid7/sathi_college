@@ -12,6 +12,7 @@ export type Field = {
   type?: "text" | "number" | "textarea" | "checkbox" | "select" | "url";
   options?: string[];
   required?: boolean;
+  defaultChecked?: boolean;
 };
 
 export function CrudTable({
@@ -172,7 +173,7 @@ export function CrudTable({
                         })}
                       </select>
                     ) : f.type === "checkbox" ? (
-                      <input type="checkbox" name={f.name} defaultChecked={!!editing?.[f.name]} className="h-5 w-5" />
+                      <input type="checkbox" name={f.name} defaultChecked={editing?.id ? !!editing?.[f.name] : !!f.defaultChecked} className="h-5 w-5" />
                     ) : (
                       <input
                         name={f.name}

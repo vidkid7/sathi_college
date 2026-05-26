@@ -6,7 +6,7 @@ import { CtaBanner } from "@/components/home/CtaBanner";
 import { db } from "@/lib/db";
 import { getSettings, resolveCta, whatsappLinkFromSettings } from "@/lib/settings";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { itemListJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
+import { BRAND_DISPLAY_NAME, BRAND_READABLE_NAME, brandMetaDescription, itemListJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +27,8 @@ export default async function HomePage() {
         data={[
           webPageJsonLd({
             path: "/",
-            name: `${settings.siteName} engineering admissions guidance`,
-            description: settings.description
+            name: `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) engineering admissions guidance`,
+            description: brandMetaDescription(settings.description)
           }),
           itemListJsonLd({
             path: "/",
