@@ -6,6 +6,8 @@ node_modules
 .env.production
 *.log
 .codex-*.png
+.codex-screens
+hero-demo.html
 .vercel
 .turbo
 coverage
