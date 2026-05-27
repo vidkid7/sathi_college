@@ -86,15 +86,16 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
   }
 
   return (
-    <div className="fixed bottom-[calc(0.5rem+env(safe-area-inset-bottom))] right-2 z-[45] flex flex-col items-end gap-1.5 sm:bottom-4 sm:right-4 sm:gap-3">
+    <div data-sathi-floating-actions className="fixed bottom-[calc(0.5rem+env(safe-area-inset-bottom))] right-2 z-[45] flex flex-col items-end gap-1.5 sm:bottom-4 sm:right-4 sm:gap-3">
       {open ? (
         <motion.div
+          data-sathi-chat-panel
           initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          className="mb-1 max-h-[calc(100svh-5.5rem)] w-[min(calc(100vw-1.5rem),410px)] overflow-hidden rounded-2xl border border-white/70 bg-white/82 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl dark:border-white/12 dark:bg-slate-950/88"
+          className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-2 top-[5.15rem] z-[45] flex w-[min(calc(100vw-1rem),410px)] flex-col overflow-hidden rounded-2xl border border-white/70 bg-white/86 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl sm:bottom-20 sm:right-4 sm:top-24 dark:border-white/12 dark:bg-slate-950/90"
         >
-          <div className="flex items-center justify-between gap-3 border-b border-[rgb(var(--border))] bg-gradient-to-r from-blue-600 via-violet-600 to-sky-500 px-4 py-3 text-white">
+          <div className="shrink-0 flex items-center justify-between gap-3 border-b border-[rgb(var(--border))] bg-gradient-to-r from-blue-600 via-violet-600 to-sky-500 px-4 py-3 text-white">
             <div className="flex min-w-0 items-center gap-3">
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/18 ring-1 ring-white/25">
                 <Bot className="h-5 w-5" />
@@ -118,7 +119,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
             </button>
           </div>
 
-          <div ref={listRef} className="max-h-[min(48svh,390px)] space-y-3 overflow-y-auto bg-[rgb(var(--bg-soft))]/45 p-3 nice-scroll sm:max-h-[min(56svh,430px)] dark:bg-white/[0.03]">
+          <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-[rgb(var(--bg-soft))]/45 p-3 nice-scroll dark:bg-white/[0.03]">
             {messages.map((message, index) => (
               <div key={`${message.from}-${index}`} className={`flex ${message.from === "user" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -159,7 +160,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
             ) : null}
           </div>
 
-          <div className="border-t border-[rgb(var(--border))] bg-white/70 p-3 backdrop-blur-xl dark:bg-slate-950/70">
+          <div className="shrink-0 border-t border-[rgb(var(--border))] bg-white/74 p-3 backdrop-blur-xl dark:bg-slate-950/74">
             <div className="mb-2 flex gap-2 overflow-x-auto pb-1 nice-scroll">
               {starterPrompts.map((prompt) => (
                 <button

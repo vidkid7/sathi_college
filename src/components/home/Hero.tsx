@@ -4,7 +4,7 @@ import type { ElementType, FormEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Building2, FileText, ShieldCheck, TrendingUp, Users, WalletCards } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Building2, FileText, GraduationCap, SearchCheck, ShieldCheck, Sparkles, TrendingUp, Users, WalletCards } from "lucide-react";
 import { HeroIllustration } from "@/components/ui/HeroIllustration";
 import { SceneVisual } from "@/components/ui/SceneVisual";
 import { GeneratedHeroVisual } from "@/components/ui/GeneratedHeroVisual";
@@ -22,6 +22,28 @@ export type HeroProps = {
 };
 
 const avatars = ["A", "R", "P", "N"];
+const predictorHighlights = [
+  {
+    title: "Scholarship Finder",
+    description: "Match course and country options with fee support and funding indicators.",
+    icon: Sparkles
+  },
+  {
+    title: "Course Compare",
+    description: "Review duration, eligibility, career direction and admission fit side by side.",
+    icon: BookOpenCheck
+  },
+  {
+    title: "College Shortlist",
+    description: "Move from predictor results to colleges, exams and comparison pages quickly.",
+    icon: SearchCheck
+  },
+  {
+    title: "Career Pathways",
+    description: "Connect each course choice with realistic career outcomes and next steps.",
+    icon: GraduationCap
+  }
+];
 
 export function Hero(p: HeroProps) {
   const [rankExam, setRankExam] = useState(normalizeExamSlug());
@@ -235,8 +257,26 @@ export function Hero(p: HeroProps) {
         </div>
       </div>
 
-      <div className="container relative z-10 pb-10 lg:pb-16">
-        <div className="grid gap-4 md:grid-cols-2 xl:max-w-[760px]">
+      <div className="container relative z-10 pb-12 lg:pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          className="mx-auto mb-6 max-w-3xl text-center"
+        >
+          <span className="badge mb-3">
+            <Sparkles className="h-3.5 w-3.5 text-[rgb(var(--primary))]" />
+            Smart admission command center
+          </span>
+          <h2 className="font-display text-2xl font-extrabold sm:text-3xl lg:text-4xl">
+            Predict, shortlist and compare from one clear dashboard.
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[rgb(var(--fg-muted))] sm:text-base">
+            Use the two high-intent tools first, then move into scholarships, course comparisons, college options and career pathways without losing context.
+          </p>
+        </motion.div>
+
+        <div className="grid gap-5 lg:grid-cols-2">
           <PredictorMiniCard
             title="Rank Predictor"
             description="Predict your probable rank based on your exam score."
@@ -290,6 +330,28 @@ export function Hero(p: HeroProps) {
             );
           })}
         </motion.div>
+
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {predictorHighlights.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: index * 0.05 }}
+                className="liquid-surface p-5"
+              >
+                <span className="icon-tile mb-4">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="font-display text-base font-extrabold">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[rgb(var(--fg-muted))]">{item.description}</p>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -334,22 +396,22 @@ function PredictorMiniCard({
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form onSubmit={onSubmit} className="glass-card">
+    <form onSubmit={onSubmit} className="glass-card predictor-card-liquid">
       <div className="flex items-start gap-3">
-        <span className={`grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br ${accent} text-white shadow-lg`}>
+        <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${accent} text-white shadow-lg`}>
           <Icon className="h-5 w-5" />
         </span>
         <div>
-          <h3 className="font-display text-base font-bold">{title}</h3>
-          <p className="mt-1 text-xs leading-5 text-[rgb(var(--fg-muted))]">{description}</p>
+          <h3 className="font-display text-lg font-extrabold">{title}</h3>
+          <p className="mt-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">{description}</p>
         </div>
       </div>
-      <div className="mt-4 grid gap-3">{children}</div>
-      <button className="btn-primary mt-3 w-full" disabled={loading}>
+      <div className="mt-5 grid gap-4">{children}</div>
+      <button className="btn-primary mt-4 w-full py-3" disabled={loading}>
         {loading ? "Checking..." : buttonLabel}
         <ArrowRight className="h-4 w-4" />
       </button>
-      {result && <p className="mt-3 rounded-lg bg-[rgb(var(--primary))]/10 px-3 py-2 text-center text-sm font-semibold text-[rgb(var(--primary))]">{result}</p>}
+      {result && <p className="mt-4 rounded-lg bg-[rgb(var(--primary))]/10 px-3 py-2 text-center text-sm font-semibold text-[rgb(var(--primary))]">{result}</p>}
     </form>
   );
 }

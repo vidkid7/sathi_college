@@ -22,10 +22,10 @@ export function CtaBanner({ whatsappHref }: { whatsappHref: string }) {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 md:justify-end">
-            <Link href="/mock-test" className="rounded-lg bg-white px-5 py-3 text-sm font-bold text-[rgb(var(--primary))] shadow-lg">
+            <Link href="/mock-test" className="btn-ghost bg-white/88 px-5 py-3 text-sm font-bold text-[rgb(var(--primary))] shadow-lg">
               Take Mock Test
             </Link>
-            <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-white/40 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10">
+            <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="btn border-white/45 bg-white/10 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-blue-900/10 backdrop-blur-xl hover:bg-white/16">
               Talk to Counselor <ArrowRight className="h-4 w-4" />
             </a>
           </div>
