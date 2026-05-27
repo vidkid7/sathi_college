@@ -13,3 +13,6 @@ prisma/dev.db
 coverage/
 tsconfig.tsbuildinfo
 railway.cmd
+.codex-*
+.codex-screens/
+hero-demo.html
