@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ArrowRight, Building2, FileText, ShieldCheck, TrendingUp, Users, WalletCards } from "lucide-react";
 import { HeroIllustration } from "@/components/ui/HeroIllustration";
 import { SceneVisual } from "@/components/ui/SceneVisual";
-import { StoryHeroAnimation } from "@/components/ui/StoryHeroAnimation";
+import { GeneratedHeroVisual } from "@/components/ui/GeneratedHeroVisual";
 import { examOptions, normalizeExamSlug } from "@/lib/exam-catalog";
 
 export type HeroProps = {
@@ -46,7 +46,7 @@ export function Hero(p: HeroProps) {
       description: displayDescription,
       primary: p.primaryCta,
       secondary: p.secondaryCta,
-      visual: "story" as const
+      visual: "generated" as const
     },
     {
       key: "rank",
@@ -224,8 +224,8 @@ export function Hero(p: HeroProps) {
             className="pointer-events-none relative order-1 z-0 mx-auto flex h-[170px] w-full max-w-[340px] items-center justify-center overflow-visible opacity-100 saturate-125 sm:h-[300px] sm:max-w-[500px] md:pointer-events-auto md:order-2 md:h-auto md:max-w-none md:min-h-[300px] md:w-auto lg:min-h-[430px] xl:min-h-[520px]"
           >
             <div className="absolute inset-x-[8%] top-6 h-36 rounded-full bg-blue-300/20 blur-3xl sm:top-8 sm:h-56 md:inset-x-0 md:h-72" />
-            {slide.visual === "story" ? (
-              <StoryHeroAnimation className="scale-[0.5] sm:scale-[0.78] md:scale-[1.02] lg:scale-[1.08] xl:scale-[1.14] xl:max-w-[980px] 2xl:max-w-[1080px]" />
+            {slide.visual === "generated" ? (
+              <GeneratedHeroVisual className="scale-[0.72] sm:scale-[0.92] md:scale-[1.02] lg:scale-[1.05] xl:scale-[1.08]" />
             ) : slide.visual === "hero" ? (
               <HeroIllustration className="scale-[0.58] sm:scale-[0.82] md:scale-100 xl:max-w-[760px]" />
             ) : (

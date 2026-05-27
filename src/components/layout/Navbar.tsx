@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Building2,
   BriefcaseBusiness,
@@ -866,12 +866,16 @@ function MegaPanel({
   group,
   selectedCategory,
   onCategoryChange,
-  onNavigate
+  onNavigate,
+  onPointerEnter,
+  onPointerLeave
 }: {
   group: MegaGroup;
   selectedCategory?: string;
   onCategoryChange: (category: string) => void;
   onNavigate: () => void;
+  onPointerEnter?: () => void;
+  onPointerLeave?: () => void;
 }) {
   const Icon = group.icon;
   const activeCategory = getActiveCategory(group, selectedCategory);
@@ -885,6 +889,8 @@ function MegaPanel({
       exit={{ opacity: 0, y: -4 }}
       transition={{ duration: 0.15 }}
       data-nav-dropdown
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       className="absolute left-0 right-0 top-full hidden md:block"
     >
       <div className={`${navShellClass} pb-3 pt-1`}>
@@ -1019,6 +1025,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
   const [searchOpen, setSearchOpen] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [categoryByGroup, setCategoryByGroup] = useState<Record<string, string>>({});
+  const closeTimerRef = useRef<number | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -1037,6 +1044,13 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
   }, []);
 
   useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    cancelScheduledClose();
     setActiveGroup(null);
     setOpen(false);
     setSearchOpen(false);
@@ -1067,12 +1081,28 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
   }, []);
 
   function closeAllMenus() {
+    cancelScheduledClose();
     setActiveGroup(null);
     setOpen(false);
     setSearchOpen(false);
   }
 
+  function cancelScheduledClose() {
+    if (!closeTimerRef.current) return;
+    window.clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = null;
+  }
+
+  function scheduleMegaClose() {
+    cancelScheduledClose();
+    closeTimerRef.current = window.setTimeout(() => {
+      setActiveGroup(null);
+      closeTimerRef.current = null;
+    }, 170);
+  }
+
   function openGroup(group: MegaGroup) {
+    cancelScheduledClose();
     setActiveGroup(group.label);
     setSearchOpen(false);
     setCategoryByGroup((current) => ({
@@ -1109,7 +1139,12 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
         <div className="liquid-nav flex h-14 items-center justify-between gap-3 rounded-lg px-3 sm:px-4">
         {brand}
 
-        <nav data-nav-dropdown className="ml-2 hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex">
+        <nav
+          data-nav-dropdown
+          onMouseEnter={cancelScheduledClose}
+          onMouseLeave={scheduleMegaClose}
+          className="ml-2 hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex"
+        >
           {directLinks.slice(0, 1).map((link) => (
             <Link
               key={link.href}
@@ -1259,7 +1294,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
               setSearchOpen(false);
             }}
             aria-label="Open menu"
-            className="glass grid h-10 w-10 place-items-center rounded-lg transition hover:scale-105 lg:hidden"
+            className="glass grid h-10 w-10 place-items-center rounded-lg transition hover:scale-105 xl:hidden"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -1275,6 +1310,8 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
             selectedCategory={categoryByGroup[selectedGroup.label]}
             onCategoryChange={(category) => setCategoryByGroup((current) => ({ ...current, [selectedGroup.label]: category }))}
             onNavigate={closeAllMenus}
+            onPointerEnter={cancelScheduledClose}
+            onPointerLeave={scheduleMegaClose}
           />
         )}
       </AnimatePresence>
@@ -1285,7 +1322,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden"
+            className="xl:hidden"
           >
             <div className="container liquid-panel mx-4 mb-4 max-h-[calc(100vh-5.5rem)] overflow-y-auto p-4 sm:mx-auto">
               <form onSubmit={onSearch} className="mb-3 flex items-center gap-2 rounded-lg border border-white/70 bg-white/58 px-3 py-2 dark:border-white/10 dark:bg-white/5">

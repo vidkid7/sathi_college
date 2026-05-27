@@ -154,6 +154,7 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
     authors: [{ name: BRAND_DISPLAY_NAME, url: base }],
     creator: BRAND_DISPLAY_NAME,
     publisher: BRAND_DISPLAY_NAME,
+    category: "education",
     alternates: { canonical: url, languages: { "en-IN": url } },
     robots: robots(input?.noIndex),
     verification: verification(),
@@ -162,12 +163,18 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
       description,
       url,
       siteName: BRAND_DISPLAY_NAME,
+      locale: "en_IN",
       type: input?.type || "website",
       images: [{ url: ogImage, width: 1200, height: 630, alt: `${BRAND_DISPLAY_NAME} preview` }],
       ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
       ...(input?.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {})
     },
-    twitter: { card: "summary_large_image", title, description, images: [ogImage] }
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
+    other: {
+      "format-detection": "telephone=no",
+      classification: "Education",
+      subject: "College search, program search, admissions, entrance exams and counselling"
+    }
   };
 }
 
@@ -209,6 +216,7 @@ export function buildMetadata(input?: MetadataInput): Metadata {
     authors: [{ name: BRAND_DISPLAY_NAME, url: base }],
     creator: BRAND_DISPLAY_NAME,
     publisher: BRAND_DISPLAY_NAME,
+    category: "education",
     alternates: { canonical: url, languages: { "en-IN": url } },
     robots: robots(input?.noIndex),
     verification: verification(),
@@ -218,11 +226,17 @@ export function buildMetadata(input?: MetadataInput): Metadata {
       url,
       type: input?.type || "website",
       siteName: siteConfig.name,
+      locale: "en_IN",
       images: [{ url: ogImage, width: 1200, height: 630, alt: `${siteConfig.name} preview` }],
       ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
       ...(input?.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {})
     },
-    twitter: { card: "summary_large_image", title, description, images: [ogImage] }
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
+    other: {
+      "format-detection": "telephone=no",
+      classification: "Education",
+      subject: "College search, program search, admissions, entrance exams and counselling"
+    }
   };
 }
 
@@ -241,6 +255,7 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
     legalName: BRAND_LEGAL_NAME,
     alternateName: uniqueText([settings.shortName, settings.siteName, ...BRAND_ALIASES]),
     url: getSiteUrl(),
+    inLanguage: "en-IN",
     logo: {
       "@type": "ImageObject",
       url: logo,
@@ -251,6 +266,23 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
     description: brandMetaDescription(settings.description || settings.seo.metaDescription),
     email: settings.email,
     telephone: settings.phone,
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "admissions guidance",
+      email: settings.email,
+      telephone: settings.phone,
+      availableLanguage: ["English", "Hindi"]
+    },
+    areaServed: ["India", "Nepal", "United States", "United Kingdom", "Canada", "Australia"],
+    knowsAbout: [
+      "college admissions",
+      "program search",
+      "rank prediction",
+      "college prediction",
+      "entrance exams",
+      "scholarships",
+      "study abroad counselling"
+    ],
     address: {
       "@type": "PostalAddress",
       addressCountry: "IN",
@@ -268,11 +300,15 @@ export function websiteJsonLd(settings: SiteSettings): JsonLdRecord {
     name: BRAND_DISPLAY_NAME,
     alternateName: uniqueText([BRAND_READABLE_NAME, settings.siteName, settings.shortName, ...BRAND_ALIASES]),
     url: getSiteUrl(),
+    inLanguage: "en-IN",
     description: brandMetaDescription(settings.seo.metaDescription),
     publisher: { "@id": `${getSiteUrl()}/#organization` },
     potentialAction: {
       "@type": "SearchAction",
-      target: `${getSiteUrl()}/colleges?search={search_term_string}`,
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${getSiteUrl()}/search-program?q={search_term_string}`
+      },
       "query-input": "required name=search_term_string"
     }
   };
@@ -287,6 +323,7 @@ export function webPageJsonLd(input: { path: string; name: string; description: 
     url,
     name: input.name,
     description: trimDescription(input.description),
+    inLanguage: "en-IN",
     isPartOf: { "@id": `${getSiteUrl()}/#website` },
     publisher: { "@id": `${getSiteUrl()}/#organization` }
   };

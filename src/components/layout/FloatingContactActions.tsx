@@ -86,13 +86,13 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-5 sm:right-5">
+    <div className="fixed bottom-[calc(0.5rem+env(safe-area-inset-bottom))] right-2 z-[45] flex flex-col items-end gap-1.5 sm:bottom-4 sm:right-4 sm:gap-3">
       {open ? (
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          className="mb-1 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-white/70 bg-white/82 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl sm:w-[430px] dark:border-white/12 dark:bg-slate-950/88"
+          className="mb-1 max-h-[calc(100svh-5.5rem)] w-[min(calc(100vw-1.5rem),410px)] overflow-hidden rounded-2xl border border-white/70 bg-white/82 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl dark:border-white/12 dark:bg-slate-950/88"
         >
           <div className="flex items-center justify-between gap-3 border-b border-[rgb(var(--border))] bg-gradient-to-r from-blue-600 via-violet-600 to-sky-500 px-4 py-3 text-white">
             <div className="flex min-w-0 items-center gap-3">
@@ -118,7 +118,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
             </button>
           </div>
 
-          <div ref={listRef} className="max-h-[min(58vh,470px)] space-y-3 overflow-y-auto bg-[rgb(var(--bg-soft))]/45 p-3 nice-scroll dark:bg-white/[0.03]">
+          <div ref={listRef} className="max-h-[min(48svh,390px)] space-y-3 overflow-y-auto bg-[rgb(var(--bg-soft))]/45 p-3 nice-scroll sm:max-h-[min(56svh,430px)] dark:bg-white/[0.03]">
             {messages.map((message, index) => (
               <div key={`${message.from}-${index}`} className={`flex ${message.from === "user" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -200,49 +200,51 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
         </motion.div>
       ) : null}
 
-      <motion.button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        initial={{ opacity: 0, x: 16, scale: 0.86 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{ delay: 1.05, type: "spring", stiffness: 210, damping: 18 }}
-        whileHover={{ y: -2, scale: 1.04 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Open SathiCollege AI assistant"
-        title="Sathi AI Assistant"
-        className="group relative grid h-14 w-14 place-items-center rounded-2xl border border-white/70 bg-gradient-to-br from-blue-600 via-violet-600 to-sky-500 text-white shadow-2xl shadow-blue-500/30 backdrop-blur-xl sm:h-16 sm:w-16 dark:border-white/15"
-      >
-        <span className="absolute inset-0 rounded-2xl bg-white/12 opacity-0 transition group-hover:opacity-100" />
-        <span className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full border border-white/80 bg-white text-[rgb(var(--primary))] shadow-lg">
-          <Sparkles className="h-3.5 w-3.5" />
-        </span>
-        <Bot className="relative h-6 w-6 sm:h-7 sm:w-7" />
-        <MessageCircle className="absolute bottom-2 right-2 h-3.5 w-3.5 text-white/85" />
-        <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/88 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-xl transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/82">
-          Sathi AI
-        </span>
-      </motion.button>
+      <div className="flex flex-row-reverse items-end gap-1.5 sm:flex-col sm:gap-3">
+        <motion.button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          initial={{ opacity: 0, x: 16, scale: 0.86 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ delay: 1.05, type: "spring", stiffness: 210, damping: 18 }}
+          whileHover={{ y: -2, scale: 1.04 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Open SathiCollege AI assistant"
+          title="Sathi AI Assistant"
+          className="group relative grid h-10 w-10 place-items-center rounded-xl border border-white/70 bg-gradient-to-br from-blue-600 via-violet-600 to-sky-500 text-white shadow-2xl shadow-blue-500/30 backdrop-blur-xl sm:h-14 sm:w-14 sm:rounded-2xl dark:border-white/15"
+        >
+          <span className="absolute inset-0 rounded-xl bg-white/12 opacity-0 transition group-hover:opacity-100 sm:rounded-2xl" />
+          <span className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full border border-white/80 bg-white text-[rgb(var(--primary))] shadow-lg sm:h-5 sm:w-5">
+            <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+          </span>
+          <Bot className="relative h-[18px] w-[18px] sm:h-6 sm:w-6" />
+          <MessageCircle className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 text-white/85 sm:bottom-2 sm:right-2 sm:h-3 sm:w-3" />
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/88 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-xl transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/82">
+            Sathi AI
+          </span>
+        </motion.button>
 
-      <motion.a
-        href={whatsappHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        initial={{ opacity: 0, x: 16, scale: 0.86 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{ delay: 1.2, type: "spring", stiffness: 210, damping: 18 }}
-        whileHover={{ y: -2, scale: 1.04 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Chat with SathiCollege on WhatsApp"
-        title="WhatsApp"
-        className="group relative grid h-12 w-12 place-items-center rounded-2xl border border-white/70 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 text-white shadow-2xl shadow-emerald-500/25 backdrop-blur-xl sm:h-14 sm:w-14 dark:border-white/15"
-      >
-        <span className="absolute inset-0 animate-ping rounded-2xl bg-emerald-400/18" />
-        <MessageCircle className="relative h-5 w-5 sm:h-6 sm:w-6" />
-        <PhoneCall className="absolute bottom-2 right-2 h-3 w-3 text-white/90" />
-        <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/88 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-xl transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/82">
-          WhatsApp
-        </span>
-      </motion.a>
+        <motion.a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, x: 16, scale: 0.86 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ delay: 1.2, type: "spring", stiffness: 210, damping: 18 }}
+          whileHover={{ y: -2, scale: 1.04 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Chat with SathiCollege on WhatsApp"
+          title="WhatsApp"
+          className="group relative grid h-9 w-9 place-items-center rounded-xl border border-white/70 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 text-white shadow-2xl shadow-emerald-500/25 backdrop-blur-xl sm:h-12 sm:w-12 sm:rounded-2xl dark:border-white/15"
+        >
+          <span className="absolute inset-0 animate-ping rounded-xl bg-emerald-400/18 sm:rounded-2xl" />
+          <MessageCircle className="relative h-4 w-4 sm:h-5 sm:w-5" />
+          <PhoneCall className="absolute bottom-1.5 right-1.5 h-2 w-2 text-white/90 sm:bottom-2 sm:right-2 sm:h-2.5 sm:w-2.5" />
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/88 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-xl transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/82">
+            WhatsApp
+          </span>
+        </motion.a>
+      </div>
     </div>
   );
 }

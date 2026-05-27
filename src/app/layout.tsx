@@ -37,11 +37,13 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: BRAND_DISPLAY_NAME, url: homeUrl }],
     creator: BRAND_DISPLAY_NAME,
     publisher: BRAND_DISPLAY_NAME,
+    category: "education",
     openGraph: {
       title,
       description,
       url: homeUrl,
       siteName: BRAND_DISPLAY_NAME,
+      locale: "en_IN",
       type: "website",
       images: [{ url: ogImage, width: 1200, height: 630, alt: `${BRAND_DISPLAY_NAME} preview` }]
     },
@@ -62,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
         "max-video-preview": -1
       }
     },
-    alternates: { canonical: homeUrl },
+    alternates: { canonical: homeUrl, languages: { "en-IN": homeUrl } },
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
     },
@@ -82,7 +84,11 @@ export async function generateMetadata(): Promise<Metadata> {
       statusBarStyle: "default"
     },
     other: {
-      "apple-mobile-web-app-title": BRAND_DISPLAY_NAME
+      "apple-mobile-web-app-title": BRAND_DISPLAY_NAME,
+      "mobile-web-app-capable": "yes",
+      "format-detection": "telephone=no",
+      classification: "Education",
+      subject: "College search, program search, admissions, entrance exams and counselling"
     }
   };
 }
