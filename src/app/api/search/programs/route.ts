@@ -155,6 +155,8 @@ const SEARCH_STOP_WORDS = new Set([
   "near",
   "of",
   "on",
+  "option",
+  "options",
   "please",
   "recommend",
   "show",

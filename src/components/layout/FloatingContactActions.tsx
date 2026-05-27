@@ -1,8 +1,9 @@
 "use client";
 
 import { FormEvent, useMemo, useRef, useState } from "react";
-import { Bot, Compass, GraduationCap, Loader2, MessageCircle, PhoneCall, SendHorizonal, Sparkles, X } from "lucide-react";
+import { Bot, Compass, Loader2, MessageCircle, PhoneCall, SendHorizonal, ShieldCheck, Sparkles, X } from "lucide-react";
 import { motion } from "framer-motion";
+import { FormattedAssistantMessage } from "@/components/ui/AiMessageContent";
 
 type ChatMessage = {
   from: "bot" | "user";
@@ -91,7 +92,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
           initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          className="mb-1 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-white/70 bg-white/82 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl sm:w-[390px] dark:border-white/12 dark:bg-slate-950/88"
+          className="mb-1 w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-white/70 bg-white/82 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl sm:w-[430px] dark:border-white/12 dark:bg-slate-950/88"
         >
           <div className="flex items-center justify-between gap-3 border-b border-[rgb(var(--border))] bg-gradient-to-r from-blue-600 via-violet-600 to-sky-500 px-4 py-3 text-white">
             <div className="flex min-w-0 items-center gap-3">
@@ -101,6 +102,10 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
               <div className="min-w-0">
                 <p className="truncate text-sm font-extrabold">Sathi AI Assistant</p>
                 <p className="truncate text-[11px] text-white/82">Courses, careers, schools, universities and comparisons</p>
+                <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/14 px-2 py-0.5 text-[10px] font-extrabold text-white/90 ring-1 ring-white/18">
+                  <ShieldCheck className="h-3 w-3" />
+                  Database-grounded and privacy-safe
+                </p>
               </div>
             </div>
             <button
@@ -117,25 +122,28 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
             {messages.map((message, index) => (
               <div key={`${message.from}-${index}`} className={`flex ${message.from === "user" ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[86%] rounded-2xl px-3.5 py-2.5 text-sm leading-6 shadow-sm ${
+                  className={`max-w-[92%] rounded-2xl px-3.5 py-2.5 text-sm leading-6 shadow-sm ${
                     message.from === "user"
-                      ? "bg-[rgb(var(--primary))] text-white"
+                      ? "max-w-[84%] bg-[rgb(var(--primary))] text-white"
                       : "border border-white/70 bg-white/72 text-[rgb(var(--fg))] backdrop-blur-xl dark:border-white/10 dark:bg-white/8"
                   }`}
                 >
-                  <div className="whitespace-pre-wrap">{message.text}</div>
+                  {message.from === "bot" ? <FormattedAssistantMessage text={message.text} /> : <div className="whitespace-pre-wrap">{message.text}</div>}
                   {message.sources?.length ? (
-                    <div className="mt-3 grid gap-1.5">
-                      {message.sources.map((source) => (
-                        <a
-                          key={`${source.type}-${source.title}`}
-                          href={source.url || "/search-program"}
-                          className="group/source flex items-center justify-between gap-2 rounded-lg border border-[rgb(var(--border))] bg-white/62 px-2.5 py-2 text-[11px] font-extrabold text-[rgb(var(--primary))] transition hover:bg-white dark:bg-white/5"
-                        >
-                          <span className="line-clamp-2">{source.title}</span>
-                          <Compass className="h-3.5 w-3.5 shrink-0 opacity-70 transition group-hover/source:translate-x-0.5" />
-                        </a>
-                      ))}
+                    <div className="mt-3 border-t border-[rgb(var(--border))] pt-2">
+                      <p className="mb-1.5 text-[10px] font-extrabold uppercase tracking-wide text-[rgb(var(--fg-muted))]">Related links</p>
+                      <div className="grid gap-1.5">
+                        {message.sources.map((source) => (
+                          <a
+                            key={`${source.type}-${source.title}`}
+                            href={source.url || "/search-program"}
+                            className="group/source flex items-center justify-between gap-2 rounded-lg border border-[rgb(var(--border))] bg-white/62 px-2.5 py-2 text-[11px] font-extrabold text-[rgb(var(--primary))] transition hover:bg-white dark:bg-white/5"
+                          >
+                            <span className="line-clamp-2">{source.title}</span>
+                            <Compass className="h-3.5 w-3.5 shrink-0 opacity-70 transition group-hover/source:translate-x-0.5" />
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   ) : null}
                 </div>

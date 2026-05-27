@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Building2, FileText, ShieldCheck, TrendingUp, Users, WalletCards } from "lucide-react";
-import dynamic from "next/dynamic";
-const Hero3DScene = dynamic(() => import("@/components/home/Hero3DScene").then(mod => mod.Hero3DScene), { ssr: false });
+import { HeroIllustration } from "@/components/ui/HeroIllustration";
+import { SceneVisual } from "@/components/ui/SceneVisual";
+import { StoryHeroAnimation } from "@/components/ui/StoryHeroAnimation";
 import { examOptions, normalizeExamSlug } from "@/lib/exam-catalog";
 
 export type HeroProps = {
@@ -131,13 +132,11 @@ export function Hero(p: HeroProps) {
   }
 
   return (
-    <section className="page-visual-bg relative overflow-hidden border-b border-white/60 dark:border-white/10 md:min-h-[100svh]">
-      <Hero3DScene activeSlide={activeSlide} className="pointer-events-auto" />
-
-      <div className="container relative z-10 flex flex-col justify-start pb-4 pt-3 sm:pb-7 sm:pt-6 md:min-h-[calc(100svh-4rem)] md:justify-center lg:py-10 pointer-events-none">
-        <div className="grid items-center gap-6 md:grid-cols-[minmax(0,0.96fr)_minmax(250px,0.72fr)] md:gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.86fr)] lg:gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)]">
-          <div className="relative z-10 order-1 mx-auto max-w-xl pt-1 text-center md:mx-0 md:max-w-none md:pt-3 md:text-left pointer-events-auto rounded-3xl bg-white/40 p-6 shadow-2xl backdrop-blur-md dark:bg-black/40 sm:p-8">
-            <motion.span key={`badge-${slide.key}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="badge mb-3 bg-white/70 shadow-sm backdrop-blur-md dark:bg-black/50 md:mb-5">
+    <section className="page-visual-bg relative overflow-hidden border-b border-[rgb(var(--border))]/70">
+      <div className="container relative z-10 flex flex-col justify-start pb-4 pt-3 sm:pb-7 sm:pt-6 md:min-h-[calc(100svh-4rem)] md:justify-center lg:py-10">
+        <div className="grid items-center gap-2 sm:gap-5 md:grid-cols-[minmax(0,0.96fr)_minmax(250px,0.72fr)] md:gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.86fr)] lg:gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(440px,1fr)]">
+          <div className="relative z-10 order-2 mx-auto max-w-xl pt-0 text-center md:order-1 md:mx-0 md:max-w-none md:pt-3 md:text-left">
+            <motion.span key={`badge-${slide.key}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="badge mb-3 md:mb-5">
               <ShieldCheck className="h-3.5 w-3.5 text-[rgb(var(--primary))]" />
               {slide.eyebrow}
             </motion.span>
@@ -147,7 +146,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
-              className="mx-auto max-w-[12ch] font-display text-[2.2rem] font-extrabold leading-[1.02] text-balance drop-shadow-sm sm:max-w-none sm:text-[3rem] md:mx-0 md:text-[2.65rem] lg:text-[3.45rem] xl:text-[4.35rem]"
+              className="font-display text-[1.55rem] font-extrabold leading-[1.05] text-balance sm:text-[2.85rem] md:text-[2.5rem] lg:text-[3.35rem] xl:text-[4.25rem]"
             >
               {slide.title}
             </motion.h1>
@@ -157,7 +156,7 @@ export function Hero(p: HeroProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="mx-auto mt-2 max-w-[36ch] text-[0.82rem] leading-5 text-[rgb(var(--fg-muted))] sm:mt-4 sm:max-w-xl sm:text-base md:mx-0 md:text-lg md:leading-7"
+              className="mx-auto mt-2 max-w-xl text-[0.82rem] leading-5 text-[rgb(var(--fg-muted))] sm:mt-4 sm:text-base md:mx-0 md:text-lg md:leading-7"
             >
               {slide.description}
             </motion.p>
@@ -187,7 +186,7 @@ export function Hero(p: HeroProps) {
               <SmartLink
                 href={slide.primary.href}
                 external={isExternal(slide.primary.href)}
-                className="btn-primary px-4 py-2.5 shadow-lg shadow-blue-500/25 sm:px-6 sm:py-3"
+                className="btn-primary px-4 py-2.5 sm:px-6 sm:py-3"
               >
                 {slide.primary.label}
                 <ArrowRight className="h-4 w-4" />
@@ -195,7 +194,7 @@ export function Hero(p: HeroProps) {
               <SmartLink
                 href={slide.secondary.href}
                 external={isExternal(slide.secondary.href)}
-                className="btn-ghost bg-white/50 px-4 py-2.5 backdrop-blur-md hover:bg-white/80 dark:bg-black/30 dark:hover:bg-black/50 sm:px-6 sm:py-3"
+                className="btn-ghost px-4 py-2.5 sm:px-6 sm:py-3"
               >
                 {slide.secondary.label}
               </SmartLink>
@@ -210,15 +209,29 @@ export function Hero(p: HeroProps) {
                   aria-label={`Show ${item.eyebrow}`}
                   className={[
                     "h-2.5 rounded-full transition-all",
-                    activeSlide === index ? "w-9 bg-[rgb(var(--primary))]" : "w-2.5 bg-[rgb(var(--fg-muted))]/40 hover:bg-[rgb(var(--primary))]/70"
+                    activeSlide === index ? "w-9 bg-[rgb(var(--primary))]" : "w-2.5 bg-[rgb(var(--fg-muted))]/25 hover:bg-[rgb(var(--primary))]/50"
                   ].join(" ")}
                 />
               ))}
             </div>
           </div>
 
-          {/* We keep the second column empty so the 3D scene on the right is fully visible, or we let the grid layout stand but without content on the right. */}
-          <div className="pointer-events-none order-2 hidden md:block"></div>
+          <motion.div
+            key={`visual-${slide.key}`}
+            initial={{ scale: 0.96 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.16 }}
+            className="pointer-events-none relative order-1 z-0 mx-auto flex h-[170px] w-full max-w-[340px] items-center justify-center overflow-visible opacity-100 saturate-125 sm:h-[300px] sm:max-w-[500px] md:pointer-events-auto md:order-2 md:h-auto md:max-w-none md:min-h-[300px] md:w-auto lg:min-h-[430px] xl:min-h-[520px]"
+          >
+            <div className="absolute inset-x-[8%] top-6 h-36 rounded-full bg-blue-300/20 blur-3xl sm:top-8 sm:h-56 md:inset-x-0 md:h-72" />
+            {slide.visual === "story" ? (
+              <StoryHeroAnimation className="scale-[0.5] sm:scale-[0.78] md:scale-[1.02] lg:scale-[1.08] xl:scale-[1.14] xl:max-w-[980px] 2xl:max-w-[1080px]" />
+            ) : slide.visual === "hero" ? (
+              <HeroIllustration className="scale-[0.58] sm:scale-[0.82] md:scale-100 xl:max-w-[760px]" />
+            ) : (
+              <SceneVisual name={slide.visual} priority className="scale-[0.58] sm:scale-[0.82] md:scale-100 xl:max-w-[700px]" />
+            )}
+          </motion.div>
         </div>
       </div>
 
@@ -260,7 +273,7 @@ export function Hero(p: HeroProps) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="liquid-surface metric-divider mt-7 grid gap-0 p-0 sm:grid-cols-2 lg:grid-cols-4"
+          className="glass-card metric-divider mt-7 grid gap-0 p-0 sm:grid-cols-2 lg:grid-cols-4"
         >
           {p.stats.map((s, index) => {
             const Icon = [Users, Building2, FileText, WalletCards][index % 4];
@@ -321,7 +334,7 @@ function PredictorMiniCard({
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form onSubmit={onSubmit} className="liquid-surface p-5 transition-all duration-300 hover:-translate-y-0.5">
+    <form onSubmit={onSubmit} className="glass-card">
       <div className="flex items-start gap-3">
         <span className={`grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br ${accent} text-white shadow-lg`}>
           <Icon className="h-5 w-5" />

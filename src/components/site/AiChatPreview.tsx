@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { Bot, Loader2, SendHorizonal, Sparkles } from "lucide-react";
+import { Bot, Loader2, SendHorizonal, ShieldCheck, Sparkles } from "lucide-react";
+import { FormattedAssistantMessage } from "@/components/ui/AiMessageContent";
 import { GlassCard } from "@/components/ui/GlassCard";
 
 const quickReplies = [
@@ -98,25 +99,32 @@ export function AiChatPreview() {
         <div>
           <h2 className="font-display text-xl font-bold">SathiCollege AI Assistant</h2>
           <p className="text-xs text-[rgb(var(--fg-muted))]">Connected to your search, content, community and admin-managed data.</p>
+          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[rgb(var(--border))] bg-white/58 px-3 py-1 text-[11px] font-extrabold text-[rgb(var(--primary))] dark:bg-white/5">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Database-grounded and privacy-safe
+          </p>
         </div>
       </div>
 
       <div ref={listRef} className="max-h-[460px] space-y-3 overflow-y-auto rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-elev))]/35 p-3 nice-scroll">
         {messages.map((message, index) => (
           <div key={`${message.from}-${index}`} className={`flex ${message.from === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-6 ${message.from === "user" ? "bg-[rgb(var(--primary))] text-white" : "glass"}`}>
-              <div>{message.text}</div>
+            <div className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-6 ${message.from === "user" ? "max-w-[84%] bg-[rgb(var(--primary))] text-white" : "glass"}`}>
+              {message.from === "bot" ? <FormattedAssistantMessage text={message.text} /> : <div className="whitespace-pre-wrap">{message.text}</div>}
               {message.sources?.length ? (
-                <div className="mt-3 flex flex-wrap gap-2 whitespace-normal">
-                  {message.sources.map((source) => (
-                    <a
-                      key={`${source.type}-${source.title}`}
-                      href={source.url || "/search-program"}
-                      className="rounded-lg border border-[rgb(var(--border))] bg-white/45 px-2.5 py-1 text-[11px] font-extrabold text-[rgb(var(--primary))] transition hover:bg-white/70 dark:bg-white/5"
-                    >
-                      {source.title}
-                    </a>
-                  ))}
+                <div className="mt-3 border-t border-[rgb(var(--border))] pt-2 whitespace-normal">
+                  <p className="mb-2 text-[10px] font-extrabold uppercase tracking-wide text-[rgb(var(--fg-muted))]">Related links</p>
+                  <div className="flex flex-wrap gap-2">
+                    {message.sources.map((source) => (
+                      <a
+                        key={`${source.type}-${source.title}`}
+                        href={source.url || "/search-program"}
+                        className="rounded-lg border border-[rgb(var(--border))] bg-white/45 px-2.5 py-1 text-[11px] font-extrabold text-[rgb(var(--primary))] transition hover:bg-white/70 dark:bg-white/5"
+                      >
+                        {source.title}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               ) : null}
             </div>
