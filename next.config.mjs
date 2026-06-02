@@ -25,7 +25,9 @@ const nextConfig = {
       { source: "/icon-192.png", headers: iconCacheHeaders },
       { source: "/icon-512.png", headers: iconCacheHeaders },
       { source: "/apple-touch-icon.png", headers: iconCacheHeaders },
-      { source: "/assets/brand/sathi-logo.png", headers: iconCacheHeaders }
+      { source: "/assets/brand/sathi-logo.png", headers: iconCacheHeaders },
+      { source: "/assets/brand/sathi-logo-160.webp", headers: iconCacheHeaders },
+      { source: "/assets/brand/sathi-logo-glass-160.webp", headers: iconCacheHeaders }
     ];
   },
   images: {

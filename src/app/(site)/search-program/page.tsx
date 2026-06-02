@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { SearchProgramClient } from "@/components/search/SearchProgramClient";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { breadcrumbJsonLd, buildMetadata, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, buildMetadata, dataCatalogJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Search Programs",
@@ -51,6 +51,12 @@ export default function SearchProgramPage({
             name: "SathiCollege Program Search",
             description: "A web-based education search tool for finding and comparing programs, universities, countries, intakes, scholarships and eligibility filters.",
             applicationCategory: "EducationApplication"
+          }),
+          dataCatalogJsonLd({
+            path: "/search-program",
+            name: "SathiCollege program and university search catalog",
+            description: "Searchable catalog of programs, universities, destinations, tuition, intakes, scholarships, fee waivers and admission requirements.",
+            keywords: ["program search", "university search", "study abroad", "scholarships", "tuition", "intakes"]
           })
         ]}
       />

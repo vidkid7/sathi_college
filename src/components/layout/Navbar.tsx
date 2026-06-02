@@ -830,7 +830,7 @@ const fallbackMegaGroups: MegaGroup[] = [
 ];
 
 const fallbackSearchSuggestions: NavbarSearchSuggestion[] = [
-  { name: "Search Programs", href: "/search-program", logo: "/assets/brand/sathi-logo-glass.png", meta: "CourseFinder-style program search" },
+  { name: "Search Programs", href: "/search-program", logo: "/assets/brand/sathi-logo-glass-160.webp", meta: "CourseFinder-style program search" },
   { name: "Computer Science", href: "/search-program?q=Computer%20Science", logo: REAL_IMAGES.computer, meta: "Search programs and universities" },
   { name: "MBA", href: "/search-program?q=MBA", logo: REAL_IMAGES.business, meta: "Search management programs" },
   { name: "University of Exeter", href: "/search-program?q=University%20of%20Exeter", logo: universityLogoUrl({ name: "University of Exeter" }), meta: "United Kingdom programs" },
@@ -1574,7 +1574,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref, menuData }:
     ? siteName.slice(shortName.length)
     : siteName.replace(shortName, "").trim();
   const brandRest = brandRestRaw ? `${brandRestRaw.charAt(0).toUpperCase()}${brandRestRaw.slice(1)}` : "College";
-  const brandLogoSrc = safeImageSrc(logoUrl, "/assets/brand/sathi-logo-glass.png");
+  const brandLogoSrc = safeImageSrc(logoUrl, "/assets/brand/sathi-logo-glass-160.webp");
   const megaGroups = useMemo(() => resolveMegaGroups(menuData), [menuData]);
   const searchSuggestions = useMemo(
     () => (menuData?.searchSuggestions?.length ? menuData.searchSuggestions : fallbackSearchSuggestions),

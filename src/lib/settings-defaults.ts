@@ -61,8 +61,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   tagline: "Global college, university and program discovery",
   description:
     "Use SathiCollege (Sathi College) to search programs, universities, scholarships, tuition, intakes and eligibility requirements across the USA, UK, Australia, Canada and other study destinations.",
-  logoUrl: "/assets/brand/sathi-logo-glass.png",
-  faviconUrl: "/assets/brand/sathi-logo-glass.png",
+  logoUrl: "/assets/brand/sathi-logo-glass-160.webp",
+  faviconUrl: "/assets/brand/sathi-logo-glass-160.png",
   email: "info@sathicollege.in",
   phone: "+919281014900",
   whatsapp: "919281014900",

@@ -1,5 +1,5 @@
 import { Hero } from "@/components/home/Hero";
-import { Tools } from "@/components/home/Tools";
+import { Tools, type HomeToolStats } from "@/components/home/Tools";
 import { Communities } from "@/components/home/Communities";
 import { About } from "@/components/home/About";
 import { CtaBanner } from "@/components/home/CtaBanner";
@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { getSettings, resolveCta, whatsappLinkFromSettings } from "@/lib/settings";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { BRAND_DISPLAY_NAME, BRAND_READABLE_NAME, brandMetaDescription, itemListJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
+import { examOptions, mockTests } from "@/lib/exam-catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +16,48 @@ export default async function HomePage() {
   const whatsappHref = whatsappLinkFromSettings(settings);
 
   let communities: any[] = [];
+  let toolStats: HomeToolStats = {
+    supportedPredictorExams: examOptions.length,
+    rankPredictions: 0,
+    colleges: 0,
+    cutoffs: 0,
+    mockTests: mockTests.length,
+    mockQuestions: mockTests.reduce((total, test) => total + test.questions, 0),
+    communities: 0,
+    communityPosts: 0,
+    guides: 0,
+    guideCategories: 0
+  };
+
   try {
-    communities = await db.community.findMany({ where: { active: true }, orderBy: { order: "asc" } });
+    const [
+      communityRows,
+      rankPredictions,
+      colleges,
+      cutoffs,
+      communityPosts,
+      guides,
+      guideCategories
+    ] = await Promise.all([
+      db.community.findMany({ where: { active: true }, orderBy: { order: "asc" } }),
+      db.rankPrediction.count(),
+      db.college.count(),
+      db.cutoff.count(),
+      db.communityPost.count({ where: { published: true } }),
+      db.post.count({ where: { published: true } }),
+      db.category.count()
+    ]);
+    communities = communityRows;
+    toolStats = {
+      ...toolStats,
+      rankPredictions,
+      colleges,
+      cutoffs,
+      communities: communityRows.length,
+      communityPosts,
+      guides,
+      guideCategories
+    };
   } catch {
     communities = [];
   }
@@ -57,7 +98,7 @@ export default async function HomePage() {
         secondaryCta={{ label: settings.hero.secondaryCtaLabel, href: resolveCta(settings.hero.secondaryCtaHref, settings) }}
         stats={settings.hero.stats}
       />
-      <Tools />
+      <Tools stats={toolStats} />
       <Communities items={communities} />
       <About title={settings.about.title} body={settings.about.body} whatsappHref={whatsappHref} />
       <CtaBanner whatsappHref={whatsappHref} />

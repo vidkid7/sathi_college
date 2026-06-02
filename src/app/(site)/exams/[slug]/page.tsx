@@ -61,8 +61,7 @@ export default async function ExamDetail({ params }: { params: { slug: string } 
           webPageJsonLd({
             path: `/exams/${exam.slug}`,
             name: exam.name,
-            description: exam.description,
-            type: "EducationalOccupationalProgram"
+            description: exam.description
           }),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },

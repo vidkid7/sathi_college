@@ -33,6 +33,8 @@ export function safeImageSrc(value: unknown, fallback = "/assets/generated/visua
   if (typeof value !== "string") return fallback;
   const src = value.trim();
   if (!src) return fallback;
+  if (src === "/assets/brand/sathi-logo-glass.png") return "/assets/brand/sathi-logo-glass-160.webp";
+  if (src === "/assets/brand/sathi-logo.png") return "/assets/brand/sathi-logo-160.webp";
   if (src.startsWith("/") && !src.startsWith("//") && !src.includes("\\")) return src;
   try {
     const url = new URL(src);

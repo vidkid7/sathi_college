@@ -33,6 +33,8 @@ A Next.js 14 + MySQL admissions platform for SathiCollege with a modern, mobile-
 ### SEO + performance
 - Per-page `metadata`, OpenGraph, Twitter cards
 - `sitemap.xml`, `robots.txt`, web app manifest
+- Search Console verification support via `GOOGLE_SITE_VERIFICATION`
+- See `docs/google-search-console-seo.md` for indexing and sitemap submission
 - Standalone Next output for slim Docker images
 - Reduced-motion + accessibility support
 

@@ -3,7 +3,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { db } from "@/lib/db";
-import { buildMetadata, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
+import { buildMetadata, breadcrumbJsonLd, occupationJsonLd, webPageJsonLd } from "@/lib/seo";
 import { safeImageSrc } from "@/lib/utils";
 import { BriefcaseBusiness, Compass, GraduationCap } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -30,19 +30,25 @@ export default async function CareerDetail({ params }: { params: { slug: string 
     <>
       <JsonLd
         data={[
-          webPageJsonLd({
-            path: `/careers/${career.slug}`,
-            name: career.name,
-            description: career.description,
-            type: "Occupation"
-          }),
-          breadcrumbJsonLd([
-            { name: "Home", path: "/" },
-            { name: "Careers", path: "/careers" },
-            { name: career.name, path: `/careers/${career.slug}` }
-          ])
-        ]}
-      />
+            webPageJsonLd({
+              path: `/careers/${career.slug}`,
+              name: career.name,
+              description: career.description
+            }),
+            breadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Careers", path: "/careers" },
+              { name: career.name, path: `/careers/${career.slug}` }
+            ]),
+            occupationJsonLd({
+              path: `/careers/${career.slug}`,
+              name: career.name,
+              description: career.description,
+              category: career.sector,
+              image
+            })
+          ]}
+        />
       <PageHero eyebrow={career.sector} title={<>{career.name}</>} description={career.description}>
         <div className="flex flex-wrap gap-2">
           <span className="badge"><BriefcaseBusiness className="h-3 w-3" /> {career.sector}</span>

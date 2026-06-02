@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { canonicalUrl, getSiteUrl } from "@/lib/seo";
 import { mockTests } from "@/lib/exam-catalog";
+import { importedEntityPath } from "@/lib/search-slugs";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     entry("/", now, 1, "daily"),
     entry("/colleges", now, 0.95, "daily"),
+    entry("/courses", now, 0.95, "daily"),
+    entry("/careers", now, 0.9, "daily"),
     entry("/exams", now, 0.95, "daily"),
+    entry("/search-program", now, 0.95, "daily"),
     entry("/rank-predictor", now, 0.9, "weekly"),
     entry("/college-predictor", now, 0.9, "weekly"),
     entry("/college-comparison", now, 0.85, "weekly"),
@@ -34,9 +38,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let dynamicRoutes: MetadataRoute.Sitemap = [];
   try {
-    const [exams, colleges, posts, categories, communityPosts] = await Promise.all([
+    const [exams, colleges, courses, careers, searchUniversities, searchPrograms, posts, categories, communityPosts] = await Promise.all([
       db.exam.findMany({ select: { slug: true, updatedAt: true } }),
       db.college.findMany({ select: { slug: true, updatedAt: true } }),
+      db.course.findMany({ where: { active: true }, select: { slug: true, updatedAt: true } }),
+      db.career.findMany({ where: { active: true }, select: { slug: true, updatedAt: true } }),
+      db.searchUniversity.findMany({
+        orderBy: { updatedAt: "desc" },
+        select: { sourceId: true, name: true, updatedAt: true },
+        take: 10000
+      }),
+      db.searchProgram.findMany({
+        orderBy: { updatedAt: "desc" },
+        select: { sourceId: true, name: true, updatedAt: true },
+        take: 30000
+      }),
       db.post.findMany({ where: { published: true }, select: { slug: true, updatedAt: true, category: { select: { slug: true } } } }),
       db.category.findMany({ select: { slug: true, updatedAt: true } }),
       db.communityPost.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } })
@@ -51,6 +67,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         entry(`/colleges/${c.slug}`, c.updatedAt, 0.9, "weekly"),
         entry(`/college-comparison/${c.slug}`, c.updatedAt, 0.7, "monthly")
       ]),
+      ...courses.map((c) => entry(`/courses/${c.slug}`, c.updatedAt, 0.85, "weekly")),
+      ...careers.map((c) => entry(`/careers/${c.slug}`, c.updatedAt, 0.75, "weekly")),
+      ...searchUniversities.map((u) => entry(importedEntityPath("/colleges", u.sourceId, u.name), u.updatedAt, 0.82, "weekly")),
+      ...searchPrograms.map((p) => entry(importedEntityPath("/courses", p.sourceId, p.name), p.updatedAt, 0.82, "weekly")),
       ...categories.map((c) => entry(`/blog/category/${c.slug}`, c.updatedAt, 0.6, "weekly")),
       ...posts.map((p) => entry(`/blog/${p.slug}`, p.updatedAt, 0.75, "weekly")),
       ...communityPosts.map((p) => entry(`/community/post/${p.slug}`, p.updatedAt, 0.55, "daily"))

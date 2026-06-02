@@ -63,7 +63,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           <div className="liquid-surface p-4">
             <Link href="/" className="flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={safeImageSrc(s.logoUrl, "/assets/brand/sathi-logo-glass.png")} alt={`${s.siteName} logo`} className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
+              <img src={safeImageSrc(s.logoUrl, "/assets/brand/sathi-logo-glass-160.webp")} alt={`${s.siteName} logo`} className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
               <span className="font-display text-lg font-extrabold">{s.siteName}</span>
             </Link>
             <p className="mt-3 text-sm leading-6 text-[rgb(var(--fg-muted))]">{s.footer.aboutText}</p>
@@ -140,7 +140,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           <div className="liquid-surface p-5 lg:col-span-2">
             <Link href="/" className="flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={safeImageSrc(s.logoUrl, "/assets/brand/sathi-logo-glass.png")} alt={`${s.siteName} logo`} className="h-11 w-11 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
+              <img src={safeImageSrc(s.logoUrl, "/assets/brand/sathi-logo-glass-160.webp")} alt={`${s.siteName} logo`} className="h-11 w-11 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
               <span className="font-display text-xl font-extrabold">{s.siteName}</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-6 text-[rgb(var(--fg-muted))]">{s.footer.aboutText}</p>

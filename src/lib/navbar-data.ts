@@ -102,7 +102,7 @@ const DEFAULT_COUNTRIES = [
   "Indonesia"
 ];
 
-const DEFAULT_LOGO = "/assets/brand/sathi-logo-glass.png";
+const DEFAULT_LOGO = "/assets/brand/sathi-logo-glass-160.webp";
 const PROGRAM_LOGO = REAL_IMAGES.computer;
 const UNIVERSITY_LOGO = REAL_IMAGES.campus;
 const ARTICLE_LOGO = REAL_IMAGES.news;

@@ -3,7 +3,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { db } from "@/lib/db";
-import { buildMetadata, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
+import { buildMetadata, breadcrumbJsonLd, courseJsonLd, webPageJsonLd } from "@/lib/seo";
 import { safeImageSrc } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { ArrowRight, Award, BadgeDollarSign, BookOpenCheck, Building2, CalendarDays, CheckCircle2, Clock, FileText, Globe2, GraduationCap, Layers, ListChecks, MapPin, School, Sparkles, Trophy, WalletCards } from "lucide-react";
@@ -162,14 +162,27 @@ export default async function CourseDetail({ params }: { params: { slug: string 
             webPageJsonLd({
               path: importedEntityPath("/courses", program.sourceId, program.name),
               name: program.name,
-              description: `${program.name} at ${program.universityName}.`,
-              type: "Course"
+              description: `${program.name} at ${program.universityName}.`
             }),
             breadcrumbJsonLd([
               { name: "Home", path: "/" },
               { name: "Courses", path: "/courses" },
               { name: program.name, path: importedEntityPath("/courses", program.sourceId, program.name) }
-            ])
+            ]),
+            courseJsonLd({
+              path: importedEntityPath("/courses", program.sourceId, program.name),
+              name: program.name,
+              description: program.entryRequirement || program.remarks || `${program.name} at ${program.universityName}. Explore tuition, intakes, requirements and similar programs.`,
+              providerName: program.universityName,
+              providerPath: importedEntityPath("/colleges", program.universitySourceId, program.universityName),
+              image: programImage,
+              courseCode: program.sourceId,
+              courseMode: program.isOnline ? "Online" : program.campus || "Onsite",
+              educationalLevel: program.studyLevel,
+              durationMonths: program.durationMonths,
+              tuitionAmount: program.minTuitionAmount?.toString(),
+              currency: program.currencyCode
+            })
           ]}
         />
         <PageHero eyebrow={`${program.studyLevel || "Program"} • ${program.universityCountry || "Global"} • ${dataSource}`} title={<>{program.name}</>} description={`Detailed program profile for ${program.universityName}, including fees, intakes, requirements, scholarship signals, rankings, source notes and related options from the local search database.`}>
@@ -411,19 +424,27 @@ export default async function CourseDetail({ params }: { params: { slug: string 
     <>
       <JsonLd
         data={[
-          webPageJsonLd({
-            path: `/courses/${course.slug}`,
-            name: course.name,
-            description: course.description,
-            type: "Course"
-          }),
-          breadcrumbJsonLd([
-            { name: "Home", path: "/" },
-            { name: "Courses", path: "/courses" },
-            { name: course.name, path: `/courses/${course.slug}` }
-          ])
-        ]}
-      />
+            webPageJsonLd({
+              path: `/courses/${course.slug}`,
+              name: course.name,
+              description: course.description
+            }),
+            breadcrumbJsonLd([
+              { name: "Home", path: "/" },
+              { name: "Courses", path: "/courses" },
+              { name: course.name, path: `/courses/${course.slug}` }
+            ]),
+            courseJsonLd({
+              path: `/courses/${course.slug}`,
+              name: course.name,
+              description: course.description,
+              providerName: "SathiCollege",
+              image,
+              educationalLevel: course.level,
+              courseMode: "Course guide"
+            })
+          ]}
+        />
       <PageHero eyebrow={`${course.category} • ${course.level}`} title={<>{course.name}</>} description={course.description}>
         <div className="flex flex-wrap gap-2">
           <span className="badge"><Layers className="h-3 w-3" /> {course.category}</span>

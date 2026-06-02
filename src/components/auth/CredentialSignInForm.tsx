@@ -92,7 +92,7 @@ export function CredentialSignInForm({ mode, title, subtitle, defaultCallback }:
       <GlassCard className="w-full max-w-md">
         <div className="mb-5 flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/brand/sathi-logo-glass.png" alt="SathiCollege logo" className="h-11 w-11 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
+          <img src="/assets/brand/sathi-logo-glass-160.webp" alt="SathiCollege logo" className="h-11 w-11 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
           <div>
             <h1 className="font-display text-xl font-bold">{title}</h1>
             <p className="text-xs text-[rgb(var(--fg-muted))]">{subtitle}</p>

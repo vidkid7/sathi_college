@@ -4,7 +4,7 @@ import type { SiteSettings } from "./settings-defaults";
 
 const FALLBACK_SITE_URL = "https://sathicollege.com";
 const DEFAULT_OG_IMAGE = "/assets/generated/hero-campus-generated.png";
-const BRAND_LOGO_PATH = "/assets/brand/sathi-logo-glass.png";
+const BRAND_LOGO_PATH = "/assets/brand/sathi-logo-glass-160.png";
 
 export const BRAND_DISPLAY_NAME = "SathiCollege";
 export const BRAND_READABLE_NAME = "Sathi College";
@@ -362,6 +362,104 @@ export function itemListJsonLd(input: { path: string; name: string; items: Array
       name: item.name,
       ...(item.description ? { description: trimDescription(item.description) } : {})
     }))
+  };
+}
+
+export function courseJsonLd(input: {
+  path: string;
+  name: string;
+  description: string;
+  providerName?: string | null;
+  providerPath?: string | null;
+  image?: string | null;
+  courseCode?: string | number | null;
+  courseMode?: string | null;
+  educationalLevel?: string | null;
+  durationMonths?: number | null;
+  tuitionAmount?: string | number | null;
+  currency?: string | null;
+}) {
+  const url = canonicalUrl(input.path);
+  const providerUrl = input.providerPath ? canonicalUrl(input.providerPath) : undefined;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "@id": `${url}#course`,
+    name: input.name,
+    description: trimDescription(input.description),
+    url,
+    image: imageUrl(input.image),
+    courseCode: input.courseCode ? String(input.courseCode) : undefined,
+    courseMode: input.courseMode || undefined,
+    educationalLevel: input.educationalLevel || undefined,
+    provider: input.providerName
+      ? {
+          "@type": "CollegeOrUniversity",
+          name: input.providerName,
+          ...(providerUrl ? { url: providerUrl } : {})
+        }
+      : { "@id": `${getSiteUrl()}/#organization` },
+    ...(input.durationMonths
+      ? {
+          timeRequired: `P${input.durationMonths}M`,
+          hasCourseInstance: {
+            "@type": "CourseInstance",
+            courseMode: input.courseMode || "Onsite",
+            courseWorkload: `P${input.durationMonths}M`
+          }
+        }
+      : {}),
+    ...(input.tuitionAmount
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: String(input.tuitionAmount),
+            priceCurrency: input.currency || "USD",
+            availability: "https://schema.org/InStock",
+            url
+          }
+        }
+      : {})
+  };
+}
+
+export function occupationJsonLd(input: {
+  path: string;
+  name: string;
+  description: string;
+  category?: string | null;
+  image?: string | null;
+}) {
+  const url = canonicalUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Occupation",
+    "@id": `${url}#occupation`,
+    name: input.name,
+    description: trimDescription(input.description),
+    mainEntityOfPage: url,
+    occupationalCategory: input.category || undefined,
+    image: imageUrl(input.image)
+  };
+}
+
+export function dataCatalogJsonLd(input: {
+  path: string;
+  name: string;
+  description: string;
+  keywords?: string[];
+}) {
+  const url = canonicalUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "DataCatalog",
+    "@id": `${url}#data-catalog`,
+    name: input.name,
+    description: trimDescription(input.description),
+    url,
+    keywords: input.keywords?.join(", "),
+    publisher: { "@id": `${getSiteUrl()}/#organization` },
+    inLanguage: "en"
   };
 }
 

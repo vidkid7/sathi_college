@@ -156,10 +156,15 @@ export function Hero(p: HeroProps) {
     <>
       <section className="landing-video-hero relative isolate overflow-hidden border-b border-white/15 bg-slate-950">
         <video
-          className="absolute inset-0 h-full w-full object-cover [filter:brightness(1.08)_contrast(1.14)_saturate(1.05)]"
+          className="absolute inset-0 h-full w-full object-cover"
           autoPlay
           muted
-          loop
+          onLoadedMetadata={(event) => {
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+              event.currentTarget.pause();
+            }
+          }}
+          onEnded={(event) => event.currentTarget.pause()}
           playsInline
           preload="metadata"
           poster={landingPoster}

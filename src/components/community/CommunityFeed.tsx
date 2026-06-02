@@ -166,7 +166,7 @@ export function CommunityFeed({
           <div className="reference-panel hidden p-4 2xl:block">
             <div className="mb-4 flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/brand/sathi-logo-glass.png" alt="SathiCollege community logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
+              <img src="/assets/brand/sathi-logo-glass-160.webp" alt="SathiCollege community logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
               <div>
                 <p className="text-sm font-extrabold">Community</p>
                 <p className="text-xs text-[rgb(var(--fg-muted))]">{currentUser?.email ? "Signed in" : "Student platform"}</p>

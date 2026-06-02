@@ -252,8 +252,8 @@
     background:
       linear-gradient(145deg, rgb(255 255 255 / 0.84), rgb(255 255 255 / 0.62)),
       radial-gradient(80% 80% at 10% 0%, rgb(255 255 255 / 0.42), transparent 50%);
-    -webkit-backdrop-filter: blur(12px) saturate(165%);
-    backdrop-filter: blur(12px) saturate(165%);
+    -webkit-backdrop-filter: blur(6px) saturate(145%);
+    backdrop-filter: blur(6px) saturate(145%);
     box-shadow:
       0 14px 34px rgba(50, 83, 132, 0.1),
       inset 0 1px 0 rgb(255 255 255 / 0.72),
@@ -891,8 +891,8 @@
     background:
       linear-gradient(145deg, rgb(248 252 255 / 0.78), rgb(221 235 246 / 0.54)),
       radial-gradient(90% 70% at 10% 0%, rgb(255 255 255 / 0.42), transparent 58%);
-    -webkit-backdrop-filter: blur(18px) saturate(165%);
-    backdrop-filter: blur(18px) saturate(165%);
+    -webkit-backdrop-filter: blur(6px) saturate(145%);
+    backdrop-filter: blur(6px) saturate(145%);
   }
 
   .dark :where(
@@ -1110,8 +1110,8 @@
     .glass,
     .glass-strong,
     .soft-card {
-      -webkit-backdrop-filter: blur(12px) saturate(145%);
-      backdrop-filter: blur(12px) saturate(145%);
+      -webkit-backdrop-filter: blur(4px) saturate(132%);
+      backdrop-filter: blur(4px) saturate(132%);
     }
 
     .float-layer {
