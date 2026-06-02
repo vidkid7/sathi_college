@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Contact SathiCollege",
-  description: "Contact SathiCollege for engineering admission, rank predictor, college predictor, counselling and community support.",
+  description: "Contact SathiCollege for program search, university shortlisting, scholarship guidance, predictors, counselling and community support.",
   path: "/contact"
 });
 
@@ -20,7 +20,7 @@ export default async function ContactPage() {
       <PageHero
         eyebrow="Get in touch"
         title={<>Talk to <span className="gradient-text">{s.siteName}</span></>}
-        description="Have questions about exams, counselling or branch selection? Reach out — we're here to help."
+        description="Have questions about universities, programs, scholarships, exams or admissions planning? Reach out and we will help."
       />
       <section className="container grid gap-8 py-12 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-1">

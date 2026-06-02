@@ -110,12 +110,26 @@ export function rateLimitedJson(result: RateLimitResult) {
 
 export function withSecurityHeaders(response: NextResponse, req?: NextRequest) {
   const isHttps = req?.nextUrl.protocol === "https:";
+  const pathname = req?.nextUrl.pathname || "";
+  const privateSurface =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/api") ||
+    pathname === "/login" ||
+    pathname === "/signup";
+  const lowValueSearchParams = ["callbackUrl", "error", "q", "search", "quick", "sort", "maxTuition", "requirement"];
+  const duplicateSearchSurface = req ? lowValueSearchParams.some((param) => req.nextUrl.searchParams.has(param)) : false;
+
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
   response.headers.set("X-DNS-Prefetch-Control", "off");
+  if (privateSurface) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  } else if (duplicateSearchSurface) {
+    response.headers.set("X-Robots-Tag", "noindex, follow");
+  }
   response.headers.set(
     "Content-Security-Policy",
     [

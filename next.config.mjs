@@ -17,9 +17,28 @@ const nextConfig = {
         value: "public, max-age=86400, stale-while-revalidate=604800"
       }
     ];
+    const privateRobotsHeaders = [
+      {
+        key: "X-Robots-Tag",
+        value: "noindex, nofollow"
+      }
+    ];
 
     return [
       { source: "/:path*", headers: securityHeaders },
+      { source: "/admin/:path*", headers: privateRobotsHeaders },
+      { source: "/api/:path*", headers: privateRobotsHeaders },
+      { source: "/login", headers: privateRobotsHeaders },
+      { source: "/signup", headers: privateRobotsHeaders },
+      {
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable"
+          }
+        ]
+      },
       { source: "/favicon.ico", headers: iconCacheHeaders },
       { source: "/favicon.svg", headers: iconCacheHeaders },
       { source: "/icon-192.png", headers: iconCacheHeaders },

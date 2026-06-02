@@ -11,10 +11,10 @@ import { formatCompactCount, importedEntityPath } from "@/lib/search-slugs";
 import { realImageOr, universityCampusImage, universityLogoUrl } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
-  title: "Engineering Colleges",
-  description: "Discover engineering colleges across India with cutoff trends, fees, reviews, counselling fit and admission guidance.",
+  title: "Global Universities and Colleges",
+  description: "Search universities and colleges worldwide with program counts, locations, tuition-linked courses, intakes and scholarship signals from the SathiCollege database.",
   path: "/colleges",
-  keywords: ["engineering colleges in India", "best engineering colleges", "engineering college fees", "college cutoffs"]
+  keywords: ["global universities", "college finder", "university search", "study abroad colleges", "USA universities", "UK universities", "Canada universities", "Australia universities"]
 });
 
 export const dynamic = "force-dynamic";

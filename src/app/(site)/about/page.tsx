@@ -4,7 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "About SathiCollege",
-  description: "Learn how SathiCollege helps engineering aspirants with rank predictors, college predictors, mock tests, counselling guidance and student communities.",
+  description: "Learn how SathiCollege helps students search global programs, compare universities, review scholarships, use predictors and plan admissions.",
   path: "/about"
 });
 
@@ -24,11 +24,11 @@ export default async function AboutPage() {
         <p style={{ whiteSpace: "pre-line" }}>{s.about.body}</p>
         <h2>What we offer</h2>
         <ul>
-          <li>Rank predictors for JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE</li>
-          <li>College predictors based on previous year cutoff data</li>
-          <li>Free mock tests with detailed solutions</li>
-          <li>Exam-specific WhatsApp communities for peer learning</li>
-          <li>Mentorship from current students and alumni of top colleges</li>
+          <li>Global program and university search with tuition, intake and scholarship filters</li>
+          <li>Rank and college predictors based on available admission and cutoff data</li>
+          <li>Free mock tests and exam preparation resources where data is available</li>
+          <li>Student communities for peer learning and admissions planning</li>
+          <li>Guidance across course shortlisting, career pathways and university comparisons</li>
         </ul>
       </section>
     </>

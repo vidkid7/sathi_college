@@ -10,10 +10,10 @@ import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 import { postImageFor, realImageOr } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
-  title: "Engineering Admission Blog",
-  description: "Articles, exam tips, counselling guides, cutoff updates and rank prediction guidance for engineering aspirants.",
+  title: "Study Abroad and Admissions Blog",
+  description: "Guides on universities, programs, scholarships, intakes, exams, admissions planning and student decision-making.",
   path: "/blog",
-  keywords: ["engineering admission blog", "exam tips", "counselling guide", "cutoff updates"]
+  keywords: ["study abroad blog", "admissions guides", "scholarship tips", "university comparison", "course finder guides", "exam tips"]
 });
 export const dynamic = "force-dynamic";
 

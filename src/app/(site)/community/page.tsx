@@ -11,9 +11,9 @@ import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Student Communities",
-  description: "Join exam-specific student communities for JEE, EAMCET, KCET, MHT CET, KEAM, TNEA, WBJEE and private engineering entrance aspirants.",
+  description: "Join student communities for admissions, exams, study abroad planning, university shortlisting, scholarships and peer guidance.",
   path: "/community",
-  keywords: ["engineering student community", "JEE community", "EAMCET community", "KCET community", "engineering counselling community"]
+  keywords: ["student community", "study abroad community", "admissions community", "exam community", "scholarship guidance", "university shortlisting"]
 });
 
 export const dynamic = "force-dynamic";

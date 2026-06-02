@@ -10,10 +10,10 @@ import { formatSearchMoney, importedEntityPath } from "@/lib/search-slugs";
 import { courseImageFor, realImageOr, universityLogoUrl } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
-  title: "Popular Courses",
-  description: "Browse admin-managed courses, degrees, specializations, duration and stream details on SathiCollege.",
+  title: "Global Courses and Programs",
+  description: "Browse global courses and study abroad programs by country, study level, tuition, university, duration, intake and scholarship availability.",
   path: "/courses",
-  keywords: ["popular courses", "B.Tech", "MBA", "BCA", "B.Pharma", "course finder"]
+  keywords: ["global courses", "study abroad programs", "course finder", "MBA abroad", "bachelor degree abroad", "masters programs", "scholarship courses"]
 });
 
 export const dynamic = "force-dynamic";

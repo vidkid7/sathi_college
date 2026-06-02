@@ -10,10 +10,10 @@ import { formatSearchMoney, importedEntityPath } from "@/lib/search-slugs";
 import { careerImageFor, courseImageFor, realImageOr, universityLogoUrl } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
-  title: "Popular Careers",
-  description: "Browse admin-managed career options, sectors and role guidance for students on SathiCollege.",
+  title: "Courses and Career Pathways",
+  description: "Explore career pathways and the related courses, universities and study levels that help students plan global education routes.",
   path: "/careers",
-  keywords: ["popular careers", "career compass", "student careers", "doctor career", "pilot career", "IAS officer"]
+  keywords: ["career pathways", "career compass", "student careers", "courses by career", "study abroad careers", "global education planning"]
 });
 
 export const dynamic = "force-dynamic";
