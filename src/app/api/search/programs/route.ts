@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
+import { universityLogoUrl } from "@/lib/real-images";
 import { withSecurityHeaders } from "@/lib/security";
 
 const DEFAULT_PAGE_SIZE = 12;
@@ -577,7 +578,8 @@ function serializeProgram(row: ProgramQueryRow, offerings: any[]) {
       name: row.universityName,
       country: row.universityCountry,
       state: row.universityState,
-      city: row.universityCity
+      city: row.universityCity,
+      logoUrl: universityLogoUrl({ sourceId: row.universitySourceId, name: row.universityName })
     },
     studyLevel: row.studyLevel,
     durationMonths: row.durationMonths,
@@ -769,9 +771,9 @@ export async function GET(req: NextRequest) {
       }),
       req
     );
-  } catch (error: any) {
+  } catch {
     return withSecurityHeaders(
-      NextResponse.json({ error: error?.message || "Search failed" }, { status: 500 }),
+      NextResponse.json({ error: "Program search is temporarily unavailable. Please check the database connection and try again." }, { status: 503 }),
       req
     );
   }

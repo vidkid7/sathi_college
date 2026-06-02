@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Users, ArrowUpRight } from "lucide-react";
 import { safeImageSrc } from "@/lib/utils";
+import { REAL_IMAGES } from "@/lib/real-images";
 
 type Community = { id: string; slug: string; name: string; description: string; joinUrl: string; image?: string | null };
 
@@ -49,7 +50,7 @@ export function Communities({ items }: { items: Community[] }) {
               <div className="soft-card flex h-full flex-col p-5">
                 <span className="mb-5 grid h-16 w-16 place-items-center rounded-lg bg-white shadow-sm dark:bg-[rgb(var(--bg-elev))]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={safeImageSrc(c.image, communityLogos[c.slug] || "/assets/generated/visual-blog.png")} alt={`${c.name} logo`} className="h-12 w-12 rounded-md object-contain" loading="lazy" decoding="async" />
+                  <img src={safeImageSrc(c.image, communityLogos[c.slug] || REAL_IMAGES.news)} alt={`${c.name} logo`} className="h-12 w-12 rounded-md object-contain" loading="lazy" decoding="async" />
                 </span>
                 <h3 className="font-display text-lg font-bold leading-snug">{c.name}</h3>
                 <p className="mt-2 flex-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">{c.description}</p>

@@ -12,7 +12,7 @@ export function importedEntityPath(basePath: "/colleges" | "/courses", sourceId:
 }
 
 export function sourceIdFromSlug(slug: string) {
-  const match = slug.match(/^(\d+)(?:-|$)/);
+  const match = slug.match(/^(-?\d+)(?:-|$)/);
   if (!match) return null;
   const sourceId = Number.parseInt(match[1], 10);
   return Number.isFinite(sourceId) ? sourceId : null;

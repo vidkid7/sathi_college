@@ -11,11 +11,13 @@ export function RankPredictorForm({ defaultExam }: { defaultExam?: string }) {
   const [marks, setMarks] = useState<string>("");
   const [category, setCategory] = useState("General");
   const [predicted, setPredicted] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       const r = await fetch("/api/predictor/rank", {
         method: "POST",
@@ -23,7 +25,11 @@ export function RankPredictorForm({ defaultExam }: { defaultExam?: string }) {
         body: JSON.stringify({ exam: normalizeExamSlug(exam), marks: Number(marks), category })
       });
       const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "Rank prediction failed");
       setPredicted(d.predicted);
+    } catch (err: any) {
+      setError(err?.message || "Rank prediction failed");
+      setPredicted(null);
     } finally {
       setLoading(false);
     }
@@ -57,6 +63,12 @@ export function RankPredictorForm({ defaultExam }: { defaultExam?: string }) {
           </button>
         </GlassCard>
       </form>
+
+      {error ? (
+        <GlassCard className="border-red-500/30 bg-red-500/10 text-sm font-semibold text-red-700 dark:text-red-200">
+          {error}
+        </GlassCard>
+      ) : null}
 
       <AnimatePresence>
         {predicted !== null && (

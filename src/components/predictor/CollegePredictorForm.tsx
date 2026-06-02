@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Star } from "lucide-react";
 import { examOptions, normalizeExamSlug } from "@/lib/exam-catalog";
 import { safeImageSrc } from "@/lib/utils";
+import { realImageOr, universityCampusImage } from "@/lib/real-images";
 
 type Result = { id: string; name: string; city: string; state: string; type: string; rating: number; heroImage?: string | null };
 
@@ -14,11 +15,13 @@ export function CollegePredictorForm({ defaultExam }: { defaultExam?: string }) 
   const [rank, setRank] = useState("");
   const [category, setCategory] = useState("General");
   const [results, setResults] = useState<Result[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       const r = await fetch("/api/predictor/college", {
         method: "POST",
@@ -26,7 +29,11 @@ export function CollegePredictorForm({ defaultExam }: { defaultExam?: string }) 
         body: JSON.stringify({ exam: normalizeExamSlug(exam), rank: Number(rank), category })
       });
       const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "College prediction failed");
       setResults(d.results || []);
+    } catch (err: any) {
+      setError(err?.message || "College prediction failed");
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -61,6 +68,12 @@ export function CollegePredictorForm({ defaultExam }: { defaultExam?: string }) 
         </GlassCard>
       </form>
 
+      {error ? (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm font-semibold text-red-700 dark:text-red-200">
+          {error}
+        </div>
+      ) : null}
+
       <AnimatePresence>
         {results && (
           <motion.div
@@ -72,7 +85,7 @@ export function CollegePredictorForm({ defaultExam }: { defaultExam?: string }) 
             {results.map((c) => (
               <GlassCard key={c.id}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={safeImageSrc(c.heroImage, "/assets/generated/hero-campus-base-transparent.png")} alt={`${c.name} logo`} className="mb-4 h-24 w-full rounded-lg bg-white/80 object-contain p-3 dark:bg-white/90" loading="lazy" decoding="async" />
+                <img src={safeImageSrc(realImageOr(c.heroImage, universityCampusImage()))} alt={`${c.name} logo`} className="mb-4 h-24 w-full rounded-lg bg-white/80 object-contain p-3 dark:bg-white/90" loading="lazy" decoding="async" />
                 <h3 className="font-display text-lg font-bold">{c.name}</h3>
                 <p className="text-xs text-[rgb(var(--fg-muted))]">{c.city}, {c.state} • {c.type}</p>
                 <div className="mt-3 flex items-center gap-1 text-sm">

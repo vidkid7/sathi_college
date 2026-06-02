@@ -8,6 +8,7 @@ import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
 import { formatCompactCount, importedEntityPath } from "@/lib/search-slugs";
+import { realImageOr, universityCampusImage, universityLogoUrl } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
   title: "Engineering Colleges",
@@ -136,7 +137,7 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {colleges.map((c) => {
-              const image = safeImageSrc(c.heroImage, "");
+              const image = safeImageSrc(realImageOr(c.heroImage, universityCampusImage()), "");
               return (
               <Link key={c.id} href={`/colleges/${c.slug}`} className="soft-card group flex h-full flex-col overflow-hidden">
                 <div className="relative h-36 overflow-hidden bg-gradient-to-br from-blue-50 to-sky-100 dark:from-slate-900 dark:to-blue-950">
@@ -155,8 +156,8 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
                   </div>
                   <span className="rounded-lg bg-[rgb(var(--primary))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--primary))]">{c.type}</span>
                 </div>
-                <h3 className="mt-3 font-display text-lg font-bold">{c.name}</h3>
-                <p className="mt-1 flex items-center gap-1 text-xs text-[rgb(var(--fg-muted))]"><MapPin className="h-3.5 w-3.5" /> {c.city}, {c.state}</p>
+                <h3 className="mt-3 line-clamp-2 break-words font-display text-lg font-bold leading-snug">{c.name}</h3>
+                <p className="mt-1 flex min-w-0 items-center gap-1 text-xs text-[rgb(var(--fg-muted))]"><MapPin className="h-3.5 w-3.5 shrink-0" /> <span className="truncate">{c.city}, {c.state}</span></p>
                 <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">{c.description}</p>
                 <div className="mt-4 flex items-center justify-between border-t border-[rgb(var(--border))]/70 pt-4 text-sm">
                   <span className="flex items-center gap-1 text-[rgb(var(--fg-muted))]"><WalletCards className="h-4 w-4" /> Annual fees</span>
@@ -167,38 +168,50 @@ export default async function CollegesPage({ searchParams }: { searchParams?: { 
               </Link>
               );
             })}
-            {importedUniversities.map((university) => (
-              <Link
-                key={`search-university-${university.sourceId}`}
-                href={importedEntityPath("/colleges", university.sourceId, university.name)}
-                className="soft-card group flex h-full flex-col overflow-hidden"
-              >
-                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-slate-900 dark:to-blue-950">
-                  <ReferenceVisual name="campus" className="absolute inset-0 h-full w-full object-contain p-4 transition duration-300 group-hover:scale-105" />
-                  <span className="badge absolute right-3 top-3">{formatCompactCount(university.programCount)} programs</span>
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="icon-tile">
-                      <Building2 className="h-5 w-5" />
+            {importedUniversities.map((university) => {
+              const logo = universityLogoUrl({ sourceId: university.sourceId, name: university.name });
+              const campusImage = safeImageSrc(universityCampusImage(university), "");
+              return (
+                <Link
+                  key={`search-university-${university.sourceId}`}
+                  href={importedEntityPath("/colleges", university.sourceId, university.name)}
+                  className="soft-card group flex h-full flex-col overflow-hidden"
+                >
+                  <div className="relative h-36 overflow-hidden bg-gradient-to-br from-sky-50 to-blue-100 dark:from-slate-900 dark:to-blue-950">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={campusImage} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-950/10 to-transparent" />
+                    {logo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={logo} alt={`${university.name} logo`} className="absolute left-3 top-3 h-12 w-12 rounded-lg border border-white/80 bg-white object-contain p-2 shadow-lg" loading="lazy" decoding="async" />
+                    ) : (
+                      <span className="icon-tile absolute left-3 top-3 bg-white/90"><Building2 className="h-5 w-5" /></span>
+                    )}
+                    <span className="badge absolute right-3 top-3">{formatCompactCount(university.programCount)} programs</span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="icon-tile">
+                        <Building2 className="h-5 w-5" />
+                      </div>
+                      <span className="rounded-lg bg-[rgb(var(--primary))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--primary))]">Imported DB</span>
                     </div>
-                    <span className="rounded-lg bg-[rgb(var(--primary))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--primary))]">CourseFinder DB</span>
+                    <h3 className="mt-3 line-clamp-2 break-words font-display text-lg font-bold leading-snug">{university.name}</h3>
+                    <p className="mt-1 flex min-w-0 items-center gap-1 text-xs text-[rgb(var(--fg-muted))]">
+                      <MapPin className="h-3.5 w-3.5 shrink-0" /> <span className="truncate">{[university.city, university.state, university.country].filter(Boolean).join(", ") || "Global university"}</span>
+                    </p>
+                    <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">
+                      Search {university.programCount.toLocaleString("en-IN")} programs and {university.offeringCount.toLocaleString("en-IN")} intake/year offerings from this university.
+                    </p>
+                    <div className="mt-4 flex min-w-0 items-center justify-between gap-3 border-t border-[rgb(var(--border))]/70 pt-4 text-sm">
+                      <span className="flex items-center gap-1 text-[rgb(var(--fg-muted))]"><WalletCards className="h-4 w-4" /> Offerings</span>
+                      <span className="truncate text-right font-semibold">{formatCompactCount(university.offeringCount)}</span>
+                    </div>
+                    <span className="subtle-link mt-4">View Programs <ArrowRight className="h-4 w-4" /></span>
                   </div>
-                  <h3 className="mt-3 font-display text-lg font-bold">{university.name}</h3>
-                  <p className="mt-1 flex items-center gap-1 text-xs text-[rgb(var(--fg-muted))]">
-                    <MapPin className="h-3.5 w-3.5" /> {[university.city, university.state, university.country].filter(Boolean).join(", ") || "Global university"}
-                  </p>
-                  <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">
-                    Search {university.programCount.toLocaleString("en-IN")} programs and {university.offeringCount.toLocaleString("en-IN")} intake/year offerings from this university.
-                  </p>
-                  <div className="mt-4 flex items-center justify-between border-t border-[rgb(var(--border))]/70 pt-4 text-sm">
-                    <span className="flex items-center gap-1 text-[rgb(var(--fg-muted))]"><WalletCards className="h-4 w-4" /> Offerings</span>
-                    <span className="font-semibold">{formatCompactCount(university.offeringCount)}</span>
-                  </div>
-                  <span className="subtle-link mt-4">View Programs <ArrowRight className="h-4 w-4" /></span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

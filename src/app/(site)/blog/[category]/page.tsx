@@ -8,6 +8,7 @@ import { fallbackArticle } from "@/lib/blog-fallback";
 import { safeImageSrc } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
+import { postImageFor, realImageOr } from "@/lib/real-images";
 
 export async function generateMetadata({ params }: { params: { category: string } }) {
   const post = await db.post.findUnique({ where: { slug: params.category } });
@@ -36,7 +37,7 @@ export default async function PostPage({ params }: { params: { category: string 
   const title = post?.title ?? fallback!.title;
   const excerpt = post?.excerpt ?? fallback!.excerpt;
   const content = post?.content ?? fallback!.content;
-  const coverImage = safeImageSrc(post?.coverImage, "");
+  const coverImage = safeImageSrc(realImageOr(post?.coverImage, postImageFor({ title, category: post?.category?.name })), "");
   return (
     <>
       <JsonLd

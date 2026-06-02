@@ -9,6 +9,7 @@ import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
+import { examImageFor, realImageOr } from "@/lib/real-images";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const e = await db.exam.findUnique({ where: { slug: params.slug } });
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function ExamDetail({ params }: { params: { slug: string } }) {
   const exam = await db.exam.findUnique({ where: { slug: params.slug } });
   if (!exam) notFound();
-  const examImage = safeImageSrc(exam.heroImage, "");
+  const examImage = safeImageSrc(realImageOr(exam.heroImage, examImageFor({ name: exam.name, category: exam.category })), "");
   const examSections = [
     {
       id: "eligibility",

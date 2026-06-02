@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { safeImageSrc } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { articleJsonLd, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
+import { postImageFor, realImageOr } from "@/lib/real-images";
 
 export async function generateMetadata({ params }: { params: { category: string; slug: string } }) {
   const post = await db.post.findUnique({ where: { slug: params.slug } });
@@ -39,7 +40,7 @@ export default async function CategoryPostPage({ params }: { params: { category:
   const content = post?.content ?? fallback!.content;
   const category = post?.category?.slug || params.category;
   const categoryName = post?.category?.name || fallback!.categoryLabel;
-  const coverImage = safeImageSrc(post?.coverImage, "");
+  const coverImage = safeImageSrc(realImageOr(post?.coverImage, postImageFor({ title, category: categoryName })), "");
 
   return (
     <>

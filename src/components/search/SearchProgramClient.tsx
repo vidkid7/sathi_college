@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   BadgeDollarSign,
@@ -23,6 +24,7 @@ import {
   WalletCards,
   X
 } from "lucide-react";
+import { importedEntityPath } from "@/lib/search-slugs";
 
 type Facet = {
   value: string;
@@ -49,6 +51,7 @@ type Program = {
     country: string | null;
     state: string | null;
     city: string | null;
+    logoUrl: string;
   };
   studyLevel: string | null;
   durationMonths: number | null;
@@ -158,7 +161,9 @@ const countryAliases: Array<[string, string[]]> = [
   ["United States of America", ["united states", "usa", "u.s.a", "u.s.", "america", "us"]],
   ["United Kingdom", ["uk", "u.k.", "england", "britain", "great britain"]],
   ["United Arab Emirates", ["uae", "u.a.e.", "dubai"]],
-  ["South Korea", ["korea"]]
+  ["South Korea", ["korea"]],
+  ["Australia", ["au", "australia"]],
+  ["Canada", ["ca", "canada"]]
 ];
 
 function normalizeCountryFilter(value?: string) {
@@ -196,9 +201,9 @@ export function SearchProgramClient({
     year: initialFilters.year || "2026",
     intake: initialFilters.intake || "",
     quick: initialFilters.quick || "",
-    sort: "featured",
-    maxTuition: "",
-    requirements: []
+    sort: initialFilters.sort || "featured",
+    maxTuition: initialFilters.maxTuition || "",
+    requirements: initialFilters.requirements || []
   });
   const [page, setPage] = useState(1);
   const [data, setData] = useState<SearchResponse | null>(null);
@@ -367,7 +372,7 @@ export function SearchProgramClient({
                   className={`inline-flex h-11 shrink-0 items-center gap-2 rounded-lg border px-3 text-sm font-bold transition ${
                     active
                       ? "border-[rgb(var(--primary))] bg-[rgb(var(--primary))] text-white shadow-lg shadow-blue-500/20"
-                      : "border-white/70 bg-white/56 text-[rgb(var(--fg))] shadow-sm backdrop-blur-xl hover:border-[rgb(var(--primary))]/50 hover:bg-white/78 dark:border-white/10 dark:bg-white/5"
+                      : "border-white/70 bg-white/66 text-[rgb(var(--fg))] shadow-sm backdrop-blur-sm hover:border-[rgb(var(--primary))]/50 hover:bg-white/82 dark:border-white/10 dark:bg-white/5"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -545,6 +550,8 @@ function FilterPanel({
 }
 
 function ProgramCard({ program }: { program: Program }) {
+  const router = useRouter();
+  const detailHref = importedEntityPath("/courses", program.sourceId, program.name);
   const flags = [
     program.flags.scholarship ? "Scholarship Available" : null,
     program.applicationFee.waived ? "No Application Fee" : null,
@@ -562,7 +569,19 @@ function ProgramCard({ program }: { program: Program }) {
   const requirements = Object.entries(program.requirements).filter(([, value]) => value);
 
   return (
-    <article className="liquid-surface p-4 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">
+    <article
+      role="link"
+      tabIndex={0}
+      onClick={() => router.push(detailHref)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          router.push(detailHref);
+        }
+      }}
+      className="liquid-surface group cursor-pointer p-4 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--primary))] sm:p-5"
+      aria-label={`View details for ${program.name}`}
+    >
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_240px]">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -573,25 +592,36 @@ function ProgramCard({ program }: { program: Program }) {
               </span>
             ))}
           </div>
-          <h3 className="mt-3 font-display text-xl font-extrabold leading-snug">
+          <h3 className="mt-3 line-clamp-2 max-w-full break-words font-display text-xl font-extrabold leading-snug transition group-hover:text-[rgb(var(--primary))]">
             {program.name}
           </h3>
           <div className="mt-3 grid gap-2 text-sm text-[rgb(var(--fg-muted))] sm:grid-cols-2">
             <span className="flex min-w-0 items-center gap-2">
-              <Building2 className="h-4 w-4 shrink-0 text-[rgb(var(--primary))]" />
+              {program.university.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={program.university.logoUrl}
+                  alt=""
+                  className="h-7 w-7 shrink-0 rounded-lg border border-white/70 bg-white object-contain p-1 shadow-sm"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Building2 className="h-4 w-4 shrink-0 text-[rgb(var(--primary))]" />
+              )}
               <span className="truncate font-semibold text-[rgb(var(--fg))]">{program.university.name}</span>
             </span>
-            <span className="flex items-center gap-2">
+            <span className="flex min-w-0 items-center gap-2">
               <MapPin className="h-4 w-4 shrink-0 text-[rgb(var(--primary))]" />
-              {[program.university.city, program.university.state, program.university.country].filter(Boolean).join(", ") || program.campus || "Location available on request"}
+              <span className="truncate">{[program.university.city, program.university.state, program.university.country].filter(Boolean).join(", ") || program.campus || "Location available on request"}</span>
             </span>
-            <span className="flex items-center gap-2">
+            <span className="flex min-w-0 items-center gap-2">
               <CalendarDays className="h-4 w-4 shrink-0 text-[rgb(var(--primary))]" />
-              Intakes: {program.intakes.length ? program.intakes.join(", ") : "Check offerings"}
+              <span className="truncate">Intakes: {program.intakes.length ? program.intakes.join(", ") : "Check offerings"}</span>
             </span>
-            <span className="flex items-center gap-2">
+            <span className="flex min-w-0 items-center gap-2">
               <Clock className="h-4 w-4 shrink-0 text-[rgb(var(--primary))]" />
-              Duration: {program.durationMonths ? `${program.durationMonths} Month(s)` : "Varies"}
+              <span className="truncate">Duration: {program.durationMonths ? `${program.durationMonths} Month(s)` : "Varies"}</span>
             </span>
           </div>
 
@@ -634,15 +664,27 @@ function ProgramCard({ program }: { program: Program }) {
           ) : null}
         </div>
 
-        <div className="rounded-lg border border-white/60 bg-white/42 p-4 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+        <div className="rounded-lg border border-white/60 bg-white/76 p-4 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-white/[0.08]">
           <p className="text-xs font-bold uppercase tracking-wide text-[rgb(var(--fg-muted))]">Yearly Tuition Fee</p>
           <p className="mt-2 font-display text-2xl font-extrabold">
             {formatMoney(program.tuition.amount, program.currencyCode, program.tuition.text)}
           </p>
-          <a href={`/search-program?q=${encodeURIComponent(program.name)}${program.studyLevel ? `&studyLevel=${encodeURIComponent(program.studyLevel)}` : ""}`} className="btn-primary mt-4 w-full justify-center">
+          <Link
+            href={detailHref}
+            onClick={(event) => event.stopPropagation()}
+            className="btn-primary mt-4 w-full justify-center"
+          >
+            <GraduationCap className="h-4 w-4" />
+            View Details
+          </Link>
+          <Link
+            href={`/search-program?q=${encodeURIComponent(program.name)}${program.studyLevel ? `&studyLevel=${encodeURIComponent(program.studyLevel)}` : ""}`}
+            onClick={(event) => event.stopPropagation()}
+            className="btn-ghost mt-3 w-full justify-center px-3"
+          >
             <GraduationCap className="h-4 w-4" />
             View Similar Programs
-          </a>
+          </Link>
           <div className="mt-4 grid gap-2 text-sm">
             <span className="flex items-center justify-between gap-2">
               <span className="text-[rgb(var(--fg-muted))]">Application Fee</span>

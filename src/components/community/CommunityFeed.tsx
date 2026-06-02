@@ -7,6 +7,7 @@ import { BarChart3, BookOpen, Compass, Flame, Heart, Home, ImageIcon, MessageCir
 import { motion } from "framer-motion";
 import { safeImageSrc } from "@/lib/utils";
 import type { SerializedCommunityPost } from "@/lib/community";
+import { REAL_IMAGES } from "@/lib/real-images";
 
 type Community = { id: string; slug: string; name: string; description: string; joinUrl: string; image?: string | null };
 type ActiveView = "home" | "trending" | "explore" | "all";
@@ -165,7 +166,7 @@ export function CommunityFeed({
           <div className="reference-panel hidden p-4 2xl:block">
             <div className="mb-4 flex items-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/brand/sathi-logo.png" alt="SathiCollege community logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
+              <img src="/assets/brand/sathi-logo-glass.png" alt="SathiCollege community logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
               <div>
                 <p className="text-sm font-extrabold">Community</p>
                 <p className="text-xs text-[rgb(var(--fg-muted))]">{currentUser?.email ? "Signed in" : "Student platform"}</p>
@@ -202,7 +203,7 @@ export function CommunityFeed({
               {communities.slice(0, 8).map((community) => (
                 <a key={community.id} href={community.joinUrl} target="_blank" rel="noopener noreferrer" className="flex w-full min-w-0 items-center gap-3 overflow-hidden rounded-lg px-2 py-2 transition hover:bg-[rgb(var(--primary))]/10">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={safeImageSrc(community.image, communityLogoFallbacks[community.slug] || "/assets/generated/visual-blog.png")} alt={`${community.name} logo`} className="h-9 w-9 shrink-0 rounded-lg bg-white object-contain p-1 shadow-sm" />
+                  <img src={safeImageSrc(community.image, communityLogoFallbacks[community.slug] || REAL_IMAGES.news)} alt={`${community.name} logo`} className="h-9 w-9 shrink-0 rounded-lg bg-white object-contain p-1 shadow-sm" />
                   <span className="min-w-0 flex-1 overflow-hidden">
                     <span className="block max-w-full truncate text-sm font-bold">{community.name}</span>
                     <span className="block max-w-full truncate text-xs text-[rgb(var(--fg-muted))]">Join discussion</span>

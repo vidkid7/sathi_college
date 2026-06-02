@@ -58,79 +58,72 @@ export type SiteSettings = {
 export const DEFAULT_SETTINGS: SiteSettings = {
   siteName: "SathiCollege",
   shortName: "Sathi",
-  tagline: "India's leading community for engineering aspirants",
+  tagline: "Global college, university and program discovery",
   description:
-    "Join SathiCollege (Sathi College), India's leading community for 12th class graduates. Get up-to-date info on JEE, EAMCET, KCET, MHT-CET, KEAM, TNEA, WBJEE - exam tips, counselling, branch selection, cutoffs and results.",
-  logoUrl: "/assets/brand/sathi-logo.png",
-  faviconUrl: "/assets/brand/sathi-logo.png",
+    "Use SathiCollege (Sathi College) to search programs, universities, scholarships, tuition, intakes and eligibility requirements across the USA, UK, Australia, Canada and other study destinations.",
+  logoUrl: "/assets/brand/sathi-logo-glass.png",
+  faviconUrl: "/assets/brand/sathi-logo-glass.png",
   email: "info@sathicollege.in",
   phone: "+919281014900",
   whatsapp: "919281014900",
-  address: "India",
+  address: "Global",
   social: {
     instagram: "https://instagram.com/sathicollege",
     youtube: "https://youtube.com/@sathicollege",
     telegram: "https://t.me/sathicollege"
   },
   hero: {
-    eyebrow: "India's #1 community for engineering aspirants",
+    eyebrow: "Global program search for study abroad decisions",
     titleLine1: "Join",
     titleHighlight: "SathiCollege",
-    titleLine2: "India's leading community for 12th class graduates",
+    titleLine2: "Global university and program discovery",
     description:
-      "Get up-to-date information on JEE, EAMCET, exam tips, engineering counselling, branch selection, cutoffs, results and more.",
+      "Search programs, universities, tuition, scholarships, eligibility requirements and intakes across top study destinations.",
     primaryCtaLabel: "Join WhatsApp",
     primaryCtaHref: "whatsapp",
     secondaryCtaLabel: "Predict Rank Now",
     secondaryCtaHref: "/rank-predictor",
     stats: [
       { value: "3,00,000+", label: "Students" },
-      { value: "3,000+", label: "Colleges Covered" }
+      { value: "3,000+", label: "Universities Covered" }
     ]
   },
   about: {
     title: "Get trustworthy career guidance",
     body:
-      "After completing intermediate / 12th class, you're in one of the most crucial stages of your life. You have to make important decisions while dealing with confusion. With thousands of websites available, it's hard to know who to trust. SathiCollege (Sathi College) is here to help you make the right choices for your future."
+      "Choosing a university, country, program and scholarship path is a high-stakes decision. SathiCollege (Sathi College) brings searchable program, university, tuition, intake and eligibility data into one clear experience so students can compare options with confidence."
   },
   footer: {
     aboutText:
-      "SathiCollege (Sathi College) gives 12th class graduates trustworthy guidance for engineering admissions and counselling.",
+      "SathiCollege (Sathi College) helps students search global programs, compare universities, check scholarships, review eligibility and plan study abroad decisions.",
     columns: [
       {
-        title: "Engineering Colleges",
+        title: "Study Destinations",
         links: [
-          { label: "All Colleges", href: "/colleges" },
-          { label: "Compare Colleges", href: "/college-comparison" },
-          { label: "Government", href: "/colleges?type=Government" },
-          { label: "Private", href: "/colleges?type=Private" }
+          { label: "USA Programs", href: "/search-program?country=United%20States%20of%20America" },
+          { label: "UK Programs", href: "/search-program?country=United%20Kingdom" },
+          { label: "Australia Programs", href: "/search-program?country=Australia" },
+          { label: "Canada Programs", href: "/search-program?country=Canada" }
         ]
       },
       {
-        title: "Rank Predictor",
+        title: "Program Search",
         links: [
-          { label: "JEE Mains", href: "/rank-predictor/jee-main" },
-          { label: "JEE Advanced", href: "/rank-predictor/jee-advanced" },
-          { label: "AP EAMCET", href: "/rank-predictor/ap-eamcet" },
-          { label: "TS EAMCET", href: "/rank-predictor/ts-eamcet" },
-          { label: "KCET", href: "/rank-predictor/kcet" },
-          { label: "MHT CET", href: "/rank-predictor/mht-cet" },
-          { label: "KEAM", href: "/rank-predictor/keam" },
-          { label: "TNEA", href: "/rank-predictor/tnea" },
-          { label: "WBJEE", href: "/rank-predictor/wbjee" }
+          { label: "All Programs", href: "/search-program" },
+          { label: "Scholarships", href: "/search-program?quick=scholarship" },
+          { label: "Application Fee Waiver", href: "/search-program?quick=fee-waiver" },
+          { label: "STEM Programs", href: "/search-program?quick=stem" },
+          { label: "Online Programs", href: "/search-program?quick=online" }
         ]
       },
       {
-        title: "College Predictor",
+        title: "Requirements",
         links: [
-          { label: "JEE Mains/Advanced", href: "/college-predictor/jee-main" },
-          { label: "AP EAMCET", href: "/college-predictor/ap-eamcet" },
-          { label: "TS EAMCET", href: "/college-predictor/ts-eamcet" },
-          { label: "MHT CET", href: "/college-predictor/mht-cet" },
-          { label: "Karnataka CET", href: "/college-predictor/kcet" },
-          { label: "KEAM", href: "/college-predictor/keam" },
-          { label: "TNEA", href: "/college-predictor/tnea" },
-          { label: "WBJEE", href: "/college-predictor/wbjee" }
+          { label: "IELTS", href: "/search-program?requirement=ielts" },
+          { label: "TOEFL", href: "/search-program?requirement=toefl" },
+          { label: "PTE", href: "/search-program?requirement=pte" },
+          { label: "GRE", href: "/search-program?requirement=gre" },
+          { label: "English Waiver", href: "/search-program?requirement=without-english" }
         ]
       },
       {
@@ -147,16 +140,16 @@ export const DEFAULT_SETTINGS: SiteSettings = {
       }
     ],
     copyright: `Copyright © ${new Date().getFullYear()} SathiCollege. All Rights Reserved.`,
-    bottomNote: "Made with ♥ for engineering aspirants in India."
+    bottomNote: "Built for students comparing global study options."
   },
   seo: {
-    metaTitle: "SathiCollege (Sathi College) | Engineering Rank Predictor, College Predictor & Admissions",
+    metaTitle: "SathiCollege (Sathi College) | Global Program Search, Universities & Scholarships",
     metaDescription:
-      "SathiCollege (Sathi College) helps engineering aspirants compare colleges, predict ranks, practice mock tests, join student communities and get counselling guidance.",
+      "SathiCollege (Sathi College) helps students search programs, compare universities, review scholarships, tuition, intakes and eligibility across the USA, UK, Australia and Canada.",
     keywords: [
       "SathiCollege", "Sathi College", "sathicollege", "sathi college", "sathicollage",
-      "JEE", "EAMCET", "KCET", "MHT CET", "KEAM", "TNEA", "WBJEE",
-      "rank predictor", "college predictor", "engineering counselling", "sathicollege"
+      "study abroad", "program search", "university search", "course finder", "scholarships",
+      "USA universities", "UK universities", "Australia universities", "Canada universities", "IELTS waiver"
     ],
     ogImage: "/assets/generated/hero-campus-generated.png"
   }

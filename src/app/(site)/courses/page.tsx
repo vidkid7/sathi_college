@@ -7,6 +7,7 @@ import { safeImageSrc } from "@/lib/utils";
 import { ArrowRight, BadgeDollarSign, Building2, ClipboardCheck, Clock, Layers, Search } from "lucide-react";
 import Link from "next/link";
 import { formatSearchMoney, importedEntityPath } from "@/lib/search-slugs";
+import { courseImageFor, realImageOr, universityLogoUrl } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
   title: "Popular Courses",
@@ -61,6 +62,7 @@ export default async function CoursesPage({ searchParams }: { searchParams?: { s
           id: true,
           sourceId: true,
           name: true,
+          universitySourceId: true,
           universityName: true,
           universityCountry: true,
           studyLevel: true,
@@ -155,7 +157,7 @@ export default async function CoursesPage({ searchParams }: { searchParams?: { s
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => {
-              const image = safeImageSrc(course.image, "");
+              const image = safeImageSrc(realImageOr(course.image, courseImageFor({ name: course.name, category: course.category })), "");
               return (
                 <Link key={course.id} href={`/courses/${course.slug}`} className="soft-card group flex h-full flex-col overflow-hidden">
                   <div className="h-36 bg-gradient-to-br from-emerald-50 to-sky-100 dark:from-slate-900 dark:to-emerald-950">
@@ -171,7 +173,7 @@ export default async function CoursesPage({ searchParams }: { searchParams?: { s
                       <span className="icon-tile"><ClipboardCheck className="h-5 w-5" /></span>
                       <span className="rounded-lg bg-[rgb(var(--primary))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--primary))]">{course.level}</span>
                     </div>
-                    <h3 className="mt-3 font-display text-lg font-bold">{course.name}</h3>
+                    <h3 className="mt-3 line-clamp-2 break-words font-display text-lg font-bold leading-snug">{course.name}</h3>
                     <div className="mt-2 flex flex-wrap gap-2 text-xs text-[rgb(var(--fg-muted))]">
                       <span className="badge"><Layers className="h-3 w-3" /> {course.category}</span>
                       {course.duration && <span className="badge"><Clock className="h-3 w-3" /> {course.duration}</span>}
@@ -182,33 +184,43 @@ export default async function CoursesPage({ searchParams }: { searchParams?: { s
                 </Link>
               );
             })}
-            {importedPrograms.map((program) => (
+            {importedPrograms.map((program) => {
+              const programImage = safeImageSrc(courseImageFor({ name: program.name, category: program.studyLevel }), "");
+              const logo = universityLogoUrl({ sourceId: program.universitySourceId, name: program.universityName });
+              return (
               <Link key={`search-program-${program.sourceId}`} href={importedEntityPath("/courses", program.sourceId, program.name)} className="soft-card group flex h-full flex-col overflow-hidden">
-                <div className="h-36 bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-slate-900 dark:to-blue-950">
-                  <ReferenceVisual name="books" className="h-full w-full object-contain p-5 transition duration-300 group-hover:scale-105" />
+                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-slate-900 dark:to-blue-950">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={programImage} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
+                  {logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={logo} alt={`${program.universityName} logo`} className="absolute left-3 top-3 h-11 w-11 rounded-lg border border-white/80 bg-white object-contain p-2 shadow-lg" loading="lazy" decoding="async" />
+                  ) : null}
                 </div>
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-between gap-3">
                     <span className="icon-tile"><ClipboardCheck className="h-5 w-5" /></span>
                     <span className="rounded-lg bg-[rgb(var(--primary))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--primary))]">{program.studyLevel || "Program"}</span>
                   </div>
-                  <h3 className="mt-3 font-display text-lg font-bold">{program.name}</h3>
+                  <h3 className="mt-3 line-clamp-2 break-words font-display text-lg font-bold leading-snug">{program.name}</h3>
                   <div className="mt-2 flex flex-wrap gap-2 text-xs text-[rgb(var(--fg-muted))]">
-                    <span className="badge"><Building2 className="h-3 w-3" /> {program.universityName}</span>
+                    <span className="badge min-w-0 max-w-full"><Building2 className="h-3 w-3 shrink-0" /> <span className="truncate">{program.universityName}</span></span>
                     {program.durationMonths && <span className="badge"><Clock className="h-3 w-3" /> {program.durationMonths} months</span>}
                     {program.scholarshipAvailable && <span className="badge"><BadgeDollarSign className="h-3 w-3" /> Scholarship</span>}
                   </div>
                   <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-[rgb(var(--fg-muted))]">
                     {[program.universityCountry, program.intakesText ? `Intakes: ${program.intakesText}` : null, program.isStem ? "STEM program" : null, program.isOnline ? "Online option" : null].filter(Boolean).join(" • ")}
                   </p>
-                  <div className="mt-4 flex items-center justify-between border-t border-[rgb(var(--border))]/70 pt-4 text-sm">
+                  <div className="mt-4 flex min-w-0 items-center justify-between gap-3 border-t border-[rgb(var(--border))]/70 pt-4 text-sm">
                     <span className="text-[rgb(var(--fg-muted))]">Yearly tuition</span>
-                    <span className="font-semibold">{formatSearchMoney(program.minTuitionAmount, program.currencyCode, program.tuitionFeeText)}</span>
+                    <span className="truncate text-right font-semibold">{formatSearchMoney(program.minTuitionAmount, program.currencyCode, program.tuitionFeeText)}</span>
                   </div>
                   <span className="subtle-link mt-4">View Program <ArrowRight className="h-4 w-4" /></span>
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

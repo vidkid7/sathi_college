@@ -23,35 +23,50 @@ import { AnimatePresence, motion } from "framer-motion";
 import { signOut, useSession } from "next-auth/react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { safeImageSrc } from "@/lib/utils";
+import { REAL_IMAGES, postImageFor, universityLogoUrl } from "@/lib/real-images";
 
-type NavLink = {
+export type NavLink = {
   href: string;
   label: string;
   description?: string;
 };
 
-type NavColumn = {
+export type NavColumn = {
   title: string;
   links: NavLink[];
 };
 
-type NavCategory = {
+export type NavCategory = {
   label: string;
   href: string;
   description: string;
   columns: NavColumn[];
 };
 
-type MegaGroup = {
+export type MegaGroup = {
   label: string;
   tagline: string;
   icon: LucideIcon;
   accent: string;
-  layout?: "rail" | "flat";
+  layout?: "rail" | "flat" | "choice";
   categories: NavCategory[];
   quickLinks: NavLink[];
   cta: NavLink;
   cards?: Array<NavLink & { image: string; meta?: string }>;
+};
+
+export type NavbarGroupData = Omit<MegaGroup, "icon" | "accent">;
+
+export type NavbarSearchSuggestion = {
+  name: string;
+  href: string;
+  logo: string;
+  meta: string;
+};
+
+export type NavbarData = {
+  groups?: NavbarGroupData[];
+  searchSuggestions?: NavbarSearchSuggestion[];
 };
 
 const directLinks = [
@@ -476,7 +491,7 @@ const careerColumns: NavColumn[] = [
   }
 ];
 
-const megaGroups: MegaGroup[] = [
+const fallbackMegaGroups: MegaGroup[] = [
   {
     label: "Colleges",
     tagline: "Find colleges by exam, city, branch, ownership and comparison fit.",
@@ -704,7 +719,7 @@ const megaGroups: MegaGroup[] = [
         href: "/blog/ts-eamcet-answer-key-2026",
         label: "TS EAMCET Answer Key 2026",
         description: "Answer key release, objection window and expected result flow.",
-        image: "/assets/generated/hero-campus-generated.png",
+        image: postImageFor({ title: "TS EAMCET Answer Key 2026", category: "Live Updates" }),
         meta: "Live Updates"
       },
       {
@@ -718,7 +733,7 @@ const megaGroups: MegaGroup[] = [
         href: "/blog/mht-cet-2026-admit-card",
         label: "MHT CET 2026 Admit Card",
         description: "Admit card timeline, download steps and exam-day checklist.",
-        image: "/assets/generated/visual-blog.png",
+        image: postImageFor({ title: "MHT CET 2026 Admit Card", category: "Admission Alert" }),
         meta: "Admission Alert"
       }
     ],
@@ -814,26 +829,357 @@ const megaGroups: MegaGroup[] = [
   }
 ];
 
-const searchSuggestions = [
-  { name: "Search Programs", href: "/search-program", logo: "/assets/brand/sathi-logo.png", meta: "CourseFinder-style program search" },
-  { name: "Computer Science", href: "/search-program?q=Computer%20Science", logo: "/assets/generated/visual-dashboard.png", meta: "Search programs and universities" },
-  { name: "MBA", href: "/search-program?q=MBA", logo: "/assets/generated/visual-dashboard.png", meta: "Search management programs" },
-  { name: "University of Exeter", href: "/search-program?q=University%20of%20Exeter", logo: "/assets/generated/hero-campus-generated.png", meta: "Search university programs" },
-  { name: "IIT Bombay", href: "/colleges/iit-bombay", logo: "/assets/institutes/iit-bombay.png", meta: "Mumbai, Maharashtra" },
-  { name: "IIT Delhi", href: "/colleges/iit-delhi", logo: "/assets/institutes/iit-delhi.png", meta: "New Delhi, Delhi" },
-  { name: "NIT Warangal", href: "/colleges/nit-warangal", logo: "/assets/institutes/nit-warangal.png", meta: "Warangal, Telangana" },
-  { name: "BITS Pilani", href: "/colleges/bits-pilani", logo: "/assets/institutes/bits-pilani.png", meta: "Pilani, Rajasthan" },
-  { name: "JEE Main", href: "/exams/jee-main", logo: "/assets/sathicollege/jee-common.png", meta: "Exam guide and predictors" },
-  { name: "AP EAMCET", href: "/exams/ap-eamcet", logo: "/assets/sathicollege/ap-eamcet.png", meta: "Exam guide and predictors" },
-  { name: "TS EAMCET", href: "/exams/ts-eamcet", logo: "/assets/sathicollege/ts-eamcet.png", meta: "Exam guide and predictors" },
-  { name: "KCET", href: "/exams/kcet", logo: "/assets/sathicollege/kcet.png", meta: "Exam guide and predictors" },
-  { name: "MHT CET", href: "/exams/mht-cet", logo: "/assets/sathicollege/mht-cet.png", meta: "Exam guide and predictors" },
-  { name: "B.Tech", href: "/search-program?q=B.Tech", logo: "/assets/generated/hero-campus-generated.png", meta: "Search B.Tech programs" },
-  { name: "Doctor", href: "/careers/doctor", logo: "/assets/generated/visual-scale.png", meta: "Popular career" },
-  { name: "Pilot", href: "/careers/pilot", logo: "/assets/generated/visual-blog.png", meta: "Popular career" },
-  { name: "Rank Predictor", href: "/rank-predictor", logo: "/assets/generated/visual-dashboard.png", meta: "Marks to rank estimate" },
-  { name: "College Predictor", href: "/college-predictor", logo: "/assets/generated/visual-trophy.png", meta: "Rank to college matches" },
-  { name: "Mock Tests", href: "/mock-test", logo: "/assets/generated/visual-scale.png", meta: "Practice tests" }
+const fallbackSearchSuggestions: NavbarSearchSuggestion[] = [
+  { name: "Search Programs", href: "/search-program", logo: "/assets/brand/sathi-logo-glass.png", meta: "CourseFinder-style program search" },
+  { name: "Computer Science", href: "/search-program?q=Computer%20Science", logo: REAL_IMAGES.computer, meta: "Search programs and universities" },
+  { name: "MBA", href: "/search-program?q=MBA", logo: REAL_IMAGES.business, meta: "Search management programs" },
+  { name: "University of Exeter", href: "/search-program?q=University%20of%20Exeter", logo: universityLogoUrl({ name: "University of Exeter" }), meta: "United Kingdom programs" },
+  { name: "University of New Brunswick", href: "/search-program?q=University%20of%20New%20Brunswick", logo: universityLogoUrl({ name: "University of New Brunswick" }) || REAL_IMAGES.campus, meta: "Canada programs" },
+  { name: "Arizona State University", href: "/search-program?q=Arizona%20State%20University", logo: universityLogoUrl({ name: "Arizona State University" }), meta: "United States programs" },
+  { name: "Deakin University", href: "/search-program?q=Deakin%20University", logo: universityLogoUrl({ name: "Deakin University" }) || REAL_IMAGES.campus, meta: "Australia programs" },
+  { name: "USA programs", href: "/search-program?country=United%20States%20of%20America", logo: REAL_IMAGES.globalCampus, meta: "Universities, courses and scholarships" },
+  { name: "UK programs", href: "/search-program?country=United%20Kingdom", logo: REAL_IMAGES.counselling, meta: "Universities, courses and scholarships" },
+  { name: "Australia programs", href: "/search-program?country=Australia", logo: REAL_IMAGES.campus, meta: "Universities, courses and scholarships" },
+  { name: "Canada programs", href: "/search-program?country=Canada", logo: REAL_IMAGES.globalCampus, meta: "Universities, courses and scholarships" },
+  { name: "IELTS accepted programs", href: "/search-program?requirement=ielts", logo: REAL_IMAGES.exam, meta: "Language requirement filter" },
+  { name: "TOEFL accepted programs", href: "/search-program?requirement=toefl", logo: REAL_IMAGES.exam, meta: "Language requirement filter" },
+  { name: "Scholarships", href: "/search-program?quick=scholarship", logo: REAL_IMAGES.scholarship, meta: "Funding and award filters" },
+  { name: "Application fee waiver", href: "/search-program?quick=fee-waiver", logo: REAL_IMAGES.scholarship, meta: "Programs with waiver indicators" },
+  { name: "Career pathways", href: "/careers", logo: REAL_IMAGES.business, meta: "Explore outcomes and roles" }
+];
+
+const countryFallbacks = [
+  { label: "USA", country: "United States of America" },
+  { label: "UK", country: "United Kingdom" },
+  { label: "Australia", country: "Australia" },
+  { label: "Canada", country: "Canada" },
+  { label: "Ireland", country: "Ireland" },
+  { label: "New Zealand", country: "New Zealand" },
+  { label: "Germany", country: "Germany" },
+  { label: "France", country: "France" },
+  { label: "Netherlands", country: "Netherlands" },
+  { label: "Finland", country: "Finland" },
+  { label: "Denmark", country: "Denmark" },
+  { label: "Sweden", country: "Sweden" },
+  { label: "Spain", country: "Spain" },
+  { label: "Italy", country: "Italy" },
+  { label: "Switzerland", country: "Switzerland" },
+  { label: "Singapore", country: "Singapore" },
+  { label: "Japan", country: "Japan" },
+  { label: "South Korea", country: "South Korea" },
+  { label: "UAE", country: "United Arab Emirates" },
+  { label: "Malaysia", country: "Malaysia" },
+  { label: "Malta", country: "Malta" },
+  { label: "Cyprus", country: "Cyprus" },
+  { label: "Poland", country: "Poland" },
+  { label: "Austria", country: "Austria" },
+  { label: "Belgium", country: "Belgium" },
+  { label: "Thailand", country: "Thailand" },
+  { label: "China", country: "China" },
+  { label: "India", country: "India" },
+  { label: "Vietnam", country: "Vietnam" },
+  { label: "Mauritius", country: "Mauritius" },
+  { label: "Saudi Arabia", country: "Saudi Arabia" },
+  { label: "Indonesia", country: "Indonesia" }
+];
+
+const countryProgramHref = (country: string, params?: Record<string, string>) => {
+  const query = new URLSearchParams({ country, ...(params || {}) });
+  return `/search-program?${query.toString()}`;
+};
+
+const globalFallbackCountryCategories: NavCategory[] = countryFallbacks.map(({ label, country }) => ({
+  label,
+  href: countryProgramHref(country),
+  description: `Database-backed ${label} universities, programs, scholarships, fees and entry requirements.`,
+  columns: [
+    {
+      title: "Universities",
+      links: [
+        { href: countryProgramHref(country), label: `${label} universities`, description: "Open all matching university and program records" },
+        { href: countryProgramHref(country, { q: "public university" }), label: "Public universities" },
+        { href: countryProgramHref(country, { q: "private university" }), label: "Private universities" },
+        { href: countryProgramHref(country, { q: "research university" }), label: "Research universities" }
+      ]
+    },
+    {
+      title: "Popular Programs",
+      links: [
+        { href: countryProgramHref(country, { q: "Computer Science" }), label: "Computer Science" },
+        { href: countryProgramHref(country, { q: "Business" }), label: "Business & Management" },
+        { href: countryProgramHref(country, { q: "Nursing" }), label: "Nursing & Health" },
+        { href: countryProgramHref(country, { q: "Engineering" }), label: "Engineering" }
+      ]
+    },
+    {
+      title: "Entry Requirements",
+      links: [
+        { href: countryProgramHref(country, { requirement: "ielts" }), label: "IELTS accepted" },
+        { href: countryProgramHref(country, { requirement: "toefl" }), label: "TOEFL accepted" },
+        { href: countryProgramHref(country, { requirement: "gre" }), label: "GRE accepted" },
+        { href: countryProgramHref(country, { requirement: "without-english" }), label: "English waiver" }
+      ]
+    },
+    {
+      title: "Funding & Fit",
+      links: [
+        { href: countryProgramHref(country, { quick: "scholarship" }), label: "Scholarships" },
+        { href: countryProgramHref(country, { quick: "fee-waiver" }), label: "Application fee waiver" },
+        { href: countryProgramHref(country, { quick: "stem" }), label: "STEM programs" },
+        { href: countryProgramHref(country, { quick: "online" }), label: "Online programs" }
+      ]
+    }
+  ]
+}));
+
+const globalFallbackMegaGroups: MegaGroup[] = [
+  {
+    label: "Colleges",
+    tagline: "Explore global universities by country, program strength, requirements and scholarships.",
+    icon: Building2,
+    accent: "#0f6fea",
+    cta: { href: "/search-program", label: "Open university search", description: "Search all imported university and program records" },
+    quickLinks: countryFallbacks.map(({ label, country }) => ({ href: countryProgramHref(country), label: `${label} universities` })),
+    categories: globalFallbackCountryCategories
+  },
+  {
+    label: "Exam",
+    tagline: "Filter programs by language tests, aptitude tests, waivers and admission requirements.",
+    icon: GraduationCap,
+    accent: "#38bdf8",
+    cta: { href: "/search-program?requirement=ielts", label: "Browse requirements", description: "Open programs with test and waiver filters" },
+    quickLinks: [
+      { href: "/search-program?requirement=ielts", label: "IELTS" },
+      { href: "/search-program?requirement=toefl", label: "TOEFL" },
+      { href: "/search-program?requirement=pte", label: "PTE" },
+      { href: "/search-program?requirement=gre", label: "GRE" }
+    ],
+    categories: countryFallbacks.map(({ label, country }) => ({
+      label,
+      href: countryProgramHref(country),
+      description: `Requirement filters for ${label} programs.`,
+      columns: [
+        {
+          title: "English Tests",
+          links: [
+            { href: countryProgramHref(country, { requirement: "ielts" }), label: "IELTS accepted" },
+            { href: countryProgramHref(country, { requirement: "toefl" }), label: "TOEFL accepted" },
+            { href: countryProgramHref(country, { requirement: "pte" }), label: "PTE accepted" },
+            { href: countryProgramHref(country, { requirement: "det" }), label: "Duolingo accepted" }
+          ]
+        },
+        {
+          title: "Aptitude Tests",
+          links: [
+            { href: countryProgramHref(country, { requirement: "gre" }), label: "GRE accepted" },
+            { href: countryProgramHref(country, { requirement: "gmat" }), label: "GMAT accepted" },
+            { href: countryProgramHref(country, { requirement: "sat" }), label: "SAT accepted" },
+            { href: countryProgramHref(country, { requirement: "act" }), label: "ACT accepted" }
+          ]
+        },
+        {
+          title: "Waivers",
+          links: [
+            { href: countryProgramHref(country, { requirement: "without-english" }), label: "English waiver" },
+            { href: countryProgramHref(country, { quick: "fee-waiver" }), label: "Application fee waiver" },
+            { href: countryProgramHref(country, { quick: "scholarship" }), label: "Scholarship available" }
+          ]
+        }
+      ]
+    }))
+  },
+  {
+    label: "Courses",
+    tagline: "Compare programs by country, level, tuition, scholarships and delivery mode.",
+    icon: ClipboardCheck,
+    accent: "#22c55e",
+    layout: "flat",
+    cta: { href: "/search-program", label: "View all programs", description: "Open the program finder" },
+    quickLinks: [
+      { href: "/search-program?q=Computer%20Science", label: "Computer Science" },
+      { href: "/search-program?q=MBA", label: "MBA" },
+      { href: "/search-program?q=Data%20Science", label: "Data Science" }
+    ],
+    categories: globalFallbackCountryCategories
+  },
+  {
+    label: "Careers",
+    tagline: "Find study paths that match career outcomes across global destinations.",
+    icon: BriefcaseBusiness,
+    accent: "#14b8a6",
+    layout: "flat",
+    cta: { href: "/careers", label: "Explore careers", description: "Open the career directory" },
+    quickLinks: [
+      { href: "/search-program?q=Software%20Engineering", label: "Software Engineering" },
+      { href: "/search-program?q=Data%20Analyst", label: "Data Analyst" },
+      { href: "/search-program?q=Healthcare", label: "Healthcare" }
+    ],
+    categories: [
+      {
+        label: "Career Pathways",
+        href: "/careers",
+        description: "Program searches linked to practical career outcomes.",
+        columns: [
+          {
+            title: "Technology",
+            links: [
+              { href: "/search-program?q=Computer%20Science", label: "Software Developer" },
+              { href: "/search-program?q=Data%20Science", label: "Data Scientist" },
+              { href: "/search-program?q=Cyber%20Security", label: "Cybersecurity Analyst" }
+            ]
+          },
+          {
+            title: "Business",
+            links: [
+              { href: "/search-program?q=MBA", label: "Business Analyst" },
+              { href: "/search-program?q=Finance", label: "Financial Analyst" },
+              { href: "/search-program?q=Marketing", label: "Marketing Manager" }
+            ]
+          },
+          {
+            title: "Health & Science",
+            links: [
+              { href: "/search-program?q=Nursing", label: "Registered Nurse" },
+              { href: "/search-program?q=Public%20Health", label: "Public Health Specialist" },
+              { href: "/search-program?q=Biotechnology", label: "Biotech Researcher" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    label: "Predictors",
+    tagline: "Use database filters to shortlist programs by budget, scholarship, country and eligibility.",
+    icon: Calculator,
+    accent: "#a855f7",
+    cta: { href: "/search-program", label: "Start matching", description: "Use filters for country, tuition, tests and scholarships" },
+    quickLinks: [
+      { href: "/search-program?sort=tuition_asc", label: "Lowest tuition" },
+      { href: "/search-program?quick=scholarship", label: "Scholarship match" },
+      { href: "/search-program?requirement=without-english", label: "English waiver" }
+    ],
+    categories: [
+      {
+        label: "Program Matching",
+        href: "/search-program",
+        description: "Shortlist by fit signals from imported program records.",
+        columns: [
+          {
+            title: "Country Match",
+            links: countryFallbacks.map(({ label, country }) => ({ href: countryProgramHref(country), label: `${label} match` }))
+          },
+          {
+            title: "Budget Match",
+            links: [
+              { href: "/search-program?sort=tuition_asc", label: "Lowest tuition first" },
+              { href: "/search-program?maxTuition=15000", label: "Under 15k tuition" },
+              { href: "/search-program?quick=fee-waiver", label: "Fee waiver available" }
+            ]
+          },
+          {
+            title: "Eligibility Match",
+            links: [
+              { href: "/search-program?requirement=ielts", label: "IELTS accepted" },
+              { href: "/search-program?requirement=gre", label: "GRE accepted" },
+              { href: "/search-program?requirement=without-english", label: "English waiver" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    label: "Latest Updates",
+    tagline: "Admission, scholarship and study destination updates from the content database.",
+    icon: Newspaper,
+    accent: "#fb7185",
+    layout: "flat",
+    cta: { href: "/blog", label: "Read all updates", description: "Open articles and guides" },
+    quickLinks: [
+      { href: "/blog", label: "All Articles" },
+      { href: "/scholarship", label: "Scholarships" },
+      { href: "/community", label: "Discussions" }
+    ],
+    categories: [
+      {
+        label: "Updates",
+        href: "/blog",
+        description: "Latest global study content and community activity.",
+        columns: [
+          {
+            title: "News & Guides",
+            links: [
+              { href: "/blog", label: "All Articles" },
+              { href: "/scholarship", label: "Scholarships" },
+              { href: "/search-program", label: "Program Finder" }
+            ]
+          },
+          {
+            title: "Destinations",
+            links: countryFallbacks.map(({ label, country }) => ({ href: countryProgramHref(country), label: `${label} updates` }))
+          },
+          {
+            title: "Fast Actions",
+            links: [
+              { href: "/signup", label: "Create Account" },
+              { href: "/login", label: "Sign In" },
+              { href: "/contact", label: "Submit a Question" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    label: "More",
+    tagline: "Research tools, support links and global study shortcuts.",
+    icon: Sparkles,
+    accent: "#f97316",
+    layout: "flat",
+    cta: { href: "/about", label: "About SathiCollege", description: "Learn how the platform helps students compare options" },
+    quickLinks: [
+      { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
+      { href: "/community", label: "Community" }
+    ],
+    categories: [
+      {
+        label: "Explore",
+        href: "/about",
+        description: "Platform links and support tools.",
+        columns: [
+          {
+            title: "More to explore",
+            links: [
+              { href: "/search-program", label: "Program Finder" },
+              { href: "/scholarship", label: "Scholarships" },
+              { href: "/blog", label: "Articles" },
+              { href: "/community", label: "Community" }
+            ]
+          },
+          {
+            title: "Tools & Research",
+            links: [
+              { href: "/careers", label: "Career Compass" },
+              { href: "/search-program?quick=scholarship", label: "Scholarship Search" },
+              { href: "/search-program?sort=tuition_asc", label: "Tuition Comparison" },
+              { href: "/contact", label: "Counselling Support" }
+            ]
+          },
+          {
+            title: "Quick Links",
+            links: [
+              { href: "/about", label: "About Us" },
+              { href: "/contact", label: "Contact Us" },
+              { href: "/signup", label: "Join Us" },
+              { href: "/privacy", label: "Privacy Policy" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
 ];
 
 export type NavbarProps = {
@@ -841,6 +1187,7 @@ export type NavbarProps = {
   shortName: string;
   logoUrl: string | null;
   whatsappHref: string;
+  menuData?: NavbarData;
 };
 
 function normalizePath(href: string) {
@@ -862,6 +1209,148 @@ function columnGridClass(columnCount: number) {
   return "grid gap-4 md:grid-cols-2";
 }
 
+function withGroupVisuals(group: NavbarGroupData): MegaGroup {
+  const fallback = globalFallbackMegaGroups.find((item) => item.label === group.label);
+  return {
+    ...group,
+    icon: fallback?.icon || Sparkles,
+    accent: fallback?.accent || "#0f6fea"
+  };
+}
+
+function dedupeNavLinks(links: Array<NavLink | null | undefined>, limit?: number) {
+  const seen = new Set<string>();
+  const unique: NavLink[] = [];
+
+  for (const link of links) {
+    if (!link) continue;
+    const key = `${link.href}|${link.label}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(link);
+    if (limit && unique.length >= limit) break;
+  }
+
+  return unique;
+}
+
+function buildCoursesCareersDropdownCategory(courses?: MegaGroup, careers?: MegaGroup): NavCategory {
+  return {
+    label: "Courses & Careers",
+    href: "/courses",
+    description: "Pick the directory you want to open.",
+    columns: [
+      {
+        title: "Choose one",
+        links: [
+          {
+            href: "/courses",
+            label: "Courses",
+            description: "Open course and program discovery."
+          },
+          {
+            href: "/careers",
+            label: "Careers",
+            description: "Open career pathways and role guides."
+          }
+        ]
+      }
+    ]
+  };
+}
+
+function mergeCoursesAndCareers(courses?: MegaGroup, careers?: MegaGroup): MegaGroup | null {
+  const base = courses || careers;
+  if (!base) return null;
+
+  const categories = [buildCoursesCareersDropdownCategory(courses, careers)];
+
+  return {
+    ...base,
+    label: "Courses & Careers",
+    tagline: "Choose whether you want courses or career pathways.",
+    icon: ClipboardCheck,
+    accent: courses?.accent || careers?.accent || base.accent,
+    layout: "choice",
+    cta: {
+      href: "/courses",
+      label: "Courses",
+      description: "Open course and program discovery"
+    },
+    quickLinks: [
+      {
+        href: "/courses",
+        label: "Courses",
+        description: "Open course and program discovery."
+      },
+      {
+        href: "/careers",
+        label: "Careers",
+        description: "Open career pathways and role guides."
+      }
+    ],
+    categories
+  };
+}
+
+function buildPredictorCategory(group: MegaGroup): NavCategory {
+  const firstCategory = group.categories[0];
+  const categoryColumns = firstCategory?.columns.slice(0, 3) ?? [];
+  const categoryLinks = categoryColumns.flatMap((column) => column.links.slice(0, 4));
+
+  return {
+    label: "Predictors",
+    href: group.cta.href,
+    description: group.tagline,
+    columns: [
+      {
+        title: "Prediction Tools",
+        links: dedupeNavLinks([group.cta, ...group.quickLinks, ...categoryLinks], 8)
+      },
+      ...categoryColumns
+    ]
+  };
+}
+
+function movePredictorsIntoMore(more: MegaGroup, predictors?: MegaGroup): MegaGroup {
+  if (!predictors) return more;
+
+  return {
+    ...more,
+    tagline: "Prediction tools, research shortcuts, support links and global study resources.",
+    quickLinks: dedupeNavLinks([...predictors.quickLinks, ...more.quickLinks], 6),
+    categories: [buildPredictorCategory(predictors), ...more.categories.filter((category) => category.label !== "Predictors")]
+  };
+}
+
+function compactMegaGroups(groups: MegaGroup[]) {
+  const courses = groups.find((group) => group.label === "Courses");
+  const careers = groups.find((group) => group.label === "Careers");
+  const predictors = groups.find((group) => group.label === "Predictors");
+  const combinedCourses = mergeCoursesAndCareers(courses, careers);
+  const compacted: MegaGroup[] = [];
+
+  for (const group of groups) {
+    if (group.label === "Courses" || (!courses && group.label === "Careers")) {
+      if (combinedCourses) compacted.push(combinedCourses);
+      continue;
+    }
+
+    if (group.label === "Careers" || group.label === "Predictors") {
+      continue;
+    }
+
+    compacted.push(group.label === "More" ? movePredictorsIntoMore(group, predictors) : group);
+  }
+
+  return compacted;
+}
+
+function resolveMegaGroups(menuData?: NavbarData) {
+  if (!menuData?.groups?.length) return compactMegaGroups(globalFallbackMegaGroups);
+  return compactMegaGroups(menuData.groups.map(withGroupVisuals));
+}
+
 function MegaPanel({
   group,
   selectedCategory,
@@ -880,6 +1369,58 @@ function MegaPanel({
   const Icon = group.icon;
   const activeCategory = getActiveCategory(group, selectedCategory);
   const isFlat = group.layout === "flat";
+  const isChoice = group.layout === "choice";
+
+  if (isChoice) {
+    return (
+      <motion.div
+        data-nav-panel={group.label}
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -4 }}
+        transition={{ duration: 0.15 }}
+        data-nav-dropdown
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        className="absolute left-0 right-0 top-full hidden md:block"
+      >
+        <div className={`${navShellClass} pb-3 pt-1`}>
+          <div className="liquid-panel mx-auto max-w-[520px] p-3">
+            <div className="mb-3 flex items-start gap-3 px-2">
+              <span className="icon-tile shrink-0">
+                <Icon className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="font-display text-base font-extrabold">{group.label}</p>
+                <p className="mt-1 text-xs leading-5 text-[rgb(var(--fg-muted))]">{group.tagline}</p>
+              </div>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {group.quickLinks.map((item) => {
+                const OptionIcon = item.href.startsWith("/careers") ? BriefcaseBusiness : ClipboardCheck;
+                return (
+                  <Link
+                    key={`${group.label}-${item.href}-${item.label}`}
+                    href={item.href}
+                    onClick={onNavigate}
+                    className="group liquid-surface flex min-w-0 items-start gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    <span className="icon-tile shrink-0 bg-white/72 group-hover:bg-[rgb(var(--primary))]/12">
+                      <OptionIcon className="h-5 w-5" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-display text-base font-extrabold text-[rgb(var(--fg))] group-hover:text-[rgb(var(--primary))]">{item.label}</span>
+                      {item.description && <span className="mt-1 block text-xs leading-5 text-[rgb(var(--fg-muted))]">{item.description}</span>}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -979,9 +1520,9 @@ function MegaPanel({
                         key={`${column.title}-${item.href}-${item.label}`}
                         href={item.href}
                         onClick={onNavigate}
-                        className="group rounded-lg px-2 py-2 text-sm transition hover:bg-[rgb(var(--primary))]/10"
+                        className="group block min-w-0 overflow-hidden rounded-lg px-2 py-2 text-sm transition hover:bg-[rgb(var(--primary))]/10"
                       >
-                        <span className="block truncate font-bold text-[rgb(var(--fg))] group-hover:text-[rgb(var(--primary))]">{item.label}</span>
+                        <span className="block min-w-0 truncate font-bold text-[rgb(var(--fg))] group-hover:text-[rgb(var(--primary))]">{item.label}</span>
                         {item.description && <span className="mt-0.5 block truncate text-xs leading-5 text-[rgb(var(--fg-muted))]">{item.description}</span>}
                       </Link>
                     ))}
@@ -1018,7 +1559,7 @@ function MegaPanel({
   );
 }
 
-export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarProps) {
+export function Navbar({ siteName, shortName, logoUrl, whatsappHref, menuData }: NavbarProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
@@ -1033,8 +1574,13 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
     ? siteName.slice(shortName.length)
     : siteName.replace(shortName, "").trim();
   const brandRest = brandRestRaw ? `${brandRestRaw.charAt(0).toUpperCase()}${brandRestRaw.slice(1)}` : "College";
-  const brandLogoSrc = safeImageSrc(logoUrl, "/assets/brand/sathi-logo.png");
-  const selectedGroup = useMemo(() => megaGroups.find((group) => group.label === activeGroup) || null, [activeGroup]);
+  const brandLogoSrc = safeImageSrc(logoUrl, "/assets/brand/sathi-logo-glass.png");
+  const megaGroups = useMemo(() => resolveMegaGroups(menuData), [menuData]);
+  const searchSuggestions = useMemo(
+    () => (menuData?.searchSuggestions?.length ? menuData.searchSuggestions : fallbackSearchSuggestions),
+    [menuData]
+  );
+  const selectedGroup = useMemo(() => megaGroups.find((group) => group.label === activeGroup) || null, [activeGroup, megaGroups]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -1186,7 +1732,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
               key={link.href}
               href={link.href}
               onClick={closeAllMenus}
-              className={`hidden whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-bold transition min-[1850px]:inline-flex ${
+              className={`inline-flex whitespace-nowrap rounded-lg px-2 py-2 text-sm font-bold transition 2xl:px-2.5 ${
                 isLinkActive(pathname, link.href)
                   ? "bg-white/72 text-[rgb(var(--primary))] shadow-sm dark:bg-white/10"
                   : "text-[rgb(var(--fg-muted))] hover:bg-white/42 hover:text-[rgb(var(--fg))] dark:hover:bg-white/5"
@@ -1199,7 +1745,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
 
         <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
           <div className="relative" data-search-dropdown>
-            <form onSubmit={onSearch} className="hidden min-w-[230px] items-center gap-2 rounded-lg border border-white/70 bg-white/54 px-3 py-2 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5 2xl:flex">
+            <form onSubmit={onSearch} className="hidden min-w-[230px] items-center gap-2 rounded-lg border border-white/70 bg-white/66 px-3 py-2 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-white/5 2xl:flex">
               <button type="submit" aria-label="Submit search" className="text-[rgb(var(--fg-muted))] transition hover:text-[rgb(var(--primary))]">
                 <Search className="h-4 w-4" />
               </button>
@@ -1224,7 +1770,7 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
                 setSearchOpen((current) => !current);
                 setActiveGroup(null);
               }}
-              aria-label="Search colleges and exams"
+              aria-label="Search programs and universities"
               className="glass grid h-10 w-10 place-items-center rounded-lg text-[rgb(var(--fg-muted))] transition hover:scale-105 hover:text-[rgb(var(--primary))] 2xl:hidden"
             >
               <Search className="h-5 w-5" />
@@ -1267,24 +1813,25 @@ export function Navbar({ siteName, shortName, logoUrl, whatsappHref }: NavbarPro
           </div>
           <ThemeToggle />
           {session?.user ? (
-            <Link href={session.user.role === "ADMIN" || session.user.role === "EDITOR" ? "/admin" : "/community"} className="hidden btn-ghost max-w-[150px] truncate whitespace-nowrap px-4 py-2 min-[1700px]:inline-flex" title={session.user.name || session.user.email || "Account"}>
+            <Link href={session.user.role === "ADMIN" || session.user.role === "EDITOR" ? "/admin" : "/community"} className="hidden btn-ghost max-w-[150px] truncate whitespace-nowrap px-3 py-2 xl:inline-flex 2xl:px-4" title={session.user.name || session.user.email || "Account"}>
               <UserRound className="h-5 w-5" />
-              <span className="truncate">{session.user.name || session.user.email}</span>
+              <span className="hidden truncate min-[1380px]:inline">{session.user.name || session.user.email}</span>
             </Link>
           ) : (
-            <Link href="/login" className="hidden btn-ghost whitespace-nowrap px-4 py-2 min-[1700px]:inline-flex">
+            <Link href="/login" className="hidden btn-ghost whitespace-nowrap px-3 py-2 xl:inline-flex 2xl:px-4">
               <UserRound className="h-4 w-4" />
-              Sign In
+              <span className="hidden min-[1380px]:inline">Sign In</span>
             </Link>
           )}
           {session?.user ? (
-            <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="hidden btn-primary whitespace-nowrap px-4 py-2 min-[1700px]:inline-flex">
-              Sign Out
+            <button type="button" onClick={() => signOut({ callbackUrl: "/" })} className="hidden btn-primary whitespace-nowrap px-3 py-2 xl:inline-flex 2xl:px-4">
+              <span className="hidden min-[1380px]:inline">Sign Out</span>
+              <UserRound className="h-4 w-4 min-[1380px]:hidden" />
             </button>
           ) : (
-            <Link href="/signup" className="hidden btn-primary whitespace-nowrap px-4 py-2 min-[1700px]:inline-flex">
+            <Link href="/signup" className="hidden btn-primary whitespace-nowrap px-3 py-2 xl:inline-flex 2xl:px-4">
               <ShieldCheck className="h-4 w-4" />
-              Sign Up
+              <span className="hidden min-[1380px]:inline">Sign Up</span>
             </Link>
           )}
           <button

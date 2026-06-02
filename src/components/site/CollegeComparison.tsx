@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, Building2, ChevronDown, IndianRupee, MapPin, Plus, Star } from "lucide-react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { formatINR, safeImageSrc } from "@/lib/utils";
+import { realImageOr, universityCampusImage } from "@/lib/real-images";
 
 type College = {
   id: string;
@@ -132,7 +133,7 @@ export function CollegeComparison({ colleges, defaultSlug }: { colleges: College
                   <span className="grid h-12 w-12 place-items-center rounded-lg bg-blue-50 text-[rgb(var(--primary))]">
                     {college?.heroImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={safeImageSrc(college.heroImage, "/assets/generated/hero-campus-base-transparent.png")} alt="" className="h-full w-full rounded-lg bg-white object-contain p-1" />
+                      <img src={safeImageSrc(realImageOr(college.heroImage, universityCampusImage()))} alt="" className="h-full w-full rounded-lg bg-white object-contain p-1" />
                     ) : (
                       <Building2 className="h-5 w-5" />
                     )}

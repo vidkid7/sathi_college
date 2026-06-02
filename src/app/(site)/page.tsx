@@ -27,23 +27,23 @@ export default async function HomePage() {
         data={[
           webPageJsonLd({
             path: "/",
-            name: `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) engineering admissions guidance`,
+            name: `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) global program search`,
             description: brandMetaDescription(settings.description)
           }),
           itemListJsonLd({
             path: "/",
-            name: "SathiCollege core admission tools",
+            name: "SathiCollege global study tools",
             items: [
-              { name: "Rank Predictor", path: "/rank-predictor", description: "Estimate engineering entrance exam rank from marks and category." },
-              { name: "College Predictor", path: "/college-predictor", description: "Find likely engineering colleges from rank and category." },
-              { name: "Mock Tests", path: "/mock-test", description: "Practice entrance exam mock tests with solutions." },
-              { name: "Student Communities", path: "/community", description: "Join exam-specific student discussion communities." }
+              { name: "Program Search", path: "/search-program", description: "Search global programs by country, tuition, scholarship and eligibility." },
+              { name: "University Directory", path: "/colleges", description: "Browse universities and imported program records." },
+              { name: "Scholarship Finder", path: "/search-program?quick=scholarship", description: "Find programs with scholarship indicators." },
+              { name: "Student Communities", path: "/community", description: "Join student discussions and study planning communities." }
             ]
           }),
           softwareApplicationJsonLd({
-            path: "/rank-predictor",
-            name: "SathiCollege Rank Predictor",
-            description: "Free web tool to estimate engineering entrance exam ranks."
+            path: "/search-program",
+            name: "SathiCollege Program Search",
+            description: "Free web tool to search global programs, universities, tuition, scholarships and eligibility."
           })
         ]}
       />

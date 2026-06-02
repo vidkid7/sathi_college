@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">SathiCollege logo</title>
+  <desc id="desc">A blue violet glass app icon with a graduation cap, search orbit and knowledge sparkle.</desc>
+  <defs>
+    <linearGradient id="bg" x1="128" y1="88" x2="896" y2="936" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#62a2ff"/>
+      <stop offset=".45" stop-color="#2c74f5"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="230" cy="120" r="580" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".34"/>
+      <stop offset=".58" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softShadow" x="-18%" y="-18%" width="136%" height="136%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#08255c" flood-opacity=".30"/>
+    </filter>
+  </defs>
+  <rect x="24" y="24" width="976" height="976" rx="214" fill="url(#bg)"/>
+  <rect x="24" y="24" width="976" height="976" rx="214" fill="url(#shine)"/>
+  <rect x="62" y="56" width="900" height="900" rx="180" fill="none" stroke="#fff" stroke-opacity=".46" stroke-width="9"/>
+  <rect x="92" y="86" width="840" height="840" rx="152" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+  <g filter="url(#softShadow)">
+    <path d="M512 220 164 405l348 191 348-191L512 220Z" fill="#fff"/>
+    <path d="M512 300 280 405l232 127 232-127-232-105Z" fill="#7590f7" fill-opacity=".92"/>
+    <path d="M164 405 512 596 860 405M512 220 164 405l348 191 348-191-348-185Z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="20"/>
+    <rect x="326" y="478" width="56" height="184" rx="8" fill="#fff"/>
+    <rect x="642" y="478" width="56" height="184" rx="8" fill="#fff"/>
+    <path d="M657 697c-74 72-219 72-290 0" fill="none" stroke="#fff" stroke-linecap="butt" stroke-width="50"/>
+    <path d="M512 814c-23 0-42-6-42-6l14 50h56l14-50s-19 6-42 6Z" fill="#fff"/>
+  </g>
+  <path d="M302 386c92-88 273-121 428-5" fill="none" stroke="#b7dcff" stroke-width="14" stroke-linecap="round" opacity=".85"/>
+  <circle cx="273" cy="627" r="18" fill="#fff"/>
+  <circle cx="273" cy="627" r="18" fill="none" stroke="#56afff" stroke-width="7"/>
+  <path d="m704 415 98 97" stroke="#ffd656" stroke-linecap="round" stroke-width="34"/>
+  <path d="m683 397 54 54" stroke="#ffe175" stroke-linecap="round" stroke-width="24"/>
+  <circle cx="813" cy="521" r="39" fill="#ffd656"/>
+  <path d="M780 194v84M738 236h84M748 204l64 64M812 204l-64 64" stroke="#fff" stroke-opacity=".86" stroke-width="12"/>
+</svg>

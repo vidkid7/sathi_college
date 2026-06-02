@@ -7,7 +7,7 @@ export function GET() {
   <ShortName>SathiCollege</ShortName>
   <Description>Search SathiCollege engineering colleges, exams, predictors, mock tests and counselling guides.</Description>
   <InputEncoding>UTF-8</InputEncoding>
-  <Image height="16" width="16" type="image/png">${siteUrl}/assets/brand/sathi-logo.png</Image>
+  <Image height="16" width="16" type="image/png">${siteUrl}/assets/brand/sathi-logo-glass.png</Image>
   <Url type="text/html" method="get" template="${siteUrl}/colleges?search={searchTerms}" />
 </OpenSearchDescription>`;
 

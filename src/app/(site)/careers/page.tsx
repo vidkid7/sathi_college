@@ -6,6 +6,7 @@ import { buildMetadata, breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "
 import { safeImageSrc } from "@/lib/utils";
 import { ArrowRight, BriefcaseBusiness } from "lucide-react";
 import Link from "next/link";
+import { careerImageFor, realImageOr } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
   title: "Popular Careers",
@@ -66,7 +67,7 @@ export default async function CareersPage() {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {careers.map((career) => {
-              const image = safeImageSrc(career.image, "");
+              const image = safeImageSrc(realImageOr(career.image, careerImageFor({ name: career.name, sector: career.sector })), "");
               return (
                 <Link key={career.id} href={`/careers/${career.slug}`} className="soft-card group flex h-full flex-col overflow-hidden">
                   <div className="h-36 bg-gradient-to-br from-teal-50 to-blue-100 dark:from-slate-900 dark:to-teal-950">

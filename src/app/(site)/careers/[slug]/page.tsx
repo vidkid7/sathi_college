@@ -7,6 +7,7 @@ import { buildMetadata, breadcrumbJsonLd, webPageJsonLd } from "@/lib/seo";
 import { safeImageSrc } from "@/lib/utils";
 import { BriefcaseBusiness, Compass, GraduationCap } from "lucide-react";
 import { notFound } from "next/navigation";
+import { careerImageFor, realImageOr } from "@/lib/real-images";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const career = await db.career.findUnique({ where: { slug: params.slug } });
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function CareerDetail({ params }: { params: { slug: string } }) {
   const career = await db.career.findUnique({ where: { slug: params.slug } });
   if (!career || !career.active) notFound();
-  const image = safeImageSrc(career.image, "");
+  const image = safeImageSrc(realImageOr(career.image, careerImageFor({ name: career.name, sector: career.sector })), "");
 
   return (
     <>

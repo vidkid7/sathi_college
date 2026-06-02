@@ -4,7 +4,7 @@ import type { SiteSettings } from "./settings-defaults";
 
 const FALLBACK_SITE_URL = "https://sathicollege.com";
 const DEFAULT_OG_IMAGE = "/assets/generated/hero-campus-generated.png";
-const BRAND_LOGO_PATH = "/assets/brand/sathi-logo.png";
+const BRAND_LOGO_PATH = "/assets/brand/sathi-logo-glass.png";
 
 export const BRAND_DISPLAY_NAME = "SathiCollege";
 export const BRAND_READABLE_NAME = "Sathi College";
@@ -48,7 +48,7 @@ function uniqueText(values: Array<string | null | undefined>) {
 }
 
 export function brandMetaDescription(description?: string | null) {
-  const fallback = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) helps engineering aspirants compare colleges, predict ranks, practice mock tests, join student communities and get counselling guidance.`;
+  const fallback = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) helps students search global programs, compare universities, review scholarships, tuition, intakes and eligibility across the USA, UK, Australia and Canada.`;
   const clean = trimDescription(description || fallback);
   return /SathiCollege/i.test(clean) && /Sathi\s+College/i.test(clean) ? clean : fallback;
 }
@@ -106,9 +106,11 @@ function verification(): Metadata["verification"] | undefined {
 
 export function brandPageTitle(title?: string | null) {
   const clean = title?.replace(/\s+/g, " ").trim().replace(/\bsathicollege\b/gi, BRAND_DISPLAY_NAME);
-  if (!clean) return `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) | Engineering Rank Predictor, College Predictor & Admissions`;
-  if (/sathi\s*college/i.test(clean) && /rank predictor|college predictor|admission/i.test(clean)) return clean;
-  if (/sathi\s*college/i.test(clean)) return `${clean} | Rank Predictor, College Predictor & Engineering Admissions`;
+  const globalTitle = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) | Global Program Search, Universities & Scholarships`;
+  if (!clean) return globalTitle;
+  if (/engineering rank predictor|college predictor\s*&\s*admissions|engineering admissions/i.test(clean)) return globalTitle;
+  if (/sathi\s*college/i.test(clean) && /program search|universit|scholarship|study abroad/i.test(clean)) return clean;
+  if (/sathi\s*college/i.test(clean)) return `${clean} | Global Program Search, Universities & Scholarships`;
   return `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) | ${clean}`;
 }
 
@@ -155,7 +157,7 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
     creator: BRAND_DISPLAY_NAME,
     publisher: BRAND_DISPLAY_NAME,
     category: "education",
-    alternates: { canonical: url, languages: { "en-IN": url } },
+    alternates: { canonical: url, languages: { en: url } },
     robots: robots(input?.noIndex),
     verification: verification(),
     openGraph: {
@@ -163,7 +165,7 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
       description,
       url,
       siteName: BRAND_DISPLAY_NAME,
-      locale: "en_IN",
+      locale: "en_US",
       type: input?.type || "website",
       images: [{ url: ogImage, width: 1200, height: 630, alt: `${BRAND_DISPLAY_NAME} preview` }],
       ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
@@ -173,7 +175,7 @@ export async function buildPageMetadata(input?: MetadataInput): Promise<Metadata
     other: {
       "format-detection": "telephone=no",
       classification: "Education",
-      subject: "College search, program search, admissions, entrance exams and counselling"
+      subject: "Global university search, program search, scholarships, admissions and counselling"
     }
   };
 }
@@ -189,14 +191,16 @@ export const siteConfig = {
     "sathicollege",
     "sathi college",
     "sathicollage",
-    "engineering colleges in India",
-    "rank predictor",
-    "college predictor",
-    "JEE Main rank predictor",
-    "AP EAMCET college predictor",
-    "TS EAMCET college predictor",
-    "KCET college predictor",
-    "engineering counselling"
+    "global program search",
+    "study abroad program finder",
+    "university search",
+    "USA universities",
+    "UK universities",
+    "Australia universities",
+    "Canada universities",
+    "scholarship search",
+    "course finder",
+    "international admissions"
   ]
 };
 
@@ -204,8 +208,11 @@ export function buildMetadata(input?: MetadataInput): Metadata {
   const base = getSiteUrl();
   const path = normalizePath(input?.path);
   const url = canonicalUrl(path);
-  const title = input?.title || `${siteConfig.name} Engineering Admissions Guidance`;
-  const description = trimDescription(input?.description || "India's leading community for engineering aspirants with rank predictors, college predictors, mock tests and counselling guidance.");
+  const title = input?.title || `${siteConfig.name} Global Program Search`;
+  const description = trimDescription(
+    input?.description ||
+      "Search global universities, programs, scholarships, tuition, intakes and eligibility requirements across the USA, UK, Australia and Canada."
+  );
   const ogImage = imageUrl(input?.image || siteConfig.ogImage);
   return {
     metadataBase: new URL(base),
@@ -217,7 +224,7 @@ export function buildMetadata(input?: MetadataInput): Metadata {
     creator: BRAND_DISPLAY_NAME,
     publisher: BRAND_DISPLAY_NAME,
     category: "education",
-    alternates: { canonical: url, languages: { "en-IN": url } },
+    alternates: { canonical: url, languages: { en: url } },
     robots: robots(input?.noIndex),
     verification: verification(),
     openGraph: {
@@ -226,7 +233,7 @@ export function buildMetadata(input?: MetadataInput): Metadata {
       url,
       type: input?.type || "website",
       siteName: siteConfig.name,
-      locale: "en_IN",
+      locale: "en_US",
       images: [{ url: ogImage, width: 1200, height: 630, alt: `${siteConfig.name} preview` }],
       ...(input?.publishedTime ? { publishedTime: new Date(input.publishedTime).toISOString() } : {}),
       ...(input?.modifiedTime ? { modifiedTime: new Date(input.modifiedTime).toISOString() } : {})
@@ -235,7 +242,7 @@ export function buildMetadata(input?: MetadataInput): Metadata {
     other: {
       "format-detection": "telephone=no",
       classification: "Education",
-      subject: "College search, program search, admissions, entrance exams and counselling"
+      subject: "Global university search, program search, scholarships, admissions and counselling"
     }
   };
 }

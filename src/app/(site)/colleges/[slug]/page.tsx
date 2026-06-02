@@ -9,6 +9,7 @@ import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, educationalOrganizationJsonLd, webPageJsonLd } from "@/lib/seo";
 import { formatCompactCount, formatSearchMoney, importedEntityPath, sourceIdFromSlug } from "@/lib/search-slugs";
+import { realImageOr, universityCampusImage, universityLogoUrl } from "@/lib/real-images";
 import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
@@ -61,6 +62,8 @@ export default async function CollegeDetail({ params }: { params: { slug: string
     });
     if (!university) notFound();
     const location = [university.city, university.state, university.country].filter(Boolean).join(", ");
+    const logo = universityLogoUrl({ sourceId: university.sourceId, name: university.name });
+    const campusImage = safeImageSrc(universityCampusImage(university), "");
     return (
       <>
         <JsonLd
@@ -94,22 +97,30 @@ export default async function CollegeDetail({ params }: { params: { slug: string
         </PageHero>
         <section className="container grid gap-6 py-12 lg:grid-cols-[minmax(0,1fr)_320px]">
           <GlassCard className="lg:col-span-2" hover={false}>
-            <ReferenceVisual name="campus" className="mb-5 h-56 w-full rounded-lg bg-gradient-to-br from-blue-50 to-sky-100 object-contain p-5 dark:from-slate-900 dark:to-blue-950" />
+            <div className="relative mb-5 h-56 overflow-hidden rounded-lg border border-white/60 bg-gradient-to-br from-blue-50 to-sky-100 dark:border-white/10 dark:from-slate-900 dark:to-blue-950">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={campusImage} alt="" className="absolute inset-0 h-full w-full object-cover" loading="eager" decoding="async" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-slate-950/5 to-transparent" />
+              {logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logo} alt={`${university.name} logo`} className="absolute bottom-4 left-4 h-16 w-16 rounded-xl border border-white/80 bg-white object-contain p-3 shadow-xl" loading="eager" decoding="async" />
+              ) : null}
+            </div>
             <h2 className="font-display text-2xl font-bold">Programs at {university.name}</h2>
             <p className="mt-3 leading-7 text-[rgb(var(--fg-muted))]">
               This page is connected to the imported database. Use the search system to filter this university by program name, study level, intake, tuition and requirements.
             </p>
             <div className="mt-6 grid gap-3">
               {university.programs.map((program) => (
-                <Link key={program.sourceId} href={importedEntityPath("/courses", program.sourceId, program.name)} className="soft-card flex flex-col gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h3 className="font-bold">{program.name}</h3>
-                    <p className="mt-1 text-xs text-[rgb(var(--fg-muted))]">
+                <Link key={program.sourceId} href={importedEntityPath("/courses", program.sourceId, program.name)} className="soft-card grid min-w-0 gap-3 p-4 transition hover:-translate-y-0.5 hover:shadow-lg sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                  <div className="min-w-0">
+                    <h3 className="line-clamp-2 break-words font-bold leading-snug">{program.name}</h3>
+                    <p className="mt-1 min-w-0 truncate text-xs text-[rgb(var(--fg-muted))]">
                       {[program.studyLevel, program.durationMonths ? `${program.durationMonths} Month(s)` : null, program.intakesText ? `Intakes: ${program.intakesText}` : null].filter(Boolean).join(" • ")}
                     </p>
                   </div>
-                  <div className="flex shrink-0 items-center gap-3 text-sm">
-                    <span className="font-semibold">{formatSearchMoney(program.minTuitionAmount, program.currencyCode)}</span>
+                  <div className="flex min-w-0 items-center justify-between gap-3 text-sm sm:justify-end">
+                    <span className="truncate font-semibold sm:max-w-40">{formatSearchMoney(program.minTuitionAmount, program.currencyCode)}</span>
                     <ArrowRight className="h-4 w-4 text-[rgb(var(--primary))]" />
                   </div>
                 </Link>
@@ -135,7 +146,7 @@ export default async function CollegeDetail({ params }: { params: { slug: string
 
   const college = await db.college.findUnique({ where: { slug: params.slug } });
   if (!college) notFound();
-  const heroImage = safeImageSrc(college.heroImage, "");
+  const heroImage = safeImageSrc(realImageOr(college.heroImage, universityCampusImage()), "");
 
   return (
     <>

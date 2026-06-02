@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: homeUrl,
       siteName: BRAND_DISPLAY_NAME,
-      locale: "en_IN",
+      locale: "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1200, height: 630, alt: `${BRAND_DISPLAY_NAME} preview` }]
     },
@@ -64,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
         "max-video-preview": -1
       }
     },
-    alternates: { canonical: homeUrl, languages: { "en-IN": homeUrl } },
+    alternates: { canonical: homeUrl, languages: { en: homeUrl } },
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined
     },
@@ -88,7 +88,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "mobile-web-app-capable": "yes",
       "format-detection": "telephone=no",
       classification: "Education",
-      subject: "College search, program search, admissions, entrance exams and counselling"
+      subject: "Global university search, program search, scholarships, admissions and counselling"
     }
   };
 }

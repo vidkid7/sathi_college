@@ -8,6 +8,7 @@ node_modules
 .codex-*.png
 .codex-screens
 hero-demo.html
+Untitled design*.mp4
 .vercel
 .turbo
 coverage

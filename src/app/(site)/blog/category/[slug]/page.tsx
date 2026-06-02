@@ -8,6 +8,7 @@ import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
+import { postImageFor, realImageOr } from "@/lib/real-images";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const c = await db.category.findUnique({ where: { slug: params.slug } });
@@ -58,7 +59,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
         ) : (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((p) => {
-              const image = safeImageSrc(p.coverImage, "");
+              const image = safeImageSrc(realImageOr(p.coverImage, postImageFor({ title: p.title, category: category.name })), "");
               return (
               <Link key={p.id} href={`/blog/${p.slug}`} className="soft-card group flex h-full flex-col overflow-hidden">
                 <div className="h-40 bg-gradient-to-br from-blue-50 to-sky-100 dark:from-slate-900 dark:to-blue-950">

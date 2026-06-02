@@ -23,8 +23,16 @@ export default function SearchProgramPage({
     year?: string;
     intake?: string;
     quick?: string;
+    sort?: string;
+    maxTuition?: string;
+    requirement?: string | string[];
   };
 }) {
+  const requirements = Array.isArray(searchParams?.requirement)
+    ? searchParams?.requirement
+    : searchParams?.requirement
+      ? [searchParams.requirement]
+      : [];
   return (
     <>
       <JsonLd
@@ -55,7 +63,10 @@ export default function SearchProgramPage({
             university: searchParams?.university || "",
             year: searchParams?.year || "2026",
             intake: searchParams?.intake || "",
-            quick: searchParams?.quick || ""
+            quick: searchParams?.quick || "",
+            sort: searchParams?.sort || "featured",
+            maxTuition: searchParams?.maxTuition || "",
+            requirements
           }}
         />
       </Suspense>

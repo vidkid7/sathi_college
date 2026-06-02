@@ -7,6 +7,7 @@ import { ReferenceVisual } from "@/components/ui/ReferenceVisual";
 import { safeImageSrc } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd, itemListJsonLd, webPageJsonLd } from "@/lib/seo";
+import { examImageFor, realImageOr } from "@/lib/real-images";
 
 export const metadata = buildMetadata({
   title: "Entrance Exams",
@@ -78,7 +79,7 @@ export default async function ExamsPage({ searchParams }: { searchParams?: { cat
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {exams.map((e) => {
-            const image = safeImageSrc(e.heroImage, "");
+            const image = safeImageSrc(realImageOr(e.heroImage, examImageFor({ name: e.name, category: e.category })), "");
             return (
             <Link key={e.id} href={`/exams/${e.slug}`} className="soft-card group flex h-full flex-col overflow-hidden">
               <div className="h-32 bg-gradient-to-br from-blue-50 to-violet-50 p-3 dark:from-slate-900 dark:to-blue-950">

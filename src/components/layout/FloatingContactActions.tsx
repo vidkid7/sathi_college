@@ -93,7 +93,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
           initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-2 top-[5.15rem] z-[45] flex w-[min(calc(100vw-1rem),410px)] flex-col overflow-hidden rounded-2xl border border-white/70 bg-white/86 shadow-2xl shadow-blue-950/18 backdrop-blur-2xl sm:bottom-20 sm:right-4 sm:top-24 dark:border-white/12 dark:bg-slate-950/90"
+          className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-2 top-[5.35rem] z-[45] flex w-[min(calc(100vw-1rem),410px)] flex-col overflow-hidden rounded-2xl border border-white/70 bg-white/90 shadow-2xl shadow-blue-950/18 backdrop-blur-md sm:bottom-20 sm:right-4 sm:top-24 dark:border-white/12 dark:bg-slate-950/92"
         >
           <div className="shrink-0 flex items-center justify-between gap-3 border-b border-[rgb(var(--border))] bg-gradient-to-r from-blue-600 via-violet-600 to-sky-500 px-4 py-3 text-white">
             <div className="flex min-w-0 items-center gap-3">
@@ -126,7 +126,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
                   className={`max-w-[92%] rounded-2xl px-3.5 py-2.5 text-sm leading-6 shadow-sm ${
                     message.from === "user"
                       ? "max-w-[84%] bg-[rgb(var(--primary))] text-white"
-                      : "border border-white/70 bg-white/72 text-[rgb(var(--fg))] backdrop-blur-xl dark:border-white/10 dark:bg-white/8"
+                      : "border border-white/70 bg-white/82 text-[rgb(var(--fg))] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]"
                   }`}
                 >
                   {message.from === "bot" ? <FormattedAssistantMessage text={message.text} /> : <div className="whitespace-pre-wrap">{message.text}</div>}
@@ -152,7 +152,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
             ))}
             {loading ? (
               <div className="flex justify-start">
-                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/70 bg-white/72 px-3.5 py-2.5 text-sm shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/8">
+                <div className="inline-flex items-center gap-2 rounded-2xl border border-white/70 bg-white/82 px-3.5 py-2.5 text-sm shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.08]">
                   <Loader2 className="h-4 w-4 animate-spin text-[rgb(var(--primary))]" />
                   Searching SathiCollege data...
                 </div>
@@ -160,7 +160,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
             ) : null}
           </div>
 
-          <div className="shrink-0 border-t border-[rgb(var(--border))] bg-white/74 p-3 backdrop-blur-xl dark:bg-slate-950/74">
+          <div className="shrink-0 border-t border-[rgb(var(--border))] bg-white/82 p-3 backdrop-blur-sm dark:bg-slate-950/82">
             <div className="mb-2 flex gap-2 overflow-x-auto pb-1 nice-scroll">
               {starterPrompts.map((prompt) => (
                 <button
@@ -212,7 +212,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
           whileTap={{ scale: 0.95 }}
           aria-label="Open SathiCollege AI assistant"
           title="Sathi AI Assistant"
-          className="group relative grid h-10 w-10 place-items-center rounded-xl border border-white/70 bg-gradient-to-br from-blue-600 via-violet-600 to-sky-500 text-white shadow-2xl shadow-blue-500/30 backdrop-blur-xl sm:h-14 sm:w-14 sm:rounded-2xl dark:border-white/15"
+          className="group relative grid h-10 w-10 place-items-center rounded-xl border border-white/70 bg-gradient-to-br from-blue-600 via-violet-600 to-sky-500 text-white shadow-2xl shadow-blue-500/30 backdrop-blur-sm sm:h-14 sm:w-14 sm:rounded-2xl dark:border-white/15"
         >
           <span className="absolute inset-0 rounded-xl bg-white/12 opacity-0 transition group-hover:opacity-100 sm:rounded-2xl" />
           <span className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full border border-white/80 bg-white text-[rgb(var(--primary))] shadow-lg sm:h-5 sm:w-5">
@@ -220,7 +220,7 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
           </span>
           <Bot className="relative h-[18px] w-[18px] sm:h-6 sm:w-6" />
           <MessageCircle className="absolute bottom-1.5 right-1.5 h-2.5 w-2.5 text-white/85 sm:bottom-2 sm:right-2 sm:h-3 sm:w-3" />
-          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/88 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-xl transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/82">
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/90 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-sm transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/86">
             Sathi AI
           </span>
         </motion.button>
@@ -236,12 +236,12 @@ export function FloatingContactActions({ whatsappHref }: { whatsappHref: string 
           whileTap={{ scale: 0.95 }}
           aria-label="Chat with SathiCollege on WhatsApp"
           title="WhatsApp"
-          className="group relative grid h-9 w-9 place-items-center rounded-xl border border-white/70 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 text-white shadow-2xl shadow-emerald-500/25 backdrop-blur-xl sm:h-12 sm:w-12 sm:rounded-2xl dark:border-white/15"
+          className="group relative grid h-9 w-9 place-items-center rounded-xl border border-white/70 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 text-white shadow-2xl shadow-emerald-500/25 backdrop-blur-sm sm:h-12 sm:w-12 sm:rounded-2xl dark:border-white/15"
         >
           <span className="absolute inset-0 animate-ping rounded-xl bg-emerald-400/18 sm:rounded-2xl" />
           <MessageCircle className="relative h-4 w-4 sm:h-5 sm:w-5" />
           <PhoneCall className="absolute bottom-1.5 right-1.5 h-2 w-2 text-white/90 sm:bottom-2 sm:right-2 sm:h-2.5 sm:w-2.5" />
-          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/88 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-xl transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/82">
+          <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg border border-white/70 bg-white/90 px-3 py-2 text-xs font-extrabold text-[rgb(var(--fg))] opacity-0 shadow-lg backdrop-blur-sm transition group-hover:opacity-100 sm:block dark:border-white/10 dark:bg-slate-950/86">
             WhatsApp
           </span>
         </motion.a>

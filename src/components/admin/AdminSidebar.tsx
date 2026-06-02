@@ -28,7 +28,7 @@ export function AdminSidebar() {
     <aside className="glass sticky top-0 hidden h-screen w-64 flex-col border-r border-[rgb(var(--border))] p-4 lg:flex">
       <Link href="/admin" className="mb-6 flex items-center gap-2 px-2 pt-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/brand/sathi-logo.png" alt="SathiCollege admin logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
+        <img src="/assets/brand/sathi-logo-glass.png" alt="SathiCollege admin logo" className="h-10 w-10 rounded-xl object-contain shadow-lg shadow-blue-500/20" />
         <span className="font-display text-lg font-bold">Admin</span>
       </Link>
       <nav className="flex-1 space-y-1">
