@@ -6,10 +6,31 @@ import { CtaBanner } from "@/components/home/CtaBanner";
 import { db } from "@/lib/db";
 import { getSettings, resolveCta, whatsappLinkFromSettings } from "@/lib/settings";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { BRAND_DISPLAY_NAME, BRAND_READABLE_NAME, brandMetaDescription, itemListJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
+import { BRAND_DISPLAY_NAME, BRAND_READABLE_NAME, buildMetadata, itemListJsonLd, softwareApplicationJsonLd, webPageJsonLd } from "@/lib/seo";
 import { examOptions, mockTests } from "@/lib/exam-catalog";
 
 export const dynamic = "force-dynamic";
+
+const homeMetadata = buildMetadata({
+  title: "SathiCollege Official Website | Course & University Finder",
+  description:
+    "SathiCollege official website for global course search, university comparison, scholarships, tuition, intakes, eligibility and admissions planning.",
+  path: "/",
+  keywords: [
+    "SathiCollege official website",
+    "Sathi College official website",
+    "sathicollege",
+    "sathi college",
+    "course finder",
+    "university finder",
+    "global program search"
+  ]
+});
+
+export const metadata = {
+  ...homeMetadata,
+  title: { absolute: "SathiCollege Official Website | Course Finder" }
+};
 
 export default async function HomePage() {
   const settings = await getSettings();
@@ -68,8 +89,8 @@ export default async function HomePage() {
         data={[
           webPageJsonLd({
             path: "/",
-            name: `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) global program search`,
-            description: brandMetaDescription(settings.description)
+            name: `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) official website`,
+            description: `${BRAND_DISPLAY_NAME} official website for global course search, university comparison, scholarships, tuition, intakes, eligibility and admissions planning.`
           }),
           itemListJsonLd({
             path: "/",

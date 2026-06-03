@@ -143,9 +143,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     bottomNote: "Built for students comparing global study options."
   },
   seo: {
-    metaTitle: "SathiCollege (Sathi College) | Global Program Search, Universities & Scholarships",
+    metaTitle: "SathiCollege Official Website | Course Finder",
     metaDescription:
-      "SathiCollege (Sathi College) helps students search programs, compare universities, review scholarships, tuition, intakes and eligibility across the USA, UK, Australia and Canada.",
+      "SathiCollege (Sathi College) official website for global program search, university comparison, scholarships, tuition, intakes and admission planning.",
     keywords: [
       "SathiCollege", "Sathi College", "sathicollege", "sathi college", "sathicollage",
       "study abroad", "program search", "university search", "course finder", "scholarships",

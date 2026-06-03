@@ -48,7 +48,7 @@ function uniqueText(values: Array<string | null | undefined>) {
 }
 
 export function brandMetaDescription(description?: string | null) {
-  const fallback = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) helps students search global programs, compare universities, review scholarships, tuition, intakes and eligibility across the USA, UK, Australia and Canada.`;
+  const fallback = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) official website for global program search, university comparison, scholarships, tuition, intakes and admission planning.`;
   const clean = trimDescription(description || fallback);
   return /SathiCollege/i.test(clean) && /Sathi\s+College/i.test(clean) ? clean : fallback;
 }
@@ -106,7 +106,7 @@ function verification(): Metadata["verification"] | undefined {
 
 export function brandPageTitle(title?: string | null) {
   const clean = title?.replace(/\s+/g, " ").trim().replace(/\bsathicollege\b/gi, BRAND_DISPLAY_NAME);
-  const globalTitle = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) | Global Program Search, Universities & Scholarships`;
+  const globalTitle = `${BRAND_DISPLAY_NAME} Official Website | Course Finder`;
   if (!clean) return globalTitle;
   if (/engineering rank predictor|college predictor\s*&\s*admissions|engineering admissions/i.test(clean)) return globalTitle;
   if (/sathi\s*college/i.test(clean) && /program search|universit|scholarship|study abroad/i.test(clean)) return clean;
