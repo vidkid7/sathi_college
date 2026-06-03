@@ -9,6 +9,21 @@ export default async function middleware(req: NextRequest) {
   const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
   const methodAllowsCanonicalRedirect = req.method === "GET" || req.method === "HEAD";
   const isAuthSurface = pathname === "/login" || pathname === "/signup" || pathname.startsWith("/api/auth");
+  const brandAliasPaths = new Set([
+    "/sathi",
+    "/sathi-college",
+    "/sathicollege",
+    "/sathi-college-official",
+    "/sathicollege-official",
+    "/sathi-college-course-finder"
+  ]);
+
+  if (methodAllowsCanonicalRedirect && brandAliasPaths.has(pathname.toLowerCase().replace(/\/$/, "") || "/")) {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    redirectUrl.search = "";
+    return withSecurityHeaders(NextResponse.redirect(redirectUrl, 308), req);
+  }
 
   if (methodAllowsCanonicalRedirect && pathname === "/privacy") {
     const redirectUrl = req.nextUrl.clone();

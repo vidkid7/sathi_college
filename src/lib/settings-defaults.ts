@@ -145,9 +145,11 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   seo: {
     metaTitle: "SathiCollege Official Website | Course Finder",
     metaDescription:
-      "SathiCollege (Sathi College) official website for global program search, university comparison, scholarships, tuition, intakes and admission planning.",
+      "SathiCollege (Sathi College) official website for global course search, university comparison, scholarships, tuition, intakes, eligibility and admission planning.",
     keywords: [
-      "SathiCollege", "Sathi College", "sathicollege", "sathi college", "sathicollage",
+      "SathiCollege", "Sathi College", "SathiCollege official website", "Sathi College official website",
+      "sathicollege", "sathi college", "sathi", "sathi college official", "sathicollege official",
+      "sathi college course finder", "sathicollage",
       "study abroad", "program search", "university search", "course finder", "scholarships",
       "USA universities", "UK universities", "Australia universities", "Canada universities", "IELTS waiver"
     ],

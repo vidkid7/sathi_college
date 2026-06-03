@@ -9,12 +9,21 @@ const BRAND_LOGO_PATH = "/assets/brand/sathi-logo-glass-160.png";
 export const BRAND_DISPLAY_NAME = "SathiCollege";
 export const BRAND_READABLE_NAME = "Sathi College";
 export const BRAND_LEGAL_NAME = BRAND_READABLE_NAME;
+export const BRAND_OFFICIAL_DESCRIPTION =
+  `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) official website for global course search, university comparison, scholarships, tuition, intakes, eligibility and admission planning.`;
 
 const BRAND_ALIASES = [
   BRAND_DISPLAY_NAME,
   BRAND_READABLE_NAME,
+  `${BRAND_DISPLAY_NAME} official website`,
+  `${BRAND_READABLE_NAME} official website`,
+  `${BRAND_READABLE_NAME} course finder`,
   "sathicollege",
   "sathi college",
+  "sathi",
+  "sathi college official",
+  "sathicollege official",
+  "sathi college course finder",
   "Sathi Collage",
   "sathicollage"
 ];
@@ -48,9 +57,10 @@ function uniqueText(values: Array<string | null | undefined>) {
 }
 
 export function brandMetaDescription(description?: string | null) {
-  const fallback = `${BRAND_DISPLAY_NAME} (${BRAND_READABLE_NAME}) official website for global program search, university comparison, scholarships, tuition, intakes and admission planning.`;
+  const fallback = BRAND_OFFICIAL_DESCRIPTION;
   const clean = trimDescription(description || fallback);
-  return /SathiCollege/i.test(clean) && /Sathi\s+College/i.test(clean) ? clean : fallback;
+  const staleEngineeringDescription = /engineering aspirants|12th class graduates|jee|eamcet|kcet|mht-cet|wbjee/i.test(clean);
+  return /SathiCollege/i.test(clean) && /Sathi\s+College/i.test(clean) && !staleEngineeringDescription ? clean : fallback;
 }
 
 function normalizeBaseUrl(value?: string | null) {
@@ -188,8 +198,14 @@ export const siteConfig = {
   keywords: [
     "SathiCollege",
     "Sathi College",
+    "SathiCollege official website",
+    "Sathi College official website",
     "sathicollege",
     "sathi college",
+    "sathi",
+    "sathi college official",
+    "sathicollege official",
+    "sathi college course finder",
     "sathicollage",
     "global program search",
     "study abroad program finder",
@@ -256,13 +272,15 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
   const logo = imageUrl(settings.logoUrl || BRAND_LOGO_PATH);
   return {
     "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
+    "@type": ["EducationalOrganization", "Organization"],
     "@id": `${getSiteUrl()}/#organization`,
     name: BRAND_DISPLAY_NAME,
     legalName: BRAND_LEGAL_NAME,
     alternateName: uniqueText([settings.shortName, settings.siteName, ...BRAND_ALIASES]),
     url: getSiteUrl(),
     inLanguage: "en-IN",
+    slogan: "Global course and university finder",
+    mainEntityOfPage: `${getSiteUrl()}/`,
     logo: {
       "@type": "ImageObject",
       url: logo,
@@ -270,7 +288,24 @@ export function organizationJsonLd(settings: SiteSettings): JsonLdRecord {
       height: 512
     },
     image: logo,
-    description: brandMetaDescription(settings.description || settings.seo.metaDescription),
+    description: BRAND_OFFICIAL_DESCRIPTION,
+    keywords: [
+      "SathiCollege",
+      "Sathi College",
+      "sathicollege",
+      "sathi college",
+      "course finder",
+      "university finder",
+      "scholarship search",
+      "study abroad"
+    ],
+    brand: {
+      "@type": "Brand",
+      name: BRAND_DISPLAY_NAME,
+      alternateName: uniqueText([BRAND_READABLE_NAME, "Sathi", "sathicollege", "sathi college"]),
+      url: getSiteUrl(),
+      logo
+    },
     email: settings.email,
     telephone: settings.phone,
     contactPoint: {
@@ -308,7 +343,7 @@ export function websiteJsonLd(settings: SiteSettings): JsonLdRecord {
     alternateName: uniqueText([BRAND_READABLE_NAME, settings.siteName, settings.shortName, ...BRAND_ALIASES]),
     url: getSiteUrl(),
     inLanguage: "en-IN",
-    description: brandMetaDescription(settings.seo.metaDescription),
+    description: BRAND_OFFICIAL_DESCRIPTION,
     publisher: { "@id": `${getSiteUrl()}/#organization` },
     potentialAction: {
       "@type": "SearchAction",
